@@ -25,6 +25,19 @@ class _Step3DatosIngresoWidgetState
   final _contrasenaFocusNode = FocusNode();
   final _confirmaContrasenaFocusNode = FocusNode();
 
+  @override
+  void dispose() {
+    _correoController.dispose();
+    _confirmaCorreoController.dispose();
+    _contrasenaController.dispose();
+    _confirmaContrasenaController.dispose();
+    _correoFocusNode.dispose();
+    _confirmaCorreoFocusNode.dispose();
+    _contrasenaFocusNode.dispose();
+    _confirmaContrasenaFocusNode.dispose();
+    super.dispose();
+  }
+
   void _handleSubmit() {
     if (_formKey.currentState!.validate()) {
       ref.read(registerProvider.notifier).setIsLoading(true);
@@ -222,6 +235,7 @@ class _Step3DatosIngresoWidgetState
       ),
       child: TextFormField(
         controller: controller,
+        focusNode: focusNode,
         obscureText: isPassword,
         style: const TextStyle(color: Tema.negro),
         decoration: InputDecoration(

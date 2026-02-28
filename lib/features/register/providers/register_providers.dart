@@ -6,13 +6,16 @@ import '../../../shared/shared_exports.dart';
 
 // Modelo de estado registrar
 class RegisterState {
-  final String nombre;
-  final String apellidos;
-  final String documentoIdentidad;
-  final String pais;
-  final String departamento;
-  final String ciudad;
+  final int tipoPersona;
+  final int tipoDocumento;
+  final String numeroDocumento;
+  final String primerApellido;
+  final String segundoApellido;
+  final String nombres;
   final String fechaNacimiento;
+  final bool sexo;
+  final String celular;
+  final String contacto;
   final String imagen1;
   final String rutaImagen1;
   final String correo;
@@ -25,13 +28,16 @@ class RegisterState {
   final String mensaje;
 
   RegisterState({
-    this.nombre = '',
-    this.apellidos = '',
-    this.documentoIdentidad = '',
-    this.pais = '',
-    this.departamento = '',
-    this.ciudad = '',
+    this.tipoPersona = 0,
+    this.tipoDocumento = 0,
+    this.numeroDocumento = '',
+    this.primerApellido = '',
+    this.segundoApellido = '',
+    this.nombres = '',
     this.fechaNacimiento = '',
+    this.sexo = false,
+    this.celular = '',
+    this.contacto = '',
     this.imagen1 = '',
     this.rutaImagen1 = '',
     this.correo = '',
@@ -45,13 +51,16 @@ class RegisterState {
   });
 
   RegisterState copyWith({
-    String? nombre,
-    String? apellidos,
-    String? documentoIdentidad,
-    String? pais,
-    String? departamento,
-    String? ciudad,
+    int? tipoPersona,
+    int? tipoDocumento,
+    String? numeroDocumento,
+    String? primerApellido,
+    String? segundoApellido,
+    String? nombres,
     String? fechaNacimiento,
+    bool? sexo,
+    String? celular,
+    String? contacto,
     String? imagen1,
     String? rutaImagen1,
     String? correo,
@@ -64,13 +73,16 @@ class RegisterState {
     String? mensaje,
   }) {
     return RegisterState(
-      nombre: nombre ?? this.nombre,
-      apellidos: apellidos ?? this.apellidos,
-      documentoIdentidad: documentoIdentidad ?? this.documentoIdentidad,
-      pais: pais ?? this.pais,
-      departamento: departamento ?? this.departamento,
-      ciudad: ciudad ?? this.ciudad,
+      tipoPersona: tipoPersona ?? this.tipoPersona,
+      tipoDocumento: tipoDocumento ?? this.tipoDocumento,
+      numeroDocumento: numeroDocumento ?? this.numeroDocumento,
+      primerApellido: primerApellido ?? this.primerApellido,
+      segundoApellido: segundoApellido ?? this.segundoApellido,
+      nombres: nombres ?? this.nombres,
       fechaNacimiento: fechaNacimiento ?? this.fechaNacimiento,
+      sexo: sexo ?? this.sexo,
+      celular: celular ?? this.celular,
+      contacto: contacto ?? this.contacto,
       imagen1: imagen1 ?? this.imagen1,
       rutaImagen1: rutaImagen1 ?? this.rutaImagen1,
       correo: correo ?? this.correo,
@@ -92,32 +104,44 @@ class RegisterNotifier extends Notifier<RegisterState> {
     return RegisterState();
   }
 
-  void setNombre(String value) {
-    state = state.copyWith(nombre: value);
+  void setTipoPersona(int value) {
+    state = state.copyWith(tipoPersona: value);
   }
 
-  void setApellidos(String value) {
-    state = state.copyWith(apellidos: value);
+  void setTipoDocumento(int value) {
+    state = state.copyWith(tipoDocumento: value);
   }
 
-  void setDocumentoIdentidad(String value) {
-    state = state.copyWith(documentoIdentidad: value);
+  void setNumeroDocumento(String value) {
+    state = state.copyWith(numeroDocumento: value);
   }
 
-  void setPais(String value) {
-    state = state.copyWith(pais: value);
+  void setPrimerApellido(String value) {
+    state = state.copyWith(primerApellido: value);
   }
 
-  void setDepartamento(String value) {
-    state = state.copyWith(departamento: value);
+  void setSegundoApellido(String value) {
+    state = state.copyWith(segundoApellido: value);
   }
 
-  void setCiudad(String value) {
-    state = state.copyWith(ciudad: value);
+  void setNombres(String value) {
+    state = state.copyWith(nombres: value);
   }
 
   void setFechaNacimiento(String value) {
     state = state.copyWith(fechaNacimiento: value);
+  }
+
+  void setSexo(bool value) {
+    state = state.copyWith(sexo: value);
+  }
+
+  void setCelular(String value) {
+    state = state.copyWith(celular: value);
+  }
+
+  void setContacto(String value) {
+    state = state.copyWith(contacto: value);
   }
 
   void setImagen1(String value) {
@@ -166,14 +190,14 @@ class RegisterNotifier extends Notifier<RegisterState> {
 
   //validar campo
   String? validarCampo(String value, String campo) {
-    if (value.isEmpty) {
+    if (value.isEmpty || value == 'null') {
       return 'El campo $campo es obligatorio';
     }
     return null;
   }
 
   String? validarCorreo(String value) {
-    if (value.isEmpty) {
+    if (value.isEmpty || value == 'null') {
       return 'El campo correo es obligatorio';
     }
     final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
@@ -214,13 +238,14 @@ class RegisterNotifier extends Notifier<RegisterState> {
   }
 
   void capturarDatosRegistrar({
-    required String nombre,
-    required String apellidos,
-    required String documentoIdentidad,
-    required String pais,
-    required String departamento,
-    required String ciudad,
+    required int tipoPersona,
+    required int tipoDocumento,
+    required String numeroDocumento,
+    required String primerApellido,
+    required String segundoApellido,
+    required String nombres,
     required String fechaNacimiento,
+    required bool sexo,
     required String imagen1,
     required String rutaImagen1,
     required String correo,
@@ -229,13 +254,14 @@ class RegisterNotifier extends Notifier<RegisterState> {
     required String confirmaContrasena,
   }) {
     state = state.copyWith(
-      nombre: nombre,
-      apellidos: apellidos,
-      documentoIdentidad: documentoIdentidad,
-      pais: pais,
-      departamento: departamento,
-      ciudad: ciudad,
+      tipoPersona: tipoPersona,
+      tipoDocumento: tipoDocumento,
+      numeroDocumento: numeroDocumento,
+      primerApellido: primerApellido,
+      segundoApellido: segundoApellido,
+      nombres: nombres,
       fechaNacimiento: fechaNacimiento,
+      sexo: sexo,
       imagen1: imagen1,
       rutaImagen1: rutaImagen1,
       correo: correo,

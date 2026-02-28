@@ -59,6 +59,6 @@ final inicioRepositoryProvider = Provider<InicioRepository>((ref) {
 });
 
 final inicioDataSourceProvider = Provider<InicioDataSource>((ref) {
-  final dio = ref.watch(dioEmergenciasProvider);
+  final dio = ref.watch(dioYataProvider);
   return InicioDataSource(dio: dio);
 });

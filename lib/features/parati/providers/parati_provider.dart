@@ -28,7 +28,7 @@ final paratiRepositoryProvider = Provider<ParatiRepository>((ref) {
 });
 
 final paratiDataSourceProvider = Provider<ParatiDataSource>((ref) {
-  final dio = ref.watch(dioEmergenciasProvider);
+  final dio = ref.watch(dioYataProvider);
   return ParatiDataSource(dio: dio);
 });
 

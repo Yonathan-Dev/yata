@@ -10,7 +10,7 @@ class RegistrarRepository {
   Future<String> enviarRegistro(
     String vUsuario,
     String vFechaEvento,
-    RegistrarState state,
+    RegistrarStateOperaciones state,
     String vEvento,
   ) async {
     try {

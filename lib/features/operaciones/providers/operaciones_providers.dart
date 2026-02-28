@@ -8,7 +8,7 @@ import '../../../core/app_exports.dart';
 import '../../../shared/shared_exports.dart';
 
 // Modelo de estado registrar
-class RegistrarState {
+class RegistrarStateOperaciones {
   final int codigo;
   final String nombre;
   final String unidadOperativa;
@@ -25,7 +25,7 @@ class RegistrarState {
   final bool isLoading;
   final String mensaje;
 
-  RegistrarState({
+  RegistrarStateOperaciones({
     this.codigo = 0,
     this.nombre = '',
     this.unidadOperativa = '',
@@ -43,7 +43,7 @@ class RegistrarState {
     this.mensaje = '',
   });
 
-  RegistrarState copyWith({
+  RegistrarStateOperaciones copyWith({
     int? codigo,
     String? nombre,
     String? unidadOperativa,
@@ -60,7 +60,7 @@ class RegistrarState {
     bool? isLoading,
     String? mensaje,
   }) {
-    return RegistrarState(
+    return RegistrarStateOperaciones(
       codigo: codigo ?? this.codigo,
       nombre: nombre ?? this.nombre,
       unidadOperativa: unidadOperativa ?? this.unidadOperativa,
@@ -81,10 +81,10 @@ class RegistrarState {
 }
 
 // Notifier para manejar el estado de ubicación
-class RegistrarNotifier extends Notifier<RegistrarState> {
+class RegistrarNotifier extends Notifier<RegistrarStateOperaciones> {
   @override
-  RegistrarState build() {
-    return RegistrarState();
+  RegistrarStateOperaciones build() {
+    return RegistrarStateOperaciones();
   }
 
   void setCodigo(int value) {
@@ -144,7 +144,7 @@ class RegistrarNotifier extends Notifier<RegistrarState> {
   }
 
   void resetEstado() {
-    state = RegistrarState();
+    state = RegistrarStateOperaciones();
   }
 
   //validar campo
@@ -182,11 +182,10 @@ class RegistrarNotifier extends Notifier<RegistrarState> {
   }
 }
 
-final registrarProvider = NotifierProvider<RegistrarNotifier, RegistrarState>(
-  () {
-    return RegistrarNotifier();
-  },
-);
+final registrarProvider =
+    NotifierProvider<RegistrarNotifier, RegistrarStateOperaciones>(() {
+      return RegistrarNotifier();
+    });
 
 //Provider para enviar registros
 final enviarRegistroProvider = FutureProvider.autoDispose<String>((ref) async {
@@ -218,7 +217,7 @@ final registrarRepositoryProvider = Provider<RegistrarRepository>((ref) {
 });
 
 final registrarDataSourceProvider = Provider<RegistrarDataSource>((ref) {
-  final dio = ref.watch(dioEmergenciasProvider);
+  final dio = ref.watch(dioYataProvider);
   return RegistrarDataSource(dio: dio);
 });
 

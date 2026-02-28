@@ -172,7 +172,7 @@ final recordarProvider = StateProvider<bool>((ref) => false);
 
 //Provider para Login
 final authDataSourceProvider = Provider<AuthDataSource>((ref) {
-  final dio = ref.read(dioSeguridadProvider);
+  final dio = ref.read(dioYataProvider);
   return AuthDataSource(dio: dio);
 });
 final authRepositoryProvider = Provider<AuthRepository>((ref) {

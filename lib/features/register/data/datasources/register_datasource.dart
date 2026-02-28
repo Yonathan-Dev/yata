@@ -15,67 +15,33 @@ class RegisterDataSource {
 
   RegisterDataSource({required this.dio});
 
-  Future<String> enviarRegistro(
-    String vUsuario,
-    String vFechaEvento,
-    int iCodigoyata,
-    String vNombreyata,
-    String vAlerta,
-    String vEstado,
-    String vObservacion,
-    String vEvento,
-  ) async {
+  Future<String> enviarVerificacionOTP(String correo, String pcIp) async {
     try {
       final response = await dio.post(
-        '/api/xxx/yyyy',
-        data: jsonEncode({
-          'vUsuario': vUsuario,
-          'vFechaEvento': vFechaEvento,
-          'iCodigoyata': iCodigoyata,
-          'vAlerta': vAlerta,
-          'vNombreyata': vNombreyata,
-          'vEstado': vEstado,
-          'vObservacion': vObservacion,
-          'vEvento': vEvento,
-        }),
+        '/api/Usuario/enviarOTPRegistro',
+        data: jsonEncode({'correo': correo, 'pcIp': pcIp}),
         options: Options(
-          headers: {'accept': 'text/plain', 'Content-Type': 'application/json'},
+          headers: {'Content-Type': 'application/json'},
           receiveTimeout: const Duration(minutes: 5),
           sendTimeout: const Duration(minutes: 2),
         ),
       );
 
-      String responseData = response.data is String
-          ? response.data as String
-          : jsonEncode(response.data);
+      final Map<String, dynamic> jsonData = response.data is String
+          ? jsonDecode(response.data as String)
+          : response.data as Map<String, dynamic>;
 
-      // Remover comillas externas si existen
-      if (responseData.startsWith('"') && responseData.endsWith('"')) {
-        responseData = responseData.substring(1, responseData.length - 1);
-        // Decodificar caracteres escapados
-        responseData = responseData.replaceAll('\\"', '"');
-      }
+      final errorCodigo = jsonData["errorCodigo"];
+      final errorMensaje = jsonData["errorMensaje"] ?? "Error desconocido";
 
-      // Agregar llaves si faltan
-      if (!responseData.startsWith('{') && responseData.contains('"data":')) {
-        responseData = '{$responseData}';
-      }
-
-      final Map<String, dynamic> jsonData = json.decode(responseData);
-      final data = jsonData["data"];
-      final error = data?["error"];
-
-      if (error != null && error["xidError"] == 200) {
-        return error["msjError"] ?? '';
+      if (response.statusCode == 200 && errorCodigo == "OK") {
+        return errorMensaje;
       } else {
-        final mensajeError = error?["msjError"] ?? "Error desconocido";
-        throw Exception(mensajeError);
+        throw Exception(errorMensaje);
       }
     } on DioException catch (e, stackTrace) {
-      // Manejar errores de Dio
       throw Exception('Error en la solicitud: ${e.message}\n$stackTrace');
     } catch (e) {
-      // Capturar errores de parseo JSON
       throw Exception('Error al procesar la respuesta del servidor: $e');
     }
   }

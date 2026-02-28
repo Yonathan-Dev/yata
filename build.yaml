@@ -1,0 +1,15 @@
+targets:
+  $default:
+    builders:
+      freezed:
+        generate_for:
+          - lib/features/**/domain/models/**
+          - lib/features/**/data/models/**
+          - lib/**/models/**
+        enabled: true
+      json_serializable:
+        generate_for:
+          - lib/features/**/domain/models/**
+          - lib/features/**/data/models/**
+          - lib/**/models/**
+        enabled: true

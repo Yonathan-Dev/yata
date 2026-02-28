@@ -1,0 +1,19 @@
+// Auth Feature Exports
+// Screens
+export 'presentation/auth_screen.dart';
+export 'presentation/pin_screen.dart';
+export 'presentation/forgot_password_screen.dart';
+// Providers
+export 'providers/auth_provider.dart';
+// Widgets
+export 'widgets/formulario_widget.dart';
+export 'widgets/email_card_widget.dart';
+export 'widgets/verify_code_card_widget.dart';
+export 'widgets/create_pin_card_widget.dart';
+export 'widgets/confirm_pin_card_widget.dart';
+export 'widgets/robot_section_widget.dart';
+// Models
+export 'data/models/auth_model.dart';
+// Repositories
+export 'data/repositories/auth_repository.dart';
+export 'data/datasources/auth_datasource.dart';

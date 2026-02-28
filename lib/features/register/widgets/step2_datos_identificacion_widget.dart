@@ -112,6 +112,10 @@ class _Step2DatosIdentificacionWidgetState
                     if (photo != null) {
                       widget.onStepChanged?.call(widget.currentStep + 1);
                     }
+
+                    ref
+                        .read(registerProvider.notifier)
+                        .setRutaImagen1(photo!.path);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Tema.negro,

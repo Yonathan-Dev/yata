@@ -194,10 +194,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   }
 
   Widget _buildLoadingIndicator(BuildContext context) {
-    final authState = ref.watch(authProvider);
+    final registerState = ref.watch(registerProvider);
 
-    if (authState.isLoading) {
-      return LoadingWidget(mensaje: authState.mensaje);
+    if (registerState.isLoading) {
+      return LoadingWidget(mensaje: registerState.mensaje);
     }
     return const SizedBox.shrink();
   }

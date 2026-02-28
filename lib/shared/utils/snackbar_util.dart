@@ -152,6 +152,38 @@ class SnackbarUtil {
     );
   }
 
+  static void snackbarNotificationPush(
+    BuildContext context, {
+    String? title,
+    String? message,
+    Duration duration = const Duration(seconds: 5),
+  }) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: _buildSnackbarContent(
+          context: context,
+          icon: Icons.notifications_active_outlined,
+          title: title ?? 'Notificación',
+          message: message ?? '',
+          iconColor: Tema.blanco,
+          textColor: Tema.blanco,
+        ),
+        backgroundColor: Tema.primaryColor,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(Constantes.borderRadius),
+        ),
+        margin: EdgeInsets.only(
+          left: Constantes.padding,
+          right: Constantes.padding,
+          top: Constantes.padding,
+          bottom: MediaQuery.of(context).size.height - 200,
+        ),
+        duration: duration,
+      ),
+    );
+  }
+
   /// Snackbar Builder
   static Widget _buildSnackbarContent({
     required BuildContext context,

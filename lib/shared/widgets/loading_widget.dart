@@ -79,7 +79,7 @@ class _LoadingWidgetState extends State<LoadingWidget>
                         height: 80,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Tema.rojo.withValues(alpha: 0.15),
+                          color: Tema.primaryColor.withValues(alpha: 0.15),
                         ),
                       ),
                       // Indicador principal

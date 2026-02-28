@@ -58,7 +58,7 @@ class _Step3DatosIngresoWidgetState
           .read(enviarOTPProvider.future)
           .then((response) {
             if (mounted) {
-              SnackbarUtil.snackbarSuccess(context, message: response);
+              SnackbarUtil.snackbarNotificationPush(context, message: response);
               context.push('/verify-code');
             }
           })
@@ -259,9 +259,6 @@ class _Step3DatosIngresoWidgetState
           ),
           filled: true,
           fillColor: Tema.blanco,
-          suffixIcon: isPassword
-              ? Icon(Icons.visibility_off, color: Colors.grey[500])
-              : null,
           errorStyle: Theme.of(
             context,
           ).textTheme.bodySmall!.copyWith(color: Tema.blanco),

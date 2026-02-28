@@ -298,7 +298,6 @@ class _Step1DatosPersonalesWidgetState
     );
   }
 
-  //Widget para fecha de nacimiento con un DatePicker para seleccionar la fecha solo mayores de 18 años
   Widget _buildDatePicker(
     TextEditingController? controller,
     FocusNode? focusNode, {

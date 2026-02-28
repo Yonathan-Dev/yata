@@ -1,49 +1,68 @@
-# Mi Presencia - Estructura con Riverpod
+## Pantallas principales
 
-Una aplicación Flutter estructurada para trabajar con Riverpod, diseñada para aplicaciones pequeñas a medianas.
+- SplashScreen
+- AuthScreen
+- HomeScreen
+- InicioScreen
+- RegisterScreen
+- ConfiguracionScreen
+- OperacionesScreen
+- ParatiScreen
 
-## 📁 Estructura del Proyecto
+## Características principales
 
+- Gestión de estado con Riverpod
+- Navegación con GoRouter
+- Temas claro y oscuro
+- Manejo centralizado de permisos (cámara, galería, almacenamiento) con PermissionsService
+- Widgets reutilizables y utilidades compartidas
+
+## Servicios principales
+
+- permissions_service.dart: Lógica para solicitar/verificar permisos de cámara, galería, almacenamiento.
 ```
+
+
+## Estructura principal
 lib/
-├── main.dart                    # Punto de entrada de la aplicación
-├── app_exports.dart            # Archivo de exportaciones centralizadas
-├── core/                       # Configuración y utilidades centrales
-│   ├── constants.dart          # Constantes de la aplicación
-│   ├── themes.dart             # Temas claro y oscuro
-│   └── router.dart             # Configuración de rutas con GoRouter
-├── models/                     # Modelos de datos
-│   ├── user.dart               # Modelo de usuario
-│   └── app_state.dart          # Estado global de la aplicación
-├── providers/                  # Providers de Riverpod
-│   ├── app_providers.dart      # Providers generales (servicios, loading, error)
-│   ├── user_providers.dart     # Providers relacionados con usuarios
-│   └── theme_providers.dart    # Providers para tema e idioma
-├── services/                   # Servicios externos
-│   ├── api_service.dart        # Servicio para llamadas a API
-│   └── preferences_service.dart # Servicio para SharedPreferences
-├── views/                      # Pantallas de la aplicación
-│   ├── home_screen.dart        # Pantalla principal
-│   ├── login_screen.dart       # Pantalla de login
-│   ├── profile_screen.dart     # Pantalla de perfil
-│   └── settings_screen.dart    # Pantalla de configuración
-└── widgets/                    # Widgets reutilizables
-    ├── loading_widget.dart     # Widget de carga
-    ├── error_widget.dart       # Widget de error
-    └── user_card.dart          # Card de usuario
+  core/                # Temas, rutas, constantes
+  features/            # Módulos: auth, home, inicio, operaciones, parati, register, splash, configuracion
+    .../presentation/  # Pantallas de cada módulo
+    .../widgets/       # Widgets de cada módulo
+    .../data/          # Datasources y modelos
+  shared/              # Servicios, widgets y utilidades compartidas
+    services/          # permissions_service.dart, preferences_service.dart
+    widgets/           # loading_widget.dart, error_widget.dart, appbar_widget.dart
+    utils/             # snackbar_util.dart, image_utils.dart, dialog_utils.dart
+    providers/         # Providers globales
 ```
+
 
 ## 🚀 Características
 
 ### ✅ Implementado
 
-- **Gestión de Estado con Riverpod**: Uso de diferentes tipos de providers
-- **Navegación**: GoRouter para manejo de rutas
-- **Temas**: Soporte para tema claro y oscuro
-- **Persistencia**: SharedPreferences para datos locales
-- **API**: Configuración con Dio para llamadas HTTP
-- **Autenticación**: Sistema básico de login/logout
+- **Gestión de Estado con Riverpod**: Providers para lógica y UI
+- **Navegación**: GoRouter
+- **Temas**: Claro/Oscuro
+- **Persistencia**: SharedPreferences
+- **API**: Dio para HTTP
+- **Autenticación**: Login/logout
+- **Permisos centralizados**: Uso de PermissionsService para cámara, galería, etc.
 - **UI/UX**: Widgets reutilizables y diseño consistente
+## 🔒 Manejo de Permisos
+
+El manejo de permisos (cámara, galería, almacenamiento) se realiza a través de la clase `PermissionsService` ubicada en `lib/shared/services/permissions_service.dart`. Esto permite reutilizar la lógica de permisos en cualquier pantalla y mantener el código desacoplado.
+
+Ejemplo de uso:
+
+```dart
+final permissionsService = PermissionsService();
+final cameraGranted = await permissionsService.ensureCameraPermission();
+if (!cameraGranted) {
+  // Mostrar diálogo personalizado
+}
+```
 
 ### 🔧 Providers Incluidos
 
@@ -100,29 +119,6 @@ ref.listen<AuthState>(authStateProvider, (previous, next) {
 });
 ```
 
-## 📱 Pantallas
-
-### LoginScreen
-- Formulario de autenticación
-- Validación de campos
-- Manejo de estados de carga y error
-- Navegación automática después del login
-
-### HomeScreen
-- Lista de usuarios
-- Manejo de estados asíncronos
-- Barra de aplicación con opciones
-
-### ProfileScreen
-- Información del usuario actual
-- Opciones para editar perfil
-- Botón de cerrar sesión
-
-### SettingsScreen
-- Cambio de tema
-- Cambio de idioma
-- Información de la aplicación
-- Cerrar sesión
 
 ## 🎨 Widgets Reutilizables
 
@@ -150,6 +146,7 @@ UserCard(
 )
 ```
 
+
 ## 🔧 Servicios
 
 ### ApiService
@@ -162,6 +159,11 @@ UserCard(
 - Gestión de tokens de autenticación
 - Preferencias de usuario (tema, idioma)
 - Métodos para limpiar datos
+
+### PermissionsService
+- Verificación y solicitud de permisos de cámara, galería, almacenamiento
+- Lógica multiplataforma (Android/iOS)
+- Métodos reutilizables para toda la app
 
 ## 🎯 Patrones de Uso
 
@@ -213,25 +215,12 @@ flutter packages pub run build_runner build
 flutter clean
 ```
 
-## 🔮 Próximos Pasos
-
-Para expandir la aplicación, considera:
-
-1. **Freezed**: Para modelos inmutables
-2. **Auto Route**: Para navegación más avanzada
-3. **Hive/Isar**: Para base de datos local
-4. **Firebase**: Para backend
-5. **Testing**: Unit tests con Riverpod
-6. **Internacionalización**: Soporte multiidioma completo
-7. **Notificaciones Push**: Con Firebase Messaging
-8. **Offline Support**: Con connectivity_plus
-
 ## 📝 Notas
 
-- Los providers están organizados por funcionalidad
-- Los modelos usan constructores simples (se puede migrar a Freezed)
-- La navegación usa rutas nombradas con GoRouter
-- El tema se persiste automáticamente
-- Los errores se manejan de forma centralizada
+- Los providers y servicios están organizados por funcionalidad
+- Los modelos usan constructores simples (puedes migrar a Freezed)
+- Navegación con GoRouter
+- El tema y preferencias se persisten automáticamente
+- Los errores y permisos se manejan de forma centralizada
 
-Esta estructura proporciona una base sólida para aplicaciones Flutter de tamaño pequeño a mediano, con un patrón de gestión de estado consistente y escalable.
+Esta estructura proporciona una base sólida para aplicaciones Flutter escalables, con gestión de estado, permisos y servicios desacoplados.

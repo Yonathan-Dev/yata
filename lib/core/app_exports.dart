@@ -3,6 +3,7 @@ export 'router.dart';
 export 'tema.dart';
 export 'constantes.dart';
 export 'responsive.dart';
+export 'secure.dart';
 
 // Feature Exports
 export '../features/auth/auth_exports.dart';

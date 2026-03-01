@@ -47,7 +47,6 @@ dependencies:
   intl: ^0.20.2
   animate_do: ^4.2.0
   dropdown_button2: ^2.3.9
-  google_maps_flutter: ^2.14.0
   image_picker: ^1.2.1
   flutter_image_compress: ^2.4.0
   path_provider: ^2.1.5
@@ -60,6 +59,8 @@ dependencies:
   path: ^1.9.1
   http_parser: ^4.1.2
   qr_flutter: ^4.1.0
+  uuid: ^4.5.3
+  flutter_secure_storage: ^10.0.0
 
 dev_dependencies:
   analyzer: ^7.4.5

@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../services/preferences_service.dart';
 import '../services/permissions_service.dart';
 
@@ -16,26 +15,22 @@ final permissionsServiceProvider = Provider<PermissionsService>((ref) {
 class GlobalState {
   final bool cargando;
   final String mensajeCargando;
-  final LatLng ubicacion;
   final List<EstadoOption> estadoOptions;
 
   const GlobalState({
     this.cargando = false,
     this.mensajeCargando = '',
-    this.ubicacion = const LatLng(0, 0),
     this.estadoOptions = const [],
   });
 
   GlobalState copyWith({
     bool? cargando,
     String? mensajeCargando,
-    LatLng? ubicacion,
     List<EstadoOption>? estadoOptions,
   }) {
     return GlobalState(
       cargando: cargando ?? this.cargando,
       mensajeCargando: mensajeCargando ?? this.mensajeCargando,
-      ubicacion: ubicacion ?? this.ubicacion,
       estadoOptions: estadoOptions ?? this.estadoOptions,
     );
   }
@@ -55,10 +50,6 @@ class GlobalNotifier extends StateNotifier<GlobalState> {
 
   void setCargando(bool value, {String mensaje = ''}) {
     state = state.copyWith(cargando: value, mensajeCargando: mensaje);
-  }
-
-  void setUbicacion(LatLng ubicacion) {
-    state = state.copyWith(ubicacion: ubicacion);
   }
 
   void setEstadoOptions(List<EstadoOption> options) {

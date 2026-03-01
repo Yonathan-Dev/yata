@@ -31,8 +31,11 @@
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
@@ -55,5 +58,9 @@
 	<string>Esta aplicación necesita acceso a tu ubicación para registrar datos georreferenciados.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Esta aplicación necesita acceso a tu ubicación para registrar datos georreferenciados.</string>
+	<key>keychain-access-groups</key>
+	<array>
+	<string>$(AppIdentifierPrefix)com.yata.wallet</string>
+	</array>
 </dict>
 </plist>

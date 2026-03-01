@@ -5,6 +5,7 @@ export 'presentation/pin_screen.dart';
 export 'presentation/forgot_password_screen.dart';
 // Providers
 export 'providers/auth_provider.dart';
+export 'providers/fingerprint_provider.dart';
 // Widgets
 export 'widgets/formulario_widget.dart';
 export 'widgets/email_card_widget.dart';

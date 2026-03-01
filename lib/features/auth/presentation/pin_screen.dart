@@ -29,13 +29,12 @@ class _PinScreenState extends ConsumerState<PinScreen> {
   }
 
   void _onNumberPressed(String number) {
-    if (_enteredPin.length < 4) {
+    if (_enteredPin.length < 6) {
       setState(() {
         _enteredPin += number;
       });
 
-      // Si completó los 4 dígitos, ir al home
-      if (_enteredPin.length == 4) {
+      if (_enteredPin.length == 6) {
         Future.delayed(const Duration(milliseconds: 300), () {
           if (mounted) {
             context.go('/home');
@@ -185,7 +184,7 @@ class _PinScreenState extends ConsumerState<PinScreen> {
   Widget _buildPinIndicators() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(4, (index) {
+      children: List.generate(6, (index) {
         final isFilled = index < _enteredPin.length;
         return Container(
           width: 16,
@@ -264,7 +263,6 @@ class _PinScreenState extends ConsumerState<PinScreen> {
         ),
         // Último número
         _buildKeyButton(_shuffledNumbers[9]),
-        // Botón borrar sin fondo
         _buildSpecialButton(
           child: Container(
             decoration: BoxDecoration(
@@ -344,8 +342,8 @@ class _PinScreenState extends ConsumerState<PinScreen> {
     return TextButton(
       onPressed: () {},
       child: Text(
-        'OLVIDO O CAMBIO DE CLAVE',
-        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+        'Olvido o cambio de clave',
+        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
           color: Tema.blanco,
           fontWeight: FontWeight.w600,
           letterSpacing: 1,

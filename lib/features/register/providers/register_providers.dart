@@ -217,21 +217,21 @@ class RegisterNotifier extends Notifier<RegisterState> {
     return null;
   }
 
-  String? validarCorreos(String correo, String confirmaCorreo) {
-    if (correo.isEmpty || confirmaCorreo.isEmpty) {
+  String? validarCorreos() {
+    if (state.correo.isEmpty || state.confirmaCorreo.isEmpty) {
       return 'Ambos campos de correo son obligatorios';
     }
-    if (correo != confirmaCorreo) {
+    if (state.correo != state.confirmaCorreo) {
       return 'Los correos no coinciden';
     }
     return null;
   }
 
-  String? validarContrasenas(String contrasena, String confirmaContrasena) {
-    if (contrasena.isEmpty || confirmaContrasena.isEmpty) {
+  String? validarContrasenas() {
+    if (state.contrasena.isEmpty || state.confirmaContrasena.isEmpty) {
       return 'Ambos campos de contraseña son obligatorios';
     }
-    if (contrasena != confirmaContrasena) {
+    if (state.contrasena != state.confirmaContrasena) {
       return 'Las contraseñas no coinciden';
     }
     return null;

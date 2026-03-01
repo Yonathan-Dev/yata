@@ -24,121 +24,123 @@ class _Step2DatosIdentificacionWidgetState
   Widget build(BuildContext context) {
     return FadeInUp(
       duration: Constantes.standardAnimation,
-      child: Container(
-        width: double.infinity,
-        color: Tema.primaryColor,
-        margin: const EdgeInsets.symmetric(horizontal: 40),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            children: [
-              Container(
-                width: 100,
-                height: 100,
-                decoration: BoxDecoration(
-                  color: Tema.blanco,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.contact_mail_rounded,
-                  size: 50,
-                  color: Tema.primaryColor,
-                ),
-              ),
-              const SizedBox(height: 24),
-              // Título
-              Text(
-                'Captura la foto de tu documento de\nidentidad del lado frontal',
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Tema.blanco,
-                ),
-              ),
-              const SizedBox(height: Constantes.separacion),
-              // Subtítulo
-              Text(
-                'Te pediremos que uses la cámara para capturar\ntu documento de identidad',
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                  color: Tema.blanco.withValues(alpha: 0.8),
-                ),
-              ),
-              const SizedBox(height: Constantes.separacion * 2),
-              // Lista de instrucciones
-              _buildInstructionItemWhite(
-                context,
-                'Coloca el documento en una superficie plana y asegúrate de que esté completamente visible.',
-              ),
-              const SizedBox(height: 16),
-              _buildInstructionItemWhite(
-                context,
-                'Tomar la foto real y actualizada',
-              ),
-              const SizedBox(height: 16),
-              _buildInstructionItemWhite(
-                context,
-                'Mantén tu celular en posición vertical durante este proceso',
-              ),
-              const SizedBox(height: 24),
-              // Aviso informativo
-              Container(
+      child: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              child: Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Tema.blanco,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  'Payment recopila imágenes para habilitar cuentas de dinero electrónico a través de validaciones digitales, con el fin de minimizar los riesgos de suplantación de identidad.',
-                  textAlign: TextAlign.justify,
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                    color: Tema.negro,
-                    fontSize: 8.0,
-                  ),
+                color: Tema.primaryColor,
+                margin: const EdgeInsets.symmetric(horizontal: 40),
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  children: [
+                    Container(
+                      width: 100,
+                      height: 100,
+                      decoration: const BoxDecoration(
+                        color: Tema.blanco,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.contact_mail_rounded,
+                        size: 50,
+                        color: Tema.primaryColor,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    Text(
+                      'Captura la foto de tu documento de\nidentidad del lado frontal',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Tema.blanco,
+                      ),
+                    ),
+                    const SizedBox(height: Constantes.separacion),
+                    Text(
+                      'Te pediremos que uses la cámara para capturar\ntu documento de identidad',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        color: Tema.blanco.withValues(alpha: 0.8),
+                      ),
+                    ),
+                    const SizedBox(height: Constantes.separacion * 2),
+                    _buildInstructionItemWhite(
+                      context,
+                      'Coloca el documento en una superficie plana y asegúrate de que esté completamente visible.',
+                    ),
+                    const SizedBox(height: 16),
+                    _buildInstructionItemWhite(
+                      context,
+                      'Tomar la foto real y actualizada',
+                    ),
+                    const SizedBox(height: 16),
+                    _buildInstructionItemWhite(
+                      context,
+                      'Mantén tu celular en posición vertical durante este proceso',
+                    ),
+                    const SizedBox(height: 24),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Tema.blanco,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        'Payment recopila imágenes para habilitar cuentas de dinero electrónico a través de validaciones digitales, con el fin de minimizar los riesgos de suplantación de identidad.',
+                        textAlign: TextAlign.justify,
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                          color: Tema.negro,
+                          fontSize: 8.0,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 24),
-              // Botón Comenzar
-              SizedBox(
-                width: double.infinity,
-                height: Constantes.botonHeight,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    final picker = ImagePicker();
-                    final XFile? photo = await picker.pickImage(
-                      source: ImageSource.camera,
-                    );
-                    if (photo != null) {
-                      widget.onStepChanged?.call(widget.currentStep + 1);
-                    }
-
-                    ref
-                        .read(registerProvider.notifier)
-                        .setRutaImagen1(photo!.path);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Tema.negro,
-                    foregroundColor: Tema.blanco,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: Text(
-                    'Comenzar',
-                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                      color: Tema.blanco,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18.0,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 24),
-            ],
+            ),
           ),
-        ),
+          // Botón siempre al fondo
+          const SizedBox(height: Constantes.separacionFormulario),
+          Container(
+            width: double.infinity,
+            margin: const EdgeInsets.symmetric(horizontal: 50),
+            height: Constantes.botonHeight,
+            child: ElevatedButton(
+              onPressed: () async {
+                final picker = ImagePicker();
+                final XFile? photo = await picker.pickImage(
+                  source: ImageSource.camera,
+                );
+                if (photo != null) {
+                  ref
+                      .read(registerProvider.notifier)
+                      .setRutaImagen1(photo.path);
+                  widget.onStepChanged?.call(widget.currentStep + 1);
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Tema.negro,
+                foregroundColor: Tema.blanco,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                elevation: 0,
+              ),
+              child: Text(
+                'Comenzar',
+                style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                  color: Tema.blanco,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18.0,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: Constantes.separacionFormulario * 2),
+        ],
       ),
     );
   }

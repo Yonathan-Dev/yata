@@ -6,6 +6,7 @@ export 'presentation/confirm_pin_screen.dart';
 //providers
 export 'providers/register_providers.dart';
 export 'providers/verify_code_providers.dart';
+export 'providers/create_pin_providers.dart';
 //widgets
 export 'widgets/register_formulario_widget.dart';
 export 'widgets/step1_datos_personales_widget.dart';

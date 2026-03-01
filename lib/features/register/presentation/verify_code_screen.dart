@@ -15,10 +15,10 @@ class VerifyCodeScreen extends ConsumerStatefulWidget {
 
 class _VerifyCodeScreenState extends ConsumerState<VerifyCodeScreen> {
   final List<TextEditingController> _codeControllers = List.generate(
-    4,
+    6,
     (_) => TextEditingController(),
   );
-  final List<FocusNode> _focusNodes = List.generate(4, (_) => FocusNode());
+  final List<FocusNode> _focusNodes = List.generate(6, (_) => FocusNode());
 
   @override
   void dispose() {
@@ -32,7 +32,7 @@ class _VerifyCodeScreenState extends ConsumerState<VerifyCodeScreen> {
   }
 
   void _onCodeChanged(String value, int index) {
-    if (value.length == 1 && index < 3) {
+    if (value.length == 1 && index < 5) {
       _focusNodes[index + 1].requestFocus();
     }
     if (value.isEmpty && index > 0) {
@@ -46,7 +46,7 @@ class _VerifyCodeScreenState extends ConsumerState<VerifyCodeScreen> {
 
   void _handleContinuar() {
     final code = _fullCode;
-    if (code.length == 4) {
+    if (code.length == 6) {
       ref.read(verifyCodeProvider.notifier).setIsLoading(true);
       ref.read(verifyCodeProvider.notifier).setMensaje('Verificando código...');
       ref.read(verifyCodeProvider.notifier).setCodigoOtp(code);
@@ -70,7 +70,7 @@ class _VerifyCodeScreenState extends ConsumerState<VerifyCodeScreen> {
     } else {
       SnackbarUtil.snackbarNotificationPush(
         context,
-        message: 'Por favor ingresa los 4 dígitos',
+        message: 'Por favor ingresa los 6 dígitos',
       );
     }
   }
@@ -197,50 +197,56 @@ class _VerifyCodeScreenState extends ConsumerState<VerifyCodeScreen> {
   }
 
   Widget _buildCodeInputs(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: List.generate(4, (index) {
-        return Expanded(
-          child: Container(
-            margin: EdgeInsets.only(right: index < 3 ? 8 : 0),
-            height: 55,
-            child: TextField(
-              controller: _codeControllers[index],
-              focusNode: _focusNodes[index],
-              textAlign: TextAlign.center,
-              keyboardType: TextInputType.number,
-              maxLength: 1,
-              style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                color: Tema.blanco,
-                fontWeight: FontWeight.bold,
-              ),
-              decoration: InputDecoration(
-                counterText: '',
-                filled: true,
-                fillColor: Tema.negro,
-                contentPadding: EdgeInsets.zero,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        const spacing = 8.0;
+        const totalSpacing = spacing * 5;
+        final fieldWidth = (constraints.maxWidth - totalSpacing) / 6;
+
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: List.generate(6, (index) {
+            return SizedBox(
+              width: fieldWidth,
+              height: 50,
+              child: TextField(
+                controller: _codeControllers[index],
+                focusNode: _focusNodes[index],
+                textAlign: TextAlign.center,
+                keyboardType: TextInputType.number,
+                maxLength: 1,
+                style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                  color: Tema.blanco,
+                  fontWeight: FontWeight.bold,
                 ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(
-                    color: Tema.primaryColor,
-                    width: 2,
+                decoration: InputDecoration(
+                  counterText: '',
+                  filled: true,
+                  fillColor: Tema.negro,
+                  contentPadding: EdgeInsets.zero,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(
+                      color: Tema.primaryColor,
+                      width: 2,
+                    ),
                   ),
                 ),
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                onChanged: (value) => _onCodeChanged(value, index),
               ),
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              onChanged: (value) => _onCodeChanged(value, index),
-            ),
-          ),
+            );
+          }),
         );
-      }),
+      },
     );
   }
 

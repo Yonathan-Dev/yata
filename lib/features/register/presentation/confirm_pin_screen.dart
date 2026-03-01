@@ -15,10 +15,10 @@ class ConfirmPinScreen extends ConsumerStatefulWidget {
 
 class _ConfirmPinScreenState extends ConsumerState<ConfirmPinScreen> {
   final List<TextEditingController> _codeControllers = List.generate(
-    4,
+    6,
     (_) => TextEditingController(),
   );
-  final List<FocusNode> _focusNodes = List.generate(4, (_) => FocusNode());
+  final List<FocusNode> _focusNodes = List.generate(6, (_) => FocusNode());
 
   @override
   void dispose() {
@@ -32,7 +32,7 @@ class _ConfirmPinScreenState extends ConsumerState<ConfirmPinScreen> {
   }
 
   void _onCodeChanged(String value, int index) {
-    if (value.length == 1 && index < 3) {
+    if (value.length == 1 && index < 5) {
       _focusNodes[index + 1].requestFocus();
     }
     if (value.isEmpty && index > 0) {
@@ -46,12 +46,20 @@ class _ConfirmPinScreenState extends ConsumerState<ConfirmPinScreen> {
 
   void _handleContinuar() {
     final code = _fullCode;
-    if (code.length == 4) {
-      context.go('/pin');
+    if (code.length == 6) {
+      ref.read(registerPinProvider.notifier).setConfirmPin(code);
+      if (ref.read(registerPinProvider.notifier).validarPin() == true) {
+        context.go('/pin');
+      } else {
+        SnackbarUtil.snackbarNotificationPush(
+          context,
+          message: 'Los PIN no coinciden, por favor intenta de nuevo',
+        );
+      }
     } else {
       SnackbarUtil.snackbarError(
         context,
-        message: 'Por favor ingresa tu contraseña de 4 dígitos',
+        message: 'Por favor ingresa tu PIN de 6 dígitos',
       );
     }
   }
@@ -62,9 +70,7 @@ class _ConfirmPinScreenState extends ConsumerState<ConfirmPinScreen> {
       backgroundColor: Tema.blanco,
       body: Column(
         children: [
-          // Logo superior con fondo blanco
           SafeArea(bottom: false, child: _buildLogoSection(context)),
-          // Sección violeta con card central y robot
           Expanded(child: _buildVioletSection(context)),
         ],
       ),
@@ -145,7 +151,7 @@ class _ConfirmPinScreenState extends ConsumerState<ConfirmPinScreen> {
               ),
               const SizedBox(height: 16),
               Text(
-                'Crea una clave de 4 dígitos que consideres segura. Sé original',
+                'Crea una clave de 6 dígitos que consideres segura. Sé original',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                   color: Tema.negro,
@@ -155,10 +161,8 @@ class _ConfirmPinScreenState extends ConsumerState<ConfirmPinScreen> {
                 ),
               ),
               const SizedBox(height: 32),
-              // Campos de código
               _buildCodeInputs(context),
               const SizedBox(height: 32),
-              // Botón continuar
               _buildContinuarButton(context),
             ],
           ),
@@ -168,51 +172,61 @@ class _ConfirmPinScreenState extends ConsumerState<ConfirmPinScreen> {
   }
 
   Widget _buildCodeInputs(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(4, (index) {
-        return Expanded(
-          child: Container(
-            margin: EdgeInsets.only(right: index < 3 ? 8 : 0),
-            height: 55,
-            child: TextField(
-              controller: _codeControllers[index],
-              focusNode: _focusNodes[index],
-              textAlign: TextAlign.center,
-              keyboardType: TextInputType.number,
-              maxLength: 1,
-              obscureText: true,
-              style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                color: Tema.negro,
-                fontWeight: FontWeight.bold,
-              ),
-              decoration: InputDecoration(
-                counterText: '',
-                filled: true,
-                fillColor: const Color(0xFFE0E0E0),
-                contentPadding: EdgeInsets.zero,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(
-                    color: Tema.primaryColor,
-                    width: 2,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        const spacing = 8.0;
+        const totalSpacing = spacing * 5;
+        final fieldWidth = (constraints.maxWidth - totalSpacing) / 6;
+
+        return Row(
+          children: List.generate(6, (index) {
+            return Row(
+              children: [
+                SizedBox(
+                  width: fieldWidth,
+                  height: 50,
+                  child: TextField(
+                    controller: _codeControllers[index],
+                    focusNode: _focusNodes[index],
+                    textAlign: TextAlign.center,
+                    keyboardType: TextInputType.number,
+                    maxLength: 1,
+                    obscureText: true,
+                    style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                      color: Tema.negro,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    decoration: InputDecoration(
+                      counterText: '',
+                      filled: true,
+                      fillColor: const Color(0xFFE0E0E0),
+                      contentPadding: EdgeInsets.zero,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(
+                          color: Tema.primaryColor,
+                          width: 2,
+                        ),
+                      ),
+                    ),
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    onChanged: (value) => _onCodeChanged(value, index),
                   ),
                 ),
-              ),
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              onChanged: (value) => _onCodeChanged(value, index),
-            ),
-          ),
+                if (index < 5) const SizedBox(width: spacing),
+              ],
+            );
+          }),
         );
-      }),
+      },
     );
   }
 

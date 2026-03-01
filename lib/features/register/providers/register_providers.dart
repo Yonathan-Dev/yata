@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/legacy.dart';
 import '../../../core/app_exports.dart';
 import '../../../shared/shared_exports.dart';
 
-// Modelo de estado registrar
+// Modelo de registrar
 class RegisterState {
   final int tipoPersona;
   final int tipoDocumento;
@@ -298,4 +298,11 @@ final enviarOTPProvider = FutureProvider<String>((ref) async {
   final repository = ref.watch(registerRepositoryProvider);
   final state = ref.watch(registerProvider);
   return await repository.enviarVerificacionOTP(state);
+});
+
+final registrarCuentaProvider = FutureProvider<String>((ref) async {
+  final repository = ref.watch(registerRepositoryProvider);
+  final state = ref.watch(registerProvider);
+  final pinState = ref.watch(registerPinProvider);
+  return await repository.registrarCuenta(state, pinState);
 });

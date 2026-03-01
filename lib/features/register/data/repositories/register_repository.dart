@@ -31,4 +31,19 @@ class RegisterRepository {
       rethrow;
     }
   }
+
+  Future<String> registrarCuenta(
+    RegisterState registerState,
+    RegisterPinState pinState,
+  ) async {
+    try {
+      final response = await dataSource.registrarCuenta(
+        registerState,
+        pinState,
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

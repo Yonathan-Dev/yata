@@ -75,6 +75,55 @@ class RegisterDataSource {
     }
   }
 
+  Future<String> registrarCuenta(
+    RegisterState registerState,
+    RegisterPinState pinState,
+  ) async {
+    try {
+      final response = await dio.post(
+        '/api/Usuario/registroCliente',
+        data: jsonEncode({
+          'tipoPersona': registerState.tipoPersona,
+          'tipoDocumento': registerState.tipoDocumento,
+          'numeroDocumento': registerState.numeroDocumento,
+          'primerApellido': registerState.primerApellido,
+          'segundoApellido': registerState.segundoApellido,
+          'nombres': registerState.nombres,
+          'fechaNacimiento': registerState.fechaNacimiento,
+          'sexo': registerState.sexo,
+          'correo': registerState.correo,
+          'login': registerState.correo,
+          'clave': registerState.contrasena,
+          'pin': pinState.pin,
+          'celular': registerState.celular,
+          'rutaImagen1': registerState.rutaImagen1,
+        }),
+        options: Options(
+          headers: {'Content-Type': 'application/json'},
+          receiveTimeout: const Duration(minutes: 5),
+          sendTimeout: const Duration(minutes: 2),
+        ),
+      );
+
+      final Map<String, dynamic> jsonData = response.data is String
+          ? jsonDecode(response.data as String)
+          : response.data as Map<String, dynamic>;
+
+      final errorCodigo = jsonData["errorCodigo"];
+      final errorMensaje = jsonData["errorMensaje"] ?? "Error desconocido";
+
+      if (response.statusCode == 200 && errorCodigo == "OK") {
+        return errorCodigo;
+      } else {
+        throw Exception(errorMensaje);
+      }
+    } on DioException catch (e, stackTrace) {
+      throw Exception('Error en la solicitud: ${e.message}\n$stackTrace');
+    } catch (e) {
+      throw Exception('Error al procesar la respuesta del servidor: $e');
+    }
+  }
+
   //obtener mediante el operador el yata asignado
   Future<YataModel?> obteneryataOperador(String vUsuario) async {
     try {

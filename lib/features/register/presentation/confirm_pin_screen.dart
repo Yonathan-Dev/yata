@@ -49,7 +49,44 @@ class _ConfirmPinScreenState extends ConsumerState<ConfirmPinScreen> {
     if (code.length == 6) {
       ref.read(registerPinProvider.notifier).setConfirmPin(code);
       if (ref.read(registerPinProvider.notifier).validarPin() == true) {
-        context.go('/pin');
+        ref.read(registerProvider.notifier).setIsLoading(true);
+        ref
+            .read(registerProvider.notifier)
+            .setMensaje('Registrando tu cuenta...');
+
+        ref
+            .read(registrarCuentaProvider.future)
+            .then((response) {
+              ref.read(registerProvider.notifier).setIsLoading(false);
+              if (response == 'OK') {
+                if (mounted) {
+                  SnackbarUtil.snackbarSuccess(
+                    context,
+                    message: 'Cuenta registrada exitosamente',
+                  );
+                  context.go('/pin');
+                }
+              } else {
+                if (mounted) {
+                  SnackbarUtil.snackbarError(
+                    context,
+                    message: 'Error al registrar la cuenta: $response',
+                  );
+                }
+              }
+            })
+            .catchError((error) {
+              if (mounted) {
+                SnackbarUtil.snackbarError(
+                  context,
+                  message: 'Error al registrar la cuenta: ${error.toString()}',
+                );
+              }
+            })
+            .whenComplete(() {
+              ref.read(registerProvider.notifier).setIsLoading(false);
+              ref.read(registerProvider.notifier).setMensaje('');
+            });
       } else {
         SnackbarUtil.snackbarNotificationPush(
           context,
@@ -68,10 +105,15 @@ class _ConfirmPinScreenState extends ConsumerState<ConfirmPinScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Tema.blanco,
-      body: Column(
+      body: Stack(
         children: [
-          SafeArea(bottom: false, child: _buildLogoSection(context)),
-          Expanded(child: _buildVioletSection(context)),
+          Column(
+            children: [
+              SafeArea(bottom: false, child: _buildLogoSection(context)),
+              Expanded(child: _buildVioletSection(context)),
+            ],
+          ),
+          _buildLoadingIndicator(context),
         ],
       ),
     );
@@ -91,6 +133,15 @@ class _ConfirmPinScreenState extends ConsumerState<ConfirmPinScreen> {
         ),
       ),
     );
+  }
+
+  Widget _buildLoadingIndicator(BuildContext context) {
+    final registerState = ref.watch(registerProvider);
+
+    if (registerState.isLoading) {
+      return LoadingWidget(mensaje: registerState.mensaje);
+    }
+    return const SizedBox.shrink();
   }
 
   Widget _buildVioletSection(BuildContext context) {

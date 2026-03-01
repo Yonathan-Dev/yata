@@ -45,7 +45,7 @@ class RegisterPinNotifier extends Notifier<RegisterPinState> {
   }
 
   void setConfirmPin(String value) {
-    state = state.copyWith(error: value);
+    state = state.copyWith(confirmPin: value);
   }
 
   void setIsLoading(bool value) {

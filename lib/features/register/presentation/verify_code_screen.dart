@@ -47,10 +47,28 @@ class _VerifyCodeScreenState extends ConsumerState<VerifyCodeScreen> {
   void _handleContinuar() {
     final code = _fullCode;
     if (code.length == 4) {
-      //context.go('/create-pin');
-      context.push('/create-pin');
+      ref.read(verifyCodeProvider.notifier).setIsLoading(true);
+      ref.read(verifyCodeProvider.notifier).setMensaje('Verificando código...');
+      ref.read(verifyCodeProvider.notifier).setCodigoOtp(code);
+
+      ref
+          .read(enviarCodigoOTPProvider.future)
+          .then((response) {
+            if (mounted) {
+              SnackbarUtil.snackbarSuccess(context, message: response);
+              context.push('/create-pin');
+            }
+          })
+          .catchError((error) {
+            if (mounted) {
+              SnackbarUtil.snackbarError(context, message: error.toString());
+            }
+          })
+          .whenComplete(() {
+            ref.read(verifyCodeProvider.notifier).resetEstado();
+          });
     } else {
-      SnackbarUtil.snackbarError(
+      SnackbarUtil.snackbarNotificationPush(
         context,
         message: 'Por favor ingresa los 4 dígitos',
       );
@@ -61,12 +79,15 @@ class _VerifyCodeScreenState extends ConsumerState<VerifyCodeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Tema.blanco,
-      body: Column(
+      body: Stack(
         children: [
-          // Logo superior con fondo blanco
-          SafeArea(bottom: false, child: _buildLogoSection(context)),
-          // Sección violeta con card central y robot
-          Expanded(child: _buildVioletSection(context)),
+          Column(
+            children: [
+              SafeArea(bottom: false, child: _buildLogoSection(context)),
+              Expanded(child: _buildVioletSection(context)),
+            ],
+          ),
+          _buildLoadingIndicator(context),
         ],
       ),
     );
@@ -88,16 +109,23 @@ class _VerifyCodeScreenState extends ConsumerState<VerifyCodeScreen> {
     );
   }
 
+  Widget _buildLoadingIndicator(BuildContext context) {
+    final verifyCodeState = ref.watch(verifyCodeProvider);
+
+    if (verifyCodeState.isLoading) {
+      return LoadingWidget(mensaje: verifyCodeState.mensaje);
+    }
+    return const SizedBox.shrink();
+  }
+
   Widget _buildVioletSection(BuildContext context) {
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        // Fondo violeta con curva
         ClipPath(
           clipper: _TopOvalCurveClipper(),
           child: Container(width: double.infinity, color: Tema.primaryColor),
         ),
-        // Contenido: Card + Logo debajo
         Positioned(
           top: -60,
           left: 24,

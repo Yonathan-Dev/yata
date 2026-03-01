@@ -16,4 +16,19 @@ class RegisterRepository {
       rethrow;
     }
   }
+
+  Future<String> enviarVerificacionCodigoOTP(
+    VerifyCodeState state,
+    RegisterState registerState,
+  ) async {
+    try {
+      final response = await dataSource.enviarVerificacionCodigoOTP(
+        registerState.correo,
+        state.codigoOtp,
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

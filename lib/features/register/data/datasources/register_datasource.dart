@@ -1,12 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:http/http.dart' as http;
-import 'package:path/path.dart';
-import 'package:http_parser/http_parser.dart';
 
 import '../../../../core/app_exports.dart';
 
@@ -46,45 +41,37 @@ class RegisterDataSource {
     }
   }
 
-  Future<String> uploadFoto(File imageFile, String tokenStorage) async {
-    final url = (dotenv.env['URL_STORAGE'] ?? '').trim();
-    final token = tokenStorage;
-    final instanceId = (dotenv.env['INSTANCED_STORAGE'] ?? '').trim();
+  Future<String> enviarVerificacionCodigoOTP(
+    String correo,
+    String codigoOtp,
+  ) async {
     try {
-      // Crear cliente HTTP con timeout configurado
-      final client = http.Client();
-
-      final request = http.MultipartRequest('POST', Uri.parse(url));
-      request.files.add(
-        await http.MultipartFile.fromPath(
-          'file',
-          imageFile.path,
-          filename: basename(imageFile.path),
-          contentType: MediaType('image', 'jpeg'),
+      final response = await dio.post(
+        '/api/Usuario/verificarOTPRegistro',
+        data: jsonEncode({'correo': correo, 'codigoOtp': codigoOtp}),
+        options: Options(
+          headers: {'Content-Type': 'application/json'},
+          receiveTimeout: const Duration(minutes: 5),
+          sendTimeout: const Duration(minutes: 2),
         ),
       );
-      request.fields['token'] = token;
-      request.fields['instanceId'] = instanceId;
 
-      // Enviar con timeout de 3 minutos
-      final streamedResponse = await client
-          .send(request)
-          .timeout(const Duration(seconds: 30));
-      final response = await http.Response.fromStream(streamedResponse);
-      client.close();
+      final Map<String, dynamic> jsonData = response.data is String
+          ? jsonDecode(response.data as String)
+          : response.data as Map<String, dynamic>;
 
-      if (response.statusCode == 200) {
-        final jsonResponse = jsonDecode(response.body);
-        return jsonResponse["fileId"] ?? '';
+      final errorCodigo = jsonData["errorCodigo"];
+      final errorMensaje = jsonData["errorMensaje"] ?? "Error desconocido";
+
+      if (response.statusCode == 200 && errorCodigo == "OK") {
+        return errorMensaje;
       } else {
-        throw 'Error al subir la foto. Status: ${response.statusCode}, Response: ${response.body}';
+        throw Exception(errorMensaje);
       }
-    } on TimeoutException {
-      throw 'El servidor tardó demasiado en responder. Por favor, verifica tu conexión e intenta nuevamente.';
-    } on SocketException {
-      throw 'No se pudo conectar al servidor. Verifica tu conexión a internet.';
+    } on DioException catch (e, stackTrace) {
+      throw Exception('Error en la solicitud: ${e.message}\n$stackTrace');
     } catch (e) {
-      throw 'Error al subir la foto';
+      throw Exception('Error al procesar la respuesta del servidor: $e');
     }
   }
 

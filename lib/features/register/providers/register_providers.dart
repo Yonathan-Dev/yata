@@ -211,8 +211,8 @@ class RegisterNotifier extends Notifier<RegisterState> {
     if (value.isEmpty) {
       return 'El campo contraseña es obligatorio';
     }
-    if (value.length < 6) {
-      return 'La contraseña debe tener al menos 6 caracteres';
+    if (value.length < 8) {
+      return 'Contraseña mínimo 8 caracteres';
     }
     return null;
   }

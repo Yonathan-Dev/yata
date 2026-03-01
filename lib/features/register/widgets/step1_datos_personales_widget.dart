@@ -1,5 +1,6 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/app_exports.dart';
 
@@ -119,7 +120,7 @@ class _Step1DatosPersonalesWidgetState
                       const SizedBox(height: Constantes.separacion),
                       _buildDropdown(
                         'Tipo de documento',
-                        {'DNI': 1, 'Carnet de extranjería': 2, 'Pasaporte': 3},
+                        {'DNI': 1, 'CE': 2, 'Pasaporte': 3},
                         valorSeleccionado: _tipoDocumento,
                         onChanged: (value) => ref
                             .read(registerProvider.notifier)
@@ -130,6 +131,13 @@ class _Step1DatosPersonalesWidgetState
                         hint: 'Nro documento',
                         _numeroDocumentoController,
                         _numeroDocumentoFocus,
+                        isDNI:
+                            ref.watch(
+                              registerProvider.select(
+                                (state) => state.tipoDocumento,
+                              ),
+                            ) ==
+                            1,
                       ),
                       const SizedBox(height: Constantes.separacion),
                       _buildTextField(
@@ -169,12 +177,14 @@ class _Step1DatosPersonalesWidgetState
                         hint: 'Celular',
                         _celularController,
                         _celularFocus,
+                        isCelular: true,
                       ),
                       const SizedBox(height: Constantes.separacion),
                       _buildTextField(
                         hint: 'Contacto',
                         _contactoController,
                         _contactoFocus,
+                        isCelular: true,
                       ),
                     ],
                   ),
@@ -254,21 +264,17 @@ class _Step1DatosPersonalesWidgetState
     FocusNode? focusNode, {
     required String hint,
     bool isPassword = false,
+    bool isDNI = false,
+    bool isCelular = false,
   }) {
     return TextFormField(
       controller: controller,
       focusNode: focusNode,
       style: const TextStyle(color: Colors.black87, fontSize: 14),
       decoration: InputDecoration(
-        //labelText: hint,
         hintText: hint,
         labelStyle: TextStyle(color: Tema.primaryColor, fontSize: 14),
         hintStyle: TextStyle(color: Colors.grey[500], fontSize: 14),
-        /*floatingLabelStyle: TextStyle(
-          color: Tema.negro,
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-        ),*/
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 24,
           vertical: 16,
@@ -291,10 +297,26 @@ class _Step1DatosPersonalesWidgetState
         errorStyle: Theme.of(
           context,
         ).textTheme.bodySmall!.copyWith(color: Tema.blanco),
+        counterText: '',
       ),
       validator: (value) {
         return ref.read(registerProvider.notifier).validarCampo(value!, hint);
       },
+      maxLength: isDNI
+          ? 8
+          : isCelular
+          ? 9
+          : 25,
+      keyboardType: isDNI
+          ? TextInputType.number
+          : isCelular
+          ? TextInputType.phone
+          : TextInputType.text,
+      inputFormatters: isDNI
+          ? [FilteringTextInputFormatter.digitsOnly]
+          : isCelular
+          ? [FilteringTextInputFormatter.digitsOnly]
+          : [FilteringTextInputFormatter.singleLineFormatter],
     );
   }
 

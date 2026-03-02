@@ -78,6 +78,7 @@ class RegisterDataSource {
   Future<String> registrarCuenta(
     RegisterState registerState,
     RegisterPinState pinState,
+    String fingerprintState,
   ) async {
     try {
       final response = await dio.post(
@@ -97,6 +98,7 @@ class RegisterDataSource {
           'pin': pinState.pin,
           'celular': registerState.celular,
           'rutaImagen1': registerState.rutaImagen1,
+          'fingerprint': fingerprintState,
         }),
         options: Options(
           headers: {'Content-Type': 'application/json'},

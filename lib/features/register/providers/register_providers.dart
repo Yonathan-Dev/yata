@@ -304,5 +304,6 @@ final registrarCuentaProvider = FutureProvider<String>((ref) async {
   final repository = ref.watch(registerRepositoryProvider);
   final state = ref.watch(registerProvider);
   final pinState = ref.watch(registerPinProvider);
-  return await repository.registrarCuenta(state, pinState);
+  final fingerprintState = await ref.watch(fingerPrintProvider.future);
+  return await repository.registrarCuenta(state, pinState, fingerprintState);
 });

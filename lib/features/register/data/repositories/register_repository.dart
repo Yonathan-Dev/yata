@@ -35,11 +35,13 @@ class RegisterRepository {
   Future<String> registrarCuenta(
     RegisterState registerState,
     RegisterPinState pinState,
+    String fingerprintState,
   ) async {
     try {
       final response = await dataSource.registrarCuenta(
         registerState,
         pinState,
+        fingerprintState,
       );
       return response;
     } catch (e) {

@@ -70,16 +70,16 @@ class AuthNotifier extends Notifier<AuthState> {
   Future<void> login(String usuario, String password, String plataforma) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final repository = ref.read(authRepositoryProvider);
+      /*final repository = ref.read(authRepositoryProvider);
       state = state.copyWith(mensaje: 'Iniciando sesión...');
 
       final authModel = await repository.postAuth(
         usuario,
         password,
         plataforma,
-      );
+      );*/
 
-      if (authModel.estado != 1) {
+      /*if (authModel.estado != 1) {
         state = state.copyWith(
           isAuthenticated: false,
           isLoading: false,
@@ -97,9 +97,9 @@ class AuthNotifier extends Notifier<AuthState> {
         email: authModel.correo,
         isActive: authModel.estado,
         role: authModel.codigoPerfil,
-      );
+      );*/
 
-      final prefsService = ref.read(preferencesServiceProvider);
+      /*final prefsService = ref.read(preferencesServiceProvider);
       await prefsService.saveAuthToken('fake_token');
       await prefsService.saveUserId(user.id.toString());
       if (ref.read(recordarProvider.notifier).state == true) {
@@ -115,7 +115,7 @@ class AuthNotifier extends Notifier<AuthState> {
         isLoading: false,
         mensaje: '',
         user: user,
-      );
+      );*/
     } on DioException catch (e) {
       state = state.copyWith(
         isAuthenticated: false,

@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import '../../../core/app_exports.dart';
+import '../../../shared/shared_exports.dart';
+import '../providers/pin_provider.dart';
 
 class PinScreen extends ConsumerStatefulWidget {
   const PinScreen({super.key});
@@ -14,7 +16,6 @@ class PinScreen extends ConsumerStatefulWidget {
 }
 
 class _PinScreenState extends ConsumerState<PinScreen> {
-  String _enteredPin = '';
   late List<String> _shuffledNumbers;
 
   @override
@@ -29,12 +30,11 @@ class _PinScreenState extends ConsumerState<PinScreen> {
   }
 
   void _onNumberPressed(String number) {
-    if (_enteredPin.length < 6) {
-      setState(() {
-        _enteredPin += number;
-      });
+    final enteredPin = ref.read(pinProvider.notifier).state;
+    if (enteredPin.length < 6) {
+      ref.read(pinProvider.notifier).state = enteredPin + number;
 
-      if (_enteredPin.length == 6) {
+      if (enteredPin.length + 1 == 6) {
         Future.delayed(const Duration(milliseconds: 300), () {
           if (mounted) {
             context.go('/home');
@@ -45,10 +45,12 @@ class _PinScreenState extends ConsumerState<PinScreen> {
   }
 
   void _onDeletePressed() {
-    if (_enteredPin.isNotEmpty) {
-      setState(() {
-        _enteredPin = _enteredPin.substring(0, _enteredPin.length - 1);
-      });
+    final enteredPin = ref.read(pinProvider.notifier).state;
+    if (enteredPin.isNotEmpty) {
+      ref.read(pinProvider.notifier).state = enteredPin.substring(
+        0,
+        enteredPin.length - 1,
+      );
     }
   }
 
@@ -60,12 +62,15 @@ class _PinScreenState extends ConsumerState<PinScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Tema.blanco,
-      body: Column(
+      body: Stack(
         children: [
-          // Parte superior blanca con QR e icono
-          SafeArea(bottom: false, child: _buildQRSection(context)),
-          // Parte violeta con teclado
-          Expanded(child: _buildVioletSection(context)),
+          Column(
+            children: [
+              SafeArea(bottom: false, child: _buildQRSection(context)),
+              Expanded(child: _buildVioletSection(context)),
+            ],
+          ),
+          _buildLoadingIndicator(context),
         ],
       ),
     );
@@ -101,6 +106,15 @@ class _PinScreenState extends ConsumerState<PinScreen> {
         ),
       ),
     );
+  }
+
+  Widget _buildLoadingIndicator(BuildContext context) {
+    final authState = ref.watch(authProvider);
+
+    if (authState.isLoading) {
+      return LoadingWidget(mensaje: authState.mensaje);
+    }
+    return const SizedBox.shrink();
   }
 
   Widget _buildRobotIcon() {
@@ -182,10 +196,11 @@ class _PinScreenState extends ConsumerState<PinScreen> {
   }
 
   Widget _buildPinIndicators() {
+    final enteredPin = ref.watch(pinProvider);
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(6, (index) {
-        final isFilled = index < _enteredPin.length;
+        final isFilled = index < enteredPin.length;
         return Container(
           width: 16,
           height: 16,

@@ -1,41 +1,75 @@
 class AuthModel {
-  int usuarioId;
-  String login;
-  String nroDocumento;
-  String tipoDocumento;
-  String descripcion;
-  String nombres;
-  String apePaterno;
-  String apeMaterno;
-  int estado;
-  String correo;
-  int codigoPerfil;
+  AuthData value;
+  String errorCodigo;
+  String errorMensaje;
 
   AuthModel({
-    required this.usuarioId,
-    required this.login,
-    required this.nroDocumento,
-    required this.tipoDocumento,
-    required this.descripcion,
-    required this.nombres,
-    required this.apePaterno,
-    required this.apeMaterno,
-    required this.estado,
-    required this.correo,
-    required this.codigoPerfil,
+    required this.value,
+    required this.errorCodigo,
+    required this.errorMensaje,
   });
 
   factory AuthModel.fromJson(Map<String, dynamic> json) => AuthModel(
-    usuarioId: json['USUARIO_ID'] ?? 0,
-    login: json['LOGIN'] ?? "",
-    nroDocumento: json['NRO_DOCUMENTO'] ?? "",
-    tipoDocumento: json['TIPO_DOCUMENTO'] ?? "",
-    descripcion: json['DESCRIPCION'] ?? "",
-    nombres: json['NOMBRES'] ?? "",
-    apePaterno: json['APE_PATERNO'] ?? "",
-    apeMaterno: json['APE_MATERNO'] ?? "",
-    estado: json['ESTADO'] ?? 0,
-    correo: json['CORREO'] ?? "",
-    codigoPerfil: json['CODIGO_PERFIL'] ?? 0,
+    value: AuthData.fromJson(json["value"]),
+    errorCodigo: json["errorCodigo"],
+    errorMensaje: json["errorMensaje"],
   );
+
+  Map<String, dynamic> toJson() => {
+    "value": value.toJson(),
+    "errorCodigo": errorCodigo,
+    "errorMensaje": errorMensaje,
+  };
+}
+
+class AuthData {
+  int idUsuario;
+  String login;
+  String apellidosyNombres;
+  String correoInstitucional;
+  String numeroDocumento;
+  String accessToken;
+  String refreshToken;
+  DateTime expiresAt;
+  String tokenType;
+  bool requiereVerificacion;
+
+  AuthData({
+    required this.idUsuario,
+    required this.login,
+    required this.apellidosyNombres,
+    required this.correoInstitucional,
+    required this.numeroDocumento,
+    required this.accessToken,
+    required this.refreshToken,
+    required this.expiresAt,
+    required this.tokenType,
+    required this.requiereVerificacion,
+  });
+
+  factory AuthData.fromJson(Map<String, dynamic> json) => AuthData(
+    idUsuario: json["idUsuario"],
+    login: json["login"],
+    apellidosyNombres: json["ApellidosyNombres"],
+    correoInstitucional: json["correoInstitucional"],
+    numeroDocumento: json["numeroDocumento"],
+    accessToken: json["accessToken"],
+    refreshToken: json["refreshToken"],
+    expiresAt: DateTime.parse(json["expiresAt"]),
+    tokenType: json["tokenType"],
+    requiereVerificacion: json["requiereVerificacion"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "idUsuario": idUsuario,
+    "login": login,
+    "ApellidosyNombres": apellidosyNombres,
+    "correoInstitucional": correoInstitucional,
+    "numeroDocumento": numeroDocumento,
+    "accessToken": accessToken,
+    "refreshToken": refreshToken,
+    "expiresAt": expiresAt.toIso8601String(),
+    "tokenType": tokenType,
+    "requiereVerificacion": requiereVerificacion,
+  };
 }

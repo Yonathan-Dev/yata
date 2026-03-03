@@ -1,28 +1,4 @@
 class AuthModel {
-  AuthData value;
-  String errorCodigo;
-  String errorMensaje;
-
-  AuthModel({
-    required this.value,
-    required this.errorCodigo,
-    required this.errorMensaje,
-  });
-
-  factory AuthModel.fromJson(Map<String, dynamic> json) => AuthModel(
-    value: AuthData.fromJson(json["value"]),
-    errorCodigo: json["errorCodigo"],
-    errorMensaje: json["errorMensaje"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "value": value.toJson(),
-    "errorCodigo": errorCodigo,
-    "errorMensaje": errorMensaje,
-  };
-}
-
-class AuthData {
   int idUsuario;
   String login;
   String apellidosyNombres;
@@ -34,7 +10,7 @@ class AuthData {
   String tokenType;
   bool requiereVerificacion;
 
-  AuthData({
+  AuthModel({
     required this.idUsuario,
     required this.login,
     required this.apellidosyNombres,
@@ -47,7 +23,7 @@ class AuthData {
     required this.requiereVerificacion,
   });
 
-  factory AuthData.fromJson(Map<String, dynamic> json) => AuthData(
+  factory AuthModel.fromJson(Map<String, dynamic> json) => AuthModel(
     idUsuario: json["idUsuario"],
     login: json["login"],
     apellidosyNombres: json["ApellidosyNombres"],

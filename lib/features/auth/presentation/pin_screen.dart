@@ -35,11 +35,32 @@ class _PinScreenState extends ConsumerState<PinScreen> {
       ref.read(pinProvider.notifier).state = enteredPin + number;
 
       if (enteredPin.length + 1 == 6) {
-        Future.delayed(const Duration(milliseconds: 300), () {
-          if (mounted) {
-            context.go('/home');
-          }
-        });
+        ref
+            .read(authProvider.notifier)
+            .setLoading(isLoading: true, mensaje: 'Verificando...');
+        ref
+            .read(loginPinProvider.future)
+            .then((response) {
+              if (mounted) {
+                context.go('/home');
+                SnackbarUtil.snackbarSuccess(
+                  context,
+                  message: '¡Bienvenido, ${response.apellidosyNombres}!',
+                );
+              }
+            })
+            .catchError((error) {
+              if (mounted) {
+                SnackbarUtil.snackbarError(context, message: error.toString());
+              }
+              ref.read(pinProvider.notifier).state = '';
+            })
+            .whenComplete(() {
+              _shuffleNumbers();
+              ref
+                  .read(authProvider.notifier)
+                  .setLoading(isLoading: false, mensaje: '');
+            });
       }
     }
   }

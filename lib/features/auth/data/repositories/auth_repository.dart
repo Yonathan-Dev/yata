@@ -5,14 +5,6 @@ class AuthRepository {
 
   AuthRepository({required this.dataSource});
 
-  /*Future<AuthModel> postAuth(
-    String login,
-    String clave,
-    String plataforma,
-  ) async {
-    return await dataSource.postAuth(login, clave, plataforma);
-  }*/
-
   Future<AuthModel> postAuthPin(
     String login,
     String pin,

@@ -81,15 +81,18 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Tema.blanco,
-      body: Column(
-        children: [
-          // Logo superior
-          SafeArea(bottom: false, child: _buildLogoSection(context)),
-          // Contenido con pasos
-          Expanded(child: _buildVioletSection(context)),
-        ],
+    return SafeArea(
+      bottom: false,
+      child: Scaffold(
+        backgroundColor: Tema.blanco,
+        body: Column(
+          children: [
+            // Logo superior
+            SafeArea(bottom: false, child: _buildLogoSection(context)),
+            // Contenido con pasos
+            Expanded(child: _buildVioletSection(context)),
+          ],
+        ),
       ),
     );
   }

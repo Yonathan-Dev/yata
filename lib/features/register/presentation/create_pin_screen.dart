@@ -59,13 +59,16 @@ class _CreatePinScreenState extends ConsumerState<CreatePinScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Tema.blanco,
-      body: Column(
-        children: [
-          SafeArea(bottom: false, child: _buildLogoSection(context)),
-          Expanded(child: _buildVioletSection(context)),
-        ],
+    return SafeArea(
+      bottom: false,
+      child: Scaffold(
+        backgroundColor: Tema.blanco,
+        body: Column(
+          children: [
+            SafeArea(bottom: false, child: _buildLogoSection(context)),
+            Expanded(child: _buildVioletSection(context)),
+          ],
+        ),
       ),
     );
   }

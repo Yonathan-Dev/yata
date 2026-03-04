@@ -103,18 +103,21 @@ class _ConfirmPinScreenState extends ConsumerState<ConfirmPinScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Tema.blanco,
-      body: Stack(
-        children: [
-          Column(
-            children: [
-              SafeArea(bottom: false, child: _buildLogoSection(context)),
-              Expanded(child: _buildVioletSection(context)),
-            ],
-          ),
-          _buildLoadingIndicator(context),
-        ],
+    return SafeArea(
+      bottom: false,
+      child: Scaffold(
+        backgroundColor: Tema.blanco,
+        body: Stack(
+          children: [
+            Column(
+              children: [
+                SafeArea(bottom: false, child: _buildLogoSection(context)),
+                Expanded(child: _buildVioletSection(context)),
+              ],
+            ),
+            _buildLoadingIndicator(context),
+          ],
+        ),
       ),
     );
   }

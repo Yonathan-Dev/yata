@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import '../../../core/app_exports.dart';
 import '../../../shared/shared_exports.dart';
-import '../providers/pin_provider.dart';
 
 class PinScreen extends ConsumerStatefulWidget {
   const PinScreen({super.key});
@@ -81,18 +80,21 @@ class _PinScreenState extends ConsumerState<PinScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Tema.blanco,
-      body: Stack(
-        children: [
-          Column(
-            children: [
-              SafeArea(bottom: false, child: _buildQRSection(context)),
-              Expanded(child: _buildVioletSection(context)),
-            ],
-          ),
-          _buildLoadingIndicator(context),
-        ],
+    return SafeArea(
+      bottom: false,
+      child: Scaffold(
+        backgroundColor: Tema.blanco,
+        body: Stack(
+          children: [
+            Column(
+              children: [
+                SafeArea(bottom: false, child: _buildQRSection(context)),
+                Expanded(child: _buildVioletSection(context)),
+              ],
+            ),
+            _buildLoadingIndicator(context),
+          ],
+        ),
       ),
     );
   }

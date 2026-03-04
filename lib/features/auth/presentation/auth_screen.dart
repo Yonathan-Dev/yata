@@ -30,10 +30,13 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
       }
     });
 
-    return Scaffold(
-      backgroundColor: Tema.blanco,
-      body: Stack(
-        children: [_buildContent(context), _buildLoadingIndicator(context)],
+    return SafeArea(
+      bottom: false,
+      child: Scaffold(
+        backgroundColor: Tema.blanco,
+        body: Stack(
+          children: [_buildContent(context), _buildLoadingIndicator(context)],
+        ),
       ),
     );
   }

@@ -183,3 +183,28 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
 final tokenProvider = StateProvider<String>((ref) {
   return '';
 });
+
+final loginPinProvider = FutureProvider<AuthModel>((ref) async {
+  final repository = ref.watch(authRepositoryProvider);
+  final state = ref.watch(registerProvider);
+  final pinState = ref.watch(pinProvider);
+  final fingerprintState = await ref.watch(fingerPrintProvider.future);
+  return await repository.postAuthPin(state.correo, pinState, fingerprintState);
+});
+
+final loginCorreoProvider = FutureProvider<AuthModel>((ref) async {
+  final repository = ref.watch(authRepositoryProvider);
+  final state = ref.watch(registerProvider);
+  final fingerprintState = await ref.watch(fingerPrintProvider.future);
+  final nombreDispositivo = ref.watch(dispositivoProvider).plataforma;
+  final ipAddress = ref.watch(dispositivoProvider).ipAddress;
+  final userAgent = ref.watch(dispositivoProvider).userAgent;
+  return await repository.loginConCorreo(
+    state.correo,
+    state.contrasena,
+    fingerprintState,
+    nombreDispositivo,
+    ipAddress,
+    userAgent,
+  );
+});

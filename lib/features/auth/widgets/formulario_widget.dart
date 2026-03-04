@@ -51,14 +51,38 @@ class _FormularioWidgetState extends ConsumerState<FormularioWidget> {
 
   void _handleLogin() {
     if (_formLoginKey.currentState!.validate()) {
-      context.go('/pin');
-      /*_usuarioFocusNode.unfocus();
-      _passwordFocusNode.unfocus();
-      final dispositivoState = ref.read(dispositivoProvider);
-      final plataforma = dispositivoState.plataforma;
+      ref
+          .read(registerProvider.notifier)
+          .setCorreo(_usuarioController.text.trim());
+      ref
+          .read(registerProvider.notifier)
+          .setContrasena(_passwordController.text.trim());
+
       ref
           .read(authProvider.notifier)
-          .login(_usuarioController.text, _passwordController.text, plataforma);*/
+          .setLoading(isLoading: true, mensaje: 'Iniciando sesión...');
+      ref
+          .read(loginCorreoProvider.future)
+          .then((response) {
+            if (!mounted) return;
+            context.go('/pin');
+            SnackbarUtil.snackbarSuccess(
+              context,
+              message: response.apellidosyNombres,
+            );
+          })
+          .catchError((error) {
+            if (!mounted) return;
+            SnackbarUtil.snackbarError(context, message: error.toString());
+          })
+          .whenComplete(() {
+            if (!mounted) return;
+            _usuarioFocusNode.unfocus();
+            _passwordFocusNode.unfocus();
+            ref
+                .read(authProvider.notifier)
+                .setLoading(isLoading: false, mensaje: '');
+          });
     }
   }
 
@@ -157,14 +181,15 @@ class _FormularioWidgetState extends ConsumerState<FormularioWidget> {
             errorStyle: Theme.of(
               context,
             ).textTheme.bodySmall!.copyWith(color: Tema.blanco),
+            counterText: '',
           ),
           keyboardType: TextInputType.emailAddress,
           validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Por favor ingresa tu correo electrónico';
-            }
-            return null;
+            return ref
+                .read(registerProvider.notifier)
+                .validarCorreo(value ?? '');
           },
+          maxLength: 35,
         ),
       ],
     );
@@ -222,17 +247,19 @@ class _FormularioWidgetState extends ConsumerState<FormularioWidget> {
             errorStyle: Theme.of(
               context,
             ).textTheme.bodySmall!.copyWith(color: Tema.blanco),
+            counterText: '',
           ),
           keyboardType: TextInputType.text,
           validator: (value) {
             if (value == null || value.isEmpty) {
               return 'Por favor ingresa tu contraseña';
             }
-            if (value.length < 6) {
-              return 'La contraseña debe tener al menos 6 caracteres';
+            if (value.length < 8) {
+              return 'Mínimo 8 caracteres';
             }
             return null;
           },
+          maxLength: 25,
         ),
       ],
     );

@@ -37,7 +37,7 @@ class AuthModel {
     numeroDocumento: json["numeroDocumento"] ?? '',
     accessToken: json["accessToken"] ?? '',
     refreshToken: json["refreshToken"] ?? '',
-    expiresAt: json["expiresAt"] != null
+    expiresAt: json["expiresAt"] != null && json["expiresAt"] is String
         ? DateTime.parse(json["expiresAt"])
         : DateTime.now(),
     tokenType: json["tokenType"] ?? '',

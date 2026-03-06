@@ -30,4 +30,16 @@ class AuthRepository {
       userAgent,
     );
   }
+
+  Future<AuthModel> verificarCodigoOTP(
+    String verificationToken,
+    String codigoOtp,
+    String fingerprint,
+  ) async {
+    return await dataSource.verificarCodigoOTP(
+      verificationToken,
+      codigoOtp,
+      fingerprint,
+    );
+  }
 }

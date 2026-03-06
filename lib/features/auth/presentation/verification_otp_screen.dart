@@ -53,14 +53,16 @@ class _VerificationOtpScreenState extends ConsumerState<VerificationOtpScreen> {
       ref.read(verifyCodeProvider.notifier).setCodigoOtp(code);
 
       ref
-          .read(enviarCodigoOTPProvider.future)
+          .read(loginCodigoOtpProvider.future)
           .then((response) {
             if (mounted) {
-              SnackbarUtil.snackbarSuccess(context, message: response);
               context.go('/pin');
             }
           })
           .catchError((error) {
+            if (mounted) {
+              SnackbarUtil.snackbarError(context, message: error.toString());
+            }
             if (mounted) {
               SnackbarUtil.snackbarError(context, message: error.toString());
             }

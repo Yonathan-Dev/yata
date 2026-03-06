@@ -208,3 +208,17 @@ final loginCorreoProvider = FutureProvider<AuthModel>((ref) async {
     userAgent,
   );
 });
+
+final loginCodigoOtpProvider = FutureProvider<AuthModel>((ref) async {
+  final repository = ref.watch(authRepositoryProvider);
+  final codigoOtpState = ref.watch(verifyCodeProvider).codigoOtp;
+  final fingerprintState = await ref.watch(fingerPrintProvider.future);
+  final verificationTokenState = await ref.watch(
+    verificationTokenProvider.future,
+  );
+  return await repository.verificarCodigoOTP(
+    verificationTokenState ?? '',
+    codigoOtpState,
+    fingerprintState,
+  );
+});

@@ -73,7 +73,8 @@ class _FormularioWidgetState extends ConsumerState<FormularioWidget> {
               final existingVerificationToken = await secureStorage.read(
                 key: 'verificationToken',
               );
-              if (existingVerificationToken == null) {
+              if (existingVerificationToken == null ||
+                  existingVerificationToken.isEmpty) {
                 await secureStorage.write(
                   key: 'verificationToken',
                   value: response.verificationToken,
@@ -86,7 +87,7 @@ class _FormularioWidgetState extends ConsumerState<FormularioWidget> {
             final existingAccessToken = await secureStorage.read(
               key: 'accessToken',
             );
-            if (existingAccessToken == null) {
+            if (existingAccessToken == null || existingAccessToken.isEmpty) {
               await secureStorage.write(
                 key: 'accessToken',
                 value: response.accessToken,
@@ -95,7 +96,7 @@ class _FormularioWidgetState extends ConsumerState<FormularioWidget> {
             final existingRefreshToken = await secureStorage.read(
               key: 'refreshToken',
             );
-            if (existingRefreshToken == null) {
+            if (existingRefreshToken == null || existingRefreshToken.isEmpty) {
               await secureStorage.write(
                 key: 'refreshToken',
                 value: response.refreshToken,

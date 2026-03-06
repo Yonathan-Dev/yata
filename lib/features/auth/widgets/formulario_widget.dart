@@ -104,10 +104,6 @@ class _FormularioWidgetState extends ConsumerState<FormularioWidget> {
             }
             if (!mounted) return;
             context.go('/pin');
-            SnackbarUtil.snackbarSuccess(
-              context,
-              message: response.apellidosyNombres,
-            );
           })
           .catchError((error) {
             if (!mounted) return;

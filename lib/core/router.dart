@@ -57,6 +57,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: 'confirmPin',
         builder: (context, state) => const ConfirmPinScreen(),
       ),
+      GoRoute(
+        path: '/verification-otp',
+        name: 'verificationOtp',
+        builder: (context, state) => const VerificationOtpScreen(),
+      ),
     ],
   );
 });

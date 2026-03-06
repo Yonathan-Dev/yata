@@ -3,6 +3,7 @@
 export 'presentation/auth_screen.dart';
 export 'presentation/pin_screen.dart';
 export 'presentation/forgot_password_screen.dart';
+export 'presentation/verification_otp_screen.dart';
 // Providers
 export 'providers/auth_provider.dart';
 export 'providers/fingerprint_provider.dart';

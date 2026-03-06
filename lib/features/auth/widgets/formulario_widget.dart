@@ -63,7 +63,44 @@ class _FormularioWidgetState extends ConsumerState<FormularioWidget> {
           .setLoading(isLoading: true, mensaje: 'Iniciando sesión...');
       ref
           .read(loginCorreoProvider.future)
-          .then((response) {
+          .then((response) async {
+            if (response.requiereVerificacion) {
+              if (!mounted) return;
+              SnackbarUtil.snackbarInfo(
+                context,
+                message: response.mensajeVerificacion,
+              );
+              final existingVerificationToken = await secureStorage.read(
+                key: 'verificationToken',
+              );
+              if (existingVerificationToken == null) {
+                await secureStorage.write(
+                  key: 'verificationToken',
+                  value: response.verificationToken,
+                );
+              }
+              if (!mounted) return;
+              context.push('/verification-otp');
+              return;
+            }
+            final existingAccessToken = await secureStorage.read(
+              key: 'accessToken',
+            );
+            if (existingAccessToken == null) {
+              await secureStorage.write(
+                key: 'accessToken',
+                value: response.accessToken,
+              );
+            }
+            final existingRefreshToken = await secureStorage.read(
+              key: 'refreshToken',
+            );
+            if (existingRefreshToken == null) {
+              await secureStorage.write(
+                key: 'refreshToken',
+                value: response.refreshToken,
+              );
+            }
             if (!mounted) return;
             context.go('/pin');
             SnackbarUtil.snackbarSuccess(

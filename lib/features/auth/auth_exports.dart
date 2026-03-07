@@ -8,6 +8,7 @@ export 'presentation/verification_otp_screen.dart';
 export 'providers/auth_provider.dart';
 export 'providers/secure_provider.dart';
 export 'providers/pin_provider.dart';
+export 'providers/biometric_provider.dart';
 // Widgets
 export 'widgets/formulario_widget.dart';
 export 'widgets/email_card_widget.dart';

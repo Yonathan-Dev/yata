@@ -292,31 +292,35 @@ class ConfiguracionScreen extends ConsumerWidget {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () async {
-                        ref
-                            .read(authProvider.notifier)
-                            .setLoading(
-                              isLoading: true,
-                              mensaje: 'Cerrando sesión...',
-                            );
-                        ref
-                            .read(logoutProvider.future)
-                            .then((response) async {
-                              if (!context.mounted) return;
-                              context.go('/pin');
-                            })
-                            .catchError((error) {
-                              if (!context.mounted) return;
-                              SnackbarUtil.snackbarError(
-                                context,
-                                message: error.toString(),
-                              );
-                            })
-                            .whenComplete(() {
-                              ref
-                                  .read(authProvider.notifier)
-                                  .setLoading(isLoading: false, mensaje: '');
-                              ref.read(authProvider.notifier).logout();
-                            });
+                        // Guardar referencia antes de operaciones asíncronas
+                        final authNotifier = ref.read(authProvider.notifier);
+
+                        authNotifier.setLoading(
+                          isLoading: true,
+                          mensaje: 'Cerrando sesión...',
+                        );
+
+                        try {
+                          await ref.read(logoutProvider.future);
+                          authNotifier.setLoading(
+                            isLoading: false,
+                            mensaje: '',
+                          );
+                          if (!context.mounted) return;
+                          context.go('/pin');
+                        } catch (error) {
+                          authNotifier.setLoading(
+                            isLoading: false,
+                            mensaje: '',
+                          );
+                          if (!context.mounted) return;
+                          SnackbarUtil.snackbarError(
+                            context,
+                            message: error.toString(),
+                          );
+                        } finally {
+                          authNotifier.logout();
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Tema.primaryColor,

@@ -119,8 +119,107 @@ class _PinScreenState extends ConsumerState<PinScreen> {
     }
   }
 
-  void _onBiometricPressed() {
-    context.go('/home');
+  void _onBiometricPressed() async {
+    final biometricNotifier = ref.read(biometricProvider.notifier);
+    await biometricNotifier.refresh();
+    final biometricState = ref.read(biometricProvider);
+
+    if (!biometricState.isEnabled) {
+      if (!mounted) return;
+      SnackbarUtil.snackbarInfo(
+        context,
+        message: 'Primero ingresa con tu PIN para activar la huella',
+      );
+      return;
+    }
+
+    if (!biometricState.isSupported) {
+      if (!mounted) return;
+      SnackbarUtil.snackbarError(
+        context,
+        message: 'Tu dispositivo no soporta autenticación biométrica',
+      );
+      return;
+    }
+
+    final resultado = await biometricNotifier.autenticarYObtenerCredenciales();
+
+    if (!mounted) return;
+
+    final error = ref.read(biometricProvider).error;
+    if (error != null) {
+      SnackbarUtil.snackbarError(context, message: error);
+      return;
+    }
+
+    if (resultado.success &&
+        resultado.correo != null &&
+        resultado.pin != null) {
+      ref.read(registerProvider.notifier).setCorreo(resultado.correo!);
+      ref.read(pinProvider.notifier).state = resultado.pin!;
+
+      ref
+          .read(authProvider.notifier)
+          .setLoading(isLoading: true, mensaje: 'Verificando...');
+
+      ref
+          .read(loginPinProvider.future)
+          .then((response) async {
+            if (response.requiereVerificacion) {
+              if (!mounted) return;
+              SnackbarUtil.snackbarInfo(
+                context,
+                message: response.mensajeVerificacion,
+              );
+              await secureStorage.write(
+                key: 'verificationToken',
+                value: response.verificationToken,
+              );
+              if (!mounted) return;
+              context.push('/verification-otp');
+              return;
+            }
+
+            await secureStorage.write(
+              key: 'accessToken',
+              value: response.accessToken,
+            );
+            await secureStorage.write(
+              key: 'refreshToken',
+              value: response.refreshToken,
+            );
+            await secureStorage.write(
+              key: 'expiresAt',
+              value: response.expiresAt.toIso8601String(),
+            );
+            await secureStorage.write(
+              key: 'tokenType',
+              value: response.tokenType,
+            );
+            await secureStorage.write(
+              key: 'userName',
+              value: response.apellidosyNombres,
+            );
+
+            if (!mounted) return;
+            context.go('/home');
+            SnackbarUtil.snackbarSuccess(
+              context,
+              message: '¡Bienvenido, ${response.apellidosyNombres}!',
+            );
+          })
+          .catchError((error) {
+            if (mounted) {
+              SnackbarUtil.snackbarError(context, message: error.toString());
+            }
+          })
+          .whenComplete(() {
+            ref.read(pinProvider.notifier).state = '';
+            ref
+                .read(authProvider.notifier)
+                .setLoading(isLoading: false, mensaje: '');
+          });
+    }
   }
 
   @override

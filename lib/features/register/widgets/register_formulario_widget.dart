@@ -24,23 +24,6 @@ class _RegisterFormularioWidgetState
   @override
   void initState() {
     super.initState();
-    ref.read(dispositivoProvider.notifier).obtenerInfoDispositivo();
-
-    if (ref.read(recordarProvider.notifier).state == true) {
-      Future.microtask(() {
-        final prefsService = ref.read(preferencesServiceProvider);
-        prefsService.getSavedUsername().then((savedUsername) {
-          if (savedUsername != null) {
-            _usuarioController.text = savedUsername;
-          }
-        });
-        prefsService.getSavedPassword().then((savedPassword) {
-          if (savedPassword != null) {
-            _passwordController.text = savedPassword;
-          }
-        });
-      });
-    }
   }
 
   @override

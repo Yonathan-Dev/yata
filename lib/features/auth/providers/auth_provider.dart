@@ -48,21 +48,12 @@ class AuthNotifier extends Notifier<AuthState> {
 
   // Verificar el estado de autenticación al inicializar
   Future<void> _checkAuthStatus() async {
-    final prefsService = ref.read(preferencesServiceProvider);
-    final savedUsername = await prefsService.getSavedUsername();
-    final savedPassword = await prefsService.getSavedPassword();
-    if (savedUsername != null && savedPassword != null) {
-      ref.read(recordarProvider.notifier).state = true;
-    } else {
-      ref.read(recordarProvider.notifier).state = false;
-    }
-
     state = state.copyWith(
       isLoading: true,
       mensaje: 'Verificando estado de autenticación...',
     );
-    //esppera unos 3 segundos
-    await Future.delayed(const Duration(seconds: 3));
+    //esppera unos 2 segundos
+    await Future.delayed(const Duration(seconds: 2));
     state = state.copyWith(isLoading: false, mensaje: '');
   }
 
@@ -168,7 +159,6 @@ final authProvider = NotifierProvider<AuthNotifier, AuthState>(() {
   return AuthNotifier();
 });
 final verContrasenyaProvider = StateProvider<bool>((ref) => false);
-final recordarProvider = StateProvider<bool>((ref) => false);
 
 //Provider para Login
 final authDataSourceProvider = Provider<AuthDataSource>((ref) {

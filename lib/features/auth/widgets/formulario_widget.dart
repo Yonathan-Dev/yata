@@ -21,23 +21,6 @@ class _FormularioWidgetState extends ConsumerState<FormularioWidget> {
   @override
   void initState() {
     super.initState();
-    ref.read(dispositivoProvider.notifier).obtenerInfoDispositivo();
-
-    if (ref.read(recordarProvider.notifier).state == true) {
-      Future.microtask(() {
-        final prefsService = ref.read(preferencesServiceProvider);
-        prefsService.getSavedUsername().then((savedUsername) {
-          if (savedUsername != null) {
-            _usuarioController.text = savedUsername;
-          }
-        });
-        prefsService.getSavedPassword().then((savedPassword) {
-          if (savedPassword != null) {
-            _passwordController.text = savedPassword;
-          }
-        });
-      });
-    }
   }
 
   @override
@@ -84,24 +67,24 @@ class _FormularioWidgetState extends ConsumerState<FormularioWidget> {
               context.push('/verification-otp');
               return;
             }
-            final existingAccessToken = await secureStorage.read(
+
+            await secureStorage.write(
               key: 'accessToken',
+              value: response.accessToken,
             );
-            if (existingAccessToken == null || existingAccessToken.isEmpty) {
-              await secureStorage.write(
-                key: 'accessToken',
-                value: response.accessToken,
-              );
-            }
-            final existingRefreshToken = await secureStorage.read(
+            await secureStorage.write(
               key: 'refreshToken',
+              value: response.refreshToken,
             );
-            if (existingRefreshToken == null || existingRefreshToken.isEmpty) {
-              await secureStorage.write(
-                key: 'refreshToken',
-                value: response.refreshToken,
-              );
-            }
+            await secureStorage.write(
+              key: 'expiresAt',
+              value: response.expiresAt.toIso8601String(),
+            );
+            await secureStorage.write(
+              key: 'tokenType',
+              value: response.tokenType,
+            );
+
             if (!mounted) return;
             context.go('/pin');
           })
@@ -303,7 +286,6 @@ class _FormularioWidgetState extends ConsumerState<FormularioWidget> {
     return Center(
       child: TextButton(
         onPressed: () {
-          //context.go('/forgot-password');
           context.push('/forgot-password');
         },
         child: Text(
@@ -351,7 +333,6 @@ class _FormularioWidgetState extends ConsumerState<FormularioWidget> {
           ),
           GestureDetector(
             onTap: () {
-              //context.go('/register');
               context.push('/register');
             },
             child: Text(

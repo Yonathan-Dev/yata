@@ -16,7 +16,7 @@ Future<void> main() async {
 
   await dotenv.load(fileName: ".env");
   final existingFingerprint = await secureStorage.read(key: 'fingerprint');
-  if (existingFingerprint == null) {
+  if (existingFingerprint == null || existingFingerprint.isEmpty) {
     await secureStorage.write(key: 'fingerprint', value: const Uuid().v4());
   }
 

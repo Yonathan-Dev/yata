@@ -17,7 +17,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   void initState() {
     super.initState();
     Future.microtask(
-      () => ref.read(dispositivoProvider.notifier).obtenerVersionApp(),
+      () => ref.read(dispositivoProvider.notifier).obtenerInfoDispositivo(),
     );
   }
 

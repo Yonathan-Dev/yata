@@ -103,8 +103,12 @@ class DispositivoNotifier extends Notifier<DispositivoState> {
 
   Future<void> obtenerInfoDispositivo() async {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    final info = await PackageInfo.fromPlatform();
     String appName = 'BilleteraPay';
-    String appVersion = state.versionApp;
+    String appVersion = info.version;
+    String buildNumber = info.buildNumber;
+    setVersionApp(appVersion);
+    setBuildApp(buildNumber);
 
     if (Platform.isAndroid) {
       AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
@@ -117,14 +121,8 @@ class DispositivoNotifier extends Notifier<DispositivoState> {
       setPlataforma('iOS ${iosInfo.model} ${iosInfo.systemVersion}');
       setVersionOs('iOS ${iosInfo.systemVersion}');
       setModelo(iosInfo.model);
-      setUserAgent('$appName iOS/$appVersion}');
+      setUserAgent('$appName iOS/$appVersion');
     }
-  }
-
-  Future<void> obtenerVersionApp() async {
-    final info = await PackageInfo.fromPlatform();
-    setVersionApp(info.version);
-    setBuildApp(info.buildNumber);
   }
 }
 

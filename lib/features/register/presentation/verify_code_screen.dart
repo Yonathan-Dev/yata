@@ -118,11 +118,15 @@ class _VerifyCodeScreenState extends ConsumerState<VerifyCodeScreen> {
   }
 
   Widget _buildVioletSection(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
     return Stack(
       clipBehavior: Clip.none,
       children: [
         ClipPath(
-          clipper: _TopOvalCurveClipper(),
+          clipper: ConvexCurveClipper(
+            screenHeight: screenSize.height,
+            screenWidth: screenSize.width,
+          ),
           child: Container(width: double.infinity, color: Tema.primaryColor),
         ),
         Positioned(
@@ -319,26 +323,4 @@ class _VerifyCodeScreenState extends ConsumerState<VerifyCodeScreen> {
       ),
     );
   }
-}
-
-// Clipper para curva ovalada superior
-class _TopOvalCurveClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    final path = Path();
-
-    path.moveTo(0, size.height);
-    path.lineTo(0, 100);
-
-    // Curva ovalada suave
-    path.cubicTo(0, 0, size.width, 0, size.width, 100);
-
-    path.lineTo(size.width, size.height);
-    path.close();
-
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }

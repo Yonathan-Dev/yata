@@ -49,6 +49,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   }
 
   Widget _buildContent(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
     return Column(
       children: [
         SafeArea(bottom: false, child: _buildLogoSection(context)),
@@ -57,7 +58,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             clipBehavior: Clip.none,
             children: [
               ClipPath(
-                clipper: _TopConvexCurveClipper(),
+                clipper: ConvexCurveClipper(
+                  screenHeight: screenSize.height,
+                  screenWidth: screenSize.width,
+                ),
                 child: Container(
                   width: double.infinity,
                   color: Tema.primaryColor,
@@ -292,36 +296,4 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       ),
     );
   }
-}
-
-// Clipper para crear la curva convexa superior (arco que sube en el centro)
-class _TopConvexCurveClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    final path = Path();
-
-    // Comenzar desde la esquina inferior izquierda
-    path.moveTo(0, size.height);
-
-    // Línea hasta arriba izquierda (misma altura que el extremo derecho)
-    path.lineTo(0, 100);
-
-    // Curva convexa simétrica, punto más alto en el centro
-    path.quadraticBezierTo(
-      size.width / 2, // punto de control X (centro)
-      -80, // punto de control Y (más profundo y centrado)
-      size.width, // punto final X
-      100, // punto final Y (igual que el inicio)
-    );
-
-    // Línea hasta la esquina inferior derecha
-    path.lineTo(size.width, size.height);
-
-    path.close();
-
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }

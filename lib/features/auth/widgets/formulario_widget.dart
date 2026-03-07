@@ -53,16 +53,10 @@ class _FormularioWidgetState extends ConsumerState<FormularioWidget> {
                 context,
                 message: response.mensajeVerificacion,
               );
-              final existingVerificationToken = await secureStorage.read(
+              await secureStorage.write(
                 key: 'verificationToken',
+                value: response.verificationToken,
               );
-              if (existingVerificationToken == null ||
-                  existingVerificationToken.isEmpty) {
-                await secureStorage.write(
-                  key: 'verificationToken',
-                  value: response.verificationToken,
-                );
-              }
               if (!mounted) return;
               context.push('/verification-otp');
               return;

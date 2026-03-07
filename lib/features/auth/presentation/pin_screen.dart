@@ -39,14 +39,45 @@ class _PinScreenState extends ConsumerState<PinScreen> {
             .setLoading(isLoading: true, mensaje: 'Verificando...');
         ref
             .read(loginPinProvider.future)
-            .then((response) {
-              if (mounted) {
-                context.go('/home');
-                SnackbarUtil.snackbarSuccess(
+            .then((response) async {
+              if (response.requiereVerificacion) {
+                if (!mounted) return;
+                SnackbarUtil.snackbarInfo(
                   context,
-                  message: '¡Bienvenido, ${response.apellidosyNombres}!',
+                  message: response.mensajeVerificacion,
                 );
+                await secureStorage.write(
+                  key: 'verificationToken',
+                  value: response.verificationToken,
+                );
+                if (!mounted) return;
+                context.push('/verification-otp');
+                return;
               }
+
+              await secureStorage.write(
+                key: 'accessToken',
+                value: response.accessToken,
+              );
+              await secureStorage.write(
+                key: 'refreshToken',
+                value: response.refreshToken,
+              );
+              await secureStorage.write(
+                key: 'expiresAt',
+                value: response.expiresAt.toIso8601String(),
+              );
+              await secureStorage.write(
+                key: 'tokenType',
+                value: response.tokenType,
+              );
+
+              if (!mounted) return;
+              context.go('/home');
+              SnackbarUtil.snackbarSuccess(
+                context,
+                message: '¡Bienvenido, ${response.apellidosyNombres}!',
+              );
             })
             .catchError((error) {
               if (mounted) {
@@ -56,6 +87,7 @@ class _PinScreenState extends ConsumerState<PinScreen> {
             })
             .whenComplete(() {
               _shuffleNumbers();
+              ref.read(pinProvider.notifier).state = '';
               ref
                   .read(authProvider.notifier)
                   .setLoading(isLoading: false, mensaje: '');

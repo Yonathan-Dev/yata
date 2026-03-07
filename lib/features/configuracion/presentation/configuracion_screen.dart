@@ -13,50 +13,64 @@ class ConfiguracionScreen extends ConsumerWidget {
     final authState = ref.watch(authProvider);
     ref.listen<AuthState>(authProvider, (previous, next) {
       if (next.isAuthenticated == false) {
-        context.go('/login');
+        context.go('/pin');
       }
     });
 
-    return ListView(
-      padding: const EdgeInsets.all(Constantes.padding),
+    return Stack(
       children: [
-        _buildPerfilHeader(context, authState),
-        const SizedBox(height: Constantes.separacion * 2),
-        _buildSeccionTitulo(context, 'Apariencia'),
-        _buildTarjetaConfiguracion(
-          context: context,
-          children: [_buildOpcionTema(context, ref, themeMode)],
-        ),
-        const SizedBox(height: Constantes.separacion * 2),
-        _buildSeccionTitulo(context, 'Cuenta'),
-        _buildTarjetaConfiguracion(
-          context: context,
+        ListView(
+          padding: const EdgeInsets.all(Constantes.padding),
           children: [
-            _buildOpcionModificarPerfil(context),
-            _buildOpcionCambiarContrasenaPin(context),
+            _buildPerfilHeader(context, authState),
+            const SizedBox(height: Constantes.separacion * 2),
+            _buildSeccionTitulo(context, 'Apariencia'),
+            _buildTarjetaConfiguracion(
+              context: context,
+              children: [_buildOpcionTema(context, ref, themeMode)],
+            ),
+            const SizedBox(height: Constantes.separacion * 2),
+            _buildSeccionTitulo(context, 'Cuenta'),
+            _buildTarjetaConfiguracion(
+              context: context,
+              children: [
+                _buildOpcionModificarPerfil(context),
+                _buildOpcionCambiarContrasenaPin(context),
+              ],
+            ),
+            const SizedBox(height: Constantes.separacion * 2),
+            _buildSeccionTitulo(context, 'Notificaciones'),
+            _buildTarjetaConfiguracion(
+              context: context,
+              children: [_buildOpcionNotificaciones(context)],
+            ),
+            const SizedBox(height: Constantes.separacion * 2),
+            _buildSeccionTitulo(context, 'Soporte'),
+            _buildTarjetaConfiguracion(
+              context: context,
+              children: [_buildOpcionSoporteWhatsapp(context)],
+            ),
+            const SizedBox(height: Constantes.separacion * 4),
+            _buildTarjetaConfiguracion(
+              context: context,
+              children: [_buildOpcionCerrarSesion(context, ref)],
+            ),
+            const SizedBox(height: Constantes.separacion * 2),
+            _buildVersionInfo(context, ref),
           ],
         ),
-        const SizedBox(height: Constantes.separacion * 2),
-        _buildSeccionTitulo(context, 'Notificaciones'),
-        _buildTarjetaConfiguracion(
-          context: context,
-          children: [_buildOpcionNotificaciones(context)],
-        ),
-        const SizedBox(height: Constantes.separacion * 2),
-        _buildSeccionTitulo(context, 'Soporte'),
-        _buildTarjetaConfiguracion(
-          context: context,
-          children: [_buildOpcionSoporteWhatsapp(context)],
-        ),
-        const SizedBox(height: Constantes.separacion * 4),
-        _buildTarjetaConfiguracion(
-          context: context,
-          children: [_buildOpcionCerrarSesion(context, ref)],
-        ),
-        const SizedBox(height: Constantes.separacion * 2),
-        _buildVersionInfo(context, ref),
+        _buildLoadingIndicator(context, ref),
       ],
     );
+  }
+
+  Widget _buildLoadingIndicator(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(authProvider);
+
+    if (authState.isLoading) {
+      return LoadingWidget(mensaje: authState.mensaje);
+    }
+    return const SizedBox.shrink();
   }
 
   Widget _buildPerfilHeader(BuildContext context, AuthState authState) {
@@ -222,42 +236,101 @@ class ConfiguracionScreen extends ConsumerWidget {
   void _mostrarDialogoCerrarSesion(BuildContext context, WidgetRef ref) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Cerrar sesión'),
-        content: const Text('¿Estás seguro de que deseas cerrar sesión?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancelar'),
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        child: Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: Theme.of(context).cardColor,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.08),
+                blurRadius: 16,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
-          ElevatedButton(
-            onPressed: () async {
-              ref
-                  .read(logoutProvider.future)
-                  .then((response) async {
-                    await secureStorage.delete(key: 'accessToken');
-                    await secureStorage.delete(key: 'refreshToken');
-                    await secureStorage.delete(key: 'verificationToken');
-                    await secureStorage.delete(key: 'expiresAt');
-                    await secureStorage.delete(key: 'tokenType');
-                    if (!context.mounted) return;
-                    context.go('/auth');
-                  })
-                  .catchError((error) {
-                    if (!context.mounted) return;
-                    SnackbarUtil.snackbarError(
-                      context,
-                      message: error.toString(),
-                    );
-                  })
-                  .whenComplete(() {});
-            },
-            style: ThemeData().elevatedButtonTheme.style?.copyWith(
-              backgroundColor: WidgetStateProperty.all(Tema.primaryColor),
-            ),
-            child: const Text('Si'),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.logout, color: Tema.primaryColor, size: 48),
+              const SizedBox(height: 16),
+              Text(
+                'Cerrar sesión',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: Tema.primaryColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                '¿Estás seguro de que deseas cerrar sesión?',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.grey),
+              ),
+              const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: TextButton.styleFrom(
+                        foregroundColor: Tema.primaryColor,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text('Cancelar'),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        ref
+                            .read(authProvider.notifier)
+                            .setLoading(
+                              isLoading: true,
+                              mensaje: 'Cerrando sesión...',
+                            );
+                        ref
+                            .read(logoutProvider.future)
+                            .then((response) async {
+                              if (!context.mounted) return;
+                              context.go('/pin');
+                            })
+                            .catchError((error) {
+                              if (!context.mounted) return;
+                              SnackbarUtil.snackbarError(
+                                context,
+                                message: error.toString(),
+                              );
+                            })
+                            .whenComplete(() {
+                              ref.read(authProvider.notifier).logout();
+                            });
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Tema.primaryColor,
+                        foregroundColor: Tema.blanco,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text('Sí'),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

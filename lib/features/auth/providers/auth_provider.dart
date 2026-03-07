@@ -126,13 +126,12 @@ class AuthNotifier extends Notifier<AuthState> {
 
   // Cerrar sesión
   Future<void> logout() async {
-    state = state.copyWith(isLoading: true, mensaje: 'Cerrando sesión...');
-
     try {
-      final prefsService = ref.read(preferencesServiceProvider);
-      await prefsService.removeAuthToken();
-      await prefsService.removeUserId();
-
+      await secureStorage.delete(key: 'accessToken');
+      await secureStorage.delete(key: 'refreshToken');
+      await secureStorage.delete(key: 'verificationToken');
+      await secureStorage.delete(key: 'expiresAt');
+      await secureStorage.delete(key: 'tokenType');
       state = const AuthState();
     } catch (e) {
       state = state.copyWith(

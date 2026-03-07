@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/app_exports.dart';
+import '../../../shared/shared_exports.dart';
 
 class ConfiguracionScreen extends ConsumerWidget {
   const ConfiguracionScreen({super.key});
@@ -53,7 +54,7 @@ class ConfiguracionScreen extends ConsumerWidget {
           children: [_buildOpcionCerrarSesion(context, ref)],
         ),
         const SizedBox(height: Constantes.separacion * 2),
-        _buildVersionInfo(context),
+        _buildVersionInfo(context, ref),
       ],
     );
   }
@@ -195,7 +196,7 @@ class ConfiguracionScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildVersionInfo(BuildContext context) {
+  Widget _buildVersionInfo(BuildContext context, WidgetRef ref) {
     return Center(
       child: Column(
         children: [
@@ -208,7 +209,7 @@ class ConfiguracionScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            'Versión 1.0.0',
+            'v${ref.watch(dispositivoProvider.select((d) => d.versionApp))}',
             style: Theme.of(
               context,
             ).textTheme.bodySmall?.copyWith(color: Colors.grey[500]),
@@ -231,9 +232,20 @@ class ConfiguracionScreen extends ConsumerWidget {
           ),
           ElevatedButton(
             onPressed: () async {
-              await ref.read(authProvider.notifier).logout();
-              if (!context.mounted) return;
-              context.go('/auth');
+              ref
+                  .read(logoutProvider.future)
+                  .then((response) {
+                    if (!context.mounted) return;
+                    context.go('/auth');
+                  })
+                  .catchError((error) {
+                    if (!context.mounted) return;
+                    SnackbarUtil.snackbarError(
+                      context,
+                      message: error.toString(),
+                    );
+                  })
+                  .whenComplete(() {});
             },
             style: ThemeData().elevatedButtonTheme.style?.copyWith(
               backgroundColor: WidgetStateProperty.all(Tema.primaryColor),

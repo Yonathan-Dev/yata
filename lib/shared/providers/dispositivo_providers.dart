@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class DispositivoState {
   final String plataforma;
@@ -9,6 +10,8 @@ class DispositivoState {
   final String versionOs;
   final String ipAddress;
   final String userAgent;
+  final String versionApp;
+  final String buildApp;
 
   DispositivoState({
     this.plataforma = '',
@@ -16,6 +19,8 @@ class DispositivoState {
     this.versionOs = '',
     this.ipAddress = '0.0.0.0',
     this.userAgent = '',
+    this.versionApp = '1.0.0',
+    this.buildApp = '1',
   });
   DispositivoState copyWith({
     String? plataforma,
@@ -23,6 +28,8 @@ class DispositivoState {
     String? versionOs,
     String? ipAddress,
     String? userAgent,
+    String? versionApp,
+    String? buildApp,
   }) {
     return DispositivoState(
       plataforma: plataforma ?? this.plataforma,
@@ -30,6 +37,8 @@ class DispositivoState {
       versionOs: versionOs ?? this.versionOs,
       ipAddress: ipAddress ?? this.ipAddress,
       userAgent: userAgent ?? this.userAgent,
+      versionApp: versionApp ?? this.versionApp,
+      buildApp: buildApp ?? this.buildApp,
     );
   }
 }
@@ -60,12 +69,22 @@ class DispositivoNotifier extends Notifier<DispositivoState> {
     state = state.copyWith(userAgent: value);
   }
 
+  void setVersionApp(String value) {
+    state = state.copyWith(versionApp: value);
+  }
+
+  void setBuildApp(String value) {
+    state = state.copyWith(buildApp: value);
+  }
+
   void setDispositivo({
     required String plataforma,
     required String modelo,
     required String versionOs,
     required String ipAddress,
     required String userAgent,
+    required String versionApp,
+    required String buildApp,
   }) {
     state = state.copyWith(
       plataforma: plataforma,
@@ -73,6 +92,8 @@ class DispositivoNotifier extends Notifier<DispositivoState> {
       versionOs: versionOs,
       ipAddress: ipAddress,
       userAgent: userAgent,
+      versionApp: versionApp,
+      buildApp: buildApp,
     );
   }
 
@@ -83,7 +104,7 @@ class DispositivoNotifier extends Notifier<DispositivoState> {
   Future<void> obtenerInfoDispositivo() async {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     String appName = 'BilleteraPay';
-    String appVersion = '1.0.0';
+    String appVersion = state.versionApp;
 
     if (Platform.isAndroid) {
       AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
@@ -98,6 +119,12 @@ class DispositivoNotifier extends Notifier<DispositivoState> {
       setModelo(iosInfo.model);
       setUserAgent('$appName iOS/$appVersion}');
     }
+  }
+
+  Future<void> obtenerVersionApp() async {
+    final info = await PackageInfo.fromPlatform();
+    setVersionApp(info.version);
+    setBuildApp(info.buildNumber);
   }
 }
 

@@ -158,4 +158,37 @@ class AuthDataSource {
       rethrow;
     }
   }
+
+  Future<void> logout(String refreshToken, String fingerprint) async {
+    try {
+      final response = await dio.post(
+        '/api/Usuario/logout',
+        data: {'refreshToken': refreshToken, 'fingerprint': fingerprint},
+        options: Options(
+          contentType: Headers.jsonContentType,
+          sendTimeout: Duration(milliseconds: 30000),
+          receiveTimeout: Duration(milliseconds: 30000),
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        if (data == null) {
+          throw Exception('Respuesta vacía del servidor');
+        }
+
+        final errorCodigo = data['errorCodigo'];
+        if (errorCodigo != 'OK') {
+          throw Exception(data['errorMensaje'] ?? 'Error desconocido');
+        }
+      } else {
+        throw Exception('Error al cerrar sesión: ${response.statusCode}');
+      }
+    } on DioException {
+      rethrow;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

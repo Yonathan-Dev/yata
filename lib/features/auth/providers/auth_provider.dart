@@ -222,3 +222,10 @@ final loginCodigoOtpProvider = FutureProvider<AuthModel>((ref) async {
     fingerprintState,
   );
 });
+
+final logoutProvider = FutureProvider<void>((ref) async {
+  final repository = ref.watch(authRepositoryProvider);
+  final refreshTokenState = await ref.watch(refreshTokenProvider.future);
+  final fingerprintState = await ref.watch(fingerPrintProvider.future);
+  await repository.logout(refreshTokenState!, fingerprintState);
+});

@@ -9,5 +9,15 @@ final fingerPrintProvider = FutureProvider<String>((ref) async {
 
 final verificationTokenProvider = FutureProvider<String?>((ref) async {
   final token = await secureStorage.read(key: 'verificationToken');
-  return token;
+  return token ?? '';
+});
+
+final refreshTokenProvider = FutureProvider<String?>((ref) async {
+  final token = await secureStorage.read(key: 'refreshToken');
+  return token ?? '';
+});
+
+final accessTokenProvider = FutureProvider<String?>((ref) async {
+  final token = await secureStorage.read(key: 'accessToken');
+  return token ?? '';
 });

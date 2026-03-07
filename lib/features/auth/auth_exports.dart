@@ -6,7 +6,7 @@ export 'presentation/forgot_password_screen.dart';
 export 'presentation/verification_otp_screen.dart';
 // Providers
 export 'providers/auth_provider.dart';
-export 'providers/fingerprint_provider.dart';
+export 'providers/secure_provider.dart';
 export 'providers/pin_provider.dart';
 // Widgets
 export 'widgets/formulario_widget.dart';

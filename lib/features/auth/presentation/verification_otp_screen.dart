@@ -54,7 +54,29 @@ class _VerificationOtpScreenState extends ConsumerState<VerificationOtpScreen> {
 
       ref
           .read(loginCodigoOtpProvider.future)
-          .then((response) {
+          .then((response) async {
+            await secureStorage.write(
+              key: 'accessToken',
+              value: response.accessToken,
+            );
+            await secureStorage.write(
+              key: 'refreshToken',
+              value: response.refreshToken,
+            );
+            await secureStorage.write(
+              key: 'expiresAt',
+              value: response.expiresAt.toIso8601String(),
+            );
+            await secureStorage.write(
+              key: 'tokenType',
+              value: response.tokenType,
+            );
+            if (mounted) {
+              SnackbarUtil.snackbarNotificationPush(
+                context,
+                message: 'Código verificado correctamente',
+              );
+            }
             if (mounted) {
               context.go('/pin');
             }
@@ -193,7 +215,6 @@ class _VerificationOtpScreenState extends ConsumerState<VerificationOtpScreen> {
               const SizedBox(height: 32),
               _buildCodeInputs(context),
               const SizedBox(height: 32),
-              // Botón continuar
               _buildContinuarButton(context),
             ],
           ),

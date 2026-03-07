@@ -58,37 +58,45 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
           ],
         ),
         Expanded(
-          child: Stack(
-            children: [
-              ClipPath(
-                clipper: _TopConvexCurveClipper(),
-                child: Container(
-                  width: double.infinity,
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [Tema.primaryColor, Color(0xFF21002B)],
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final screenSize = MediaQuery.of(context).size;
+              return Stack(
+                children: [
+                  ClipPath(
+                    clipper: ConvexCurveClipper(
+                      screenHeight: screenSize.height,
+                      screenWidth: screenSize.width,
+                    ),
+                    child: Container(
+                      width: double.infinity,
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [Tema.primaryColor, Color(0xFF21002B)],
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-              Align(
-                alignment: Alignment.topCenter,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24.0,
-                    vertical: 16,
-                  ),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [const FormularioWidget()],
+                  Align(
+                    alignment: Alignment.topCenter,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24.0,
+                        vertical: 16,
+                      ),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [const FormularioWidget()],
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-            ],
+                ],
+              );
+            },
           ),
         ),
       ],
@@ -169,21 +177,4 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
       ),
     );
   }
-}
-
-class _TopConvexCurveClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    final path = Path();
-    path.lineTo(0, 80);
-    path.quadraticBezierTo(size.width / 2, -80, size.width, 80);
-    path.lineTo(size.width, 0);
-    path.lineTo(size.width, size.height);
-    path.lineTo(0, size.height);
-    path.close();
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }

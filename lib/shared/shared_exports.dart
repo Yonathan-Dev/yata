@@ -10,6 +10,7 @@ export 'providers/dispositivo_providers.dart';
 export 'providers/shared_providers.dart';
 // Widgets
 export 'widgets/appbar_widget.dart';
+export 'widgets/convex_curve_clipper.dart';
 export 'widgets/error_widget.dart';
 export 'widgets/loading_widget.dart';
 export 'widgets/medios_dialog_widget.dart';

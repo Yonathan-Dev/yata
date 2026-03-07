@@ -234,7 +234,12 @@ class ConfiguracionScreen extends ConsumerWidget {
             onPressed: () async {
               ref
                   .read(logoutProvider.future)
-                  .then((response) {
+                  .then((response) async {
+                    await secureStorage.delete(key: 'accessToken');
+                    await secureStorage.delete(key: 'refreshToken');
+                    await secureStorage.delete(key: 'verificationToken');
+                    await secureStorage.delete(key: 'expiresAt');
+                    await secureStorage.delete(key: 'tokenType');
                     if (!context.mounted) return;
                     context.go('/auth');
                   })

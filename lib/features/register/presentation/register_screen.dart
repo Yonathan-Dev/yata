@@ -211,11 +211,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       child: Center(
         child: Padding(
           padding: const EdgeInsets.only(top: 40),
-          child: Image.asset(
-            'assets/iconos/yata_reco.png',
-            fit: BoxFit.contain,
-            height: 75,
-          ),
+          child: const IconoYataWidget(),
         ),
       ),
     );

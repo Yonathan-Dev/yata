@@ -40,6 +40,7 @@ class Constantes {
   static const double botonHeight = 50;
   static const double botonHeightMedium = 40;
   static const double botonHeightSmall = 30;
+  static const double imagenHeight = 75;
 
   // Duración de animaciones
   static const Duration shortAnimation = Duration(milliseconds: 200);

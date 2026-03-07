@@ -105,11 +105,7 @@ class _VerificationOtpScreenState extends ConsumerState<VerificationOtpScreen> {
       child: Center(
         child: Padding(
           padding: const EdgeInsets.only(top: 40, bottom: 100),
-          child: Image.asset(
-            'assets/iconos/yata_reco.png',
-            fit: BoxFit.contain,
-            height: 75,
-          ),
+          child: const IconoYataWidget(),
         ),
       ),
     );

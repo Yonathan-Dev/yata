@@ -13,6 +13,7 @@ export 'widgets/appbar_widget.dart';
 export 'widgets/error_widget.dart';
 export 'widgets/loading_widget.dart';
 export 'widgets/medios_dialog_widget.dart';
+export 'widgets/icono_yata_widget.dart';
 // Utilities
 export 'utils/image_utils.dart';
 export 'utils/snackbar_util.dart';

@@ -47,25 +47,15 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   Widget _buildContent(BuildContext context) {
     return Column(
       children: [
-        SafeArea(
-          bottom: false,
-          child: Column(
-            children: [
-              const SizedBox(height: Constantes.separacion * 4),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Image.asset(
-                    'assets/iconos/yata_reco.png',
-                    fit: BoxFit.cover,
-                    alignment: Alignment.topCenter,
-                    height: 75,
-                  ),
-                ],
-              ),
-            ],
-          ),
+        Column(
+          children: [
+            const SizedBox(height: Constantes.separacion * 4),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [const IconoYataWidget()],
+            ),
+          ],
         ),
         Expanded(
           child: Stack(

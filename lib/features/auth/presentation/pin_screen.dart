@@ -71,6 +71,19 @@ class _PinScreenState extends ConsumerState<PinScreen> {
                 key: 'tokenType',
                 value: response.tokenType,
               );
+              await secureStorage.write(
+                key: 'userName',
+                value: response.apellidosyNombres,
+              );
+              await secureStorage.write(
+                key: 'userCorreo',
+                value: ref.read(registerProvider).correo,
+              );
+              await secureStorage.write(
+                key: 'pin',
+                value: ref.read(pinProvider),
+              );
+              await secureStorage.write(key: 'biometricEnabled', value: 'true');
 
               if (!mounted) return;
               context.go('/home');

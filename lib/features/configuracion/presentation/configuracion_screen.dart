@@ -312,6 +312,9 @@ class ConfiguracionScreen extends ConsumerWidget {
                               );
                             })
                             .whenComplete(() {
+                              ref
+                                  .read(authProvider.notifier)
+                                  .setLoading(isLoading: false, mensaje: '');
                               ref.read(authProvider.notifier).logout();
                             });
                       },

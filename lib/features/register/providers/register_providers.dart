@@ -307,3 +307,5 @@ final registrarCuentaProvider = FutureProvider<String>((ref) async {
   final fingerprintState = await ref.watch(fingerPrintProvider.future);
   return await repository.registrarCuenta(state, pinState, fingerprintState);
 });
+
+final currentStepProvider = StateProvider<int>((ref) => 0);

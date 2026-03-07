@@ -15,7 +15,6 @@ class RegisterScreen extends ConsumerStatefulWidget {
 }
 
 class _RegisterScreenState extends ConsumerState<RegisterScreen> {
-  int _currentStep = 0;
   bool photoTaken = false;
   XFile? photoFile;
   final PermissionsService _permissionsService = PermissionsService();
@@ -87,7 +86,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       duration: Constantes.standardAnimation,
       child: Column(
         children: [
-          if (_currentStep != 1) ...[
+          if (ref.watch(currentStepProvider) != 1) ...[
             Text(
               'Crear cuenta',
               style: Theme.of(context).textTheme.headlineLarge!.copyWith(
@@ -132,7 +131,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             );
           }
           final stepIndex = index ~/ 2;
-          final isActive = stepIndex <= _currentStep;
+          final isActive = stepIndex <= ref.watch(currentStepProvider);
 
           return Column(
             children: [
@@ -162,7 +161,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   }
 
   Widget _buildFormSection(BuildContext context) {
-    switch (_currentStep) {
+    switch (ref.watch(currentStepProvider)) {
       case 0:
         return _buildStep1DatosPersonales(context);
       case 1:
@@ -176,22 +175,18 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   Widget _buildStep1DatosPersonales(BuildContext context) {
     return Step1DatosPersonalesWidget(
-      currentStep: _currentStep,
+      currentStep: ref.watch(currentStepProvider),
       onStepChanged: (step) {
-        setState(() {
-          _currentStep = step;
-        });
+        ref.read(currentStepProvider.notifier).state = step;
       },
     );
   }
 
   Widget _buildStep2DatosIdentificacion(BuildContext context) {
     return Step2DatosIdentificacionWidget(
-      currentStep: _currentStep,
+      currentStep: ref.watch(currentStepProvider),
       onStepChanged: (step) {
-        setState(() {
-          _currentStep = step;
-        });
+        ref.read(currentStepProvider.notifier).state = step;
       },
     );
   }

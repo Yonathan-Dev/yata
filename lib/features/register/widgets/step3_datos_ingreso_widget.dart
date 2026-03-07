@@ -97,143 +97,137 @@ class _Step3DatosIngresoWidgetState
   Widget build(BuildContext context) {
     return FadeInUp(
       duration: Constantes.standardAnimation,
-      child: Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
+      child: SingleChildScrollView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+        ),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              Container(
+                width: double.infinity,
+                margin: const EdgeInsets.symmetric(horizontal: 40),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Tema.blanco, width: 0.5),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Column(
+                    children: [
+                      _buildTextFieldWhiteBorder(
+                        _correoController,
+                        _correoFocusNode,
+                        hint: 'Correo electrónico:',
+                        isEmail: true,
+                      ),
+                      const SizedBox(height: Constantes.separacion),
+                      _buildTextFieldWhiteBorder(
+                        _confirmaCorreoController,
+                        _confirmaCorreoFocusNode,
+                        hint: 'Confirma tu correo electrónico:',
+                        isEmail: true,
+                      ),
+                      const SizedBox(height: Constantes.separacion),
+                      _buildTextFieldWhiteBorder(
+                        _contrasenaController,
+                        _contrasenaFocusNode,
+                        hint: 'Crea tu contraseña',
+                        isPassword: true,
+                      ),
+                      const SizedBox(height: Constantes.separacion),
+                      _buildTextFieldWhiteBorder(
+                        _confirmaContrasenaController,
+                        _confirmaContrasenaFocusNode,
+                        hint: 'Confirma tu contraseña',
+                        isPassword: true,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: Constantes.separacion * 2),
+              Container(
+                width: double.infinity,
+                margin: const EdgeInsets.symmetric(horizontal: 50),
                 child: Column(
                   children: [
-                    Container(
-                      width: double.infinity,
-                      margin: const EdgeInsets.symmetric(horizontal: 40),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: Tema.blanco, width: 0.5),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: Column(
-                          children: [
-                            _buildTextFieldWhiteBorder(
-                              _correoController,
-                              _correoFocusNode,
-                              hint: 'Correo electrónico:',
-                              isEmail: true,
-                            ),
-                            const SizedBox(height: Constantes.separacion),
-                            _buildTextFieldWhiteBorder(
-                              _confirmaCorreoController,
-                              _confirmaCorreoFocusNode,
-                              hint: 'Confirma tu correo electrónico:',
-                              isEmail: true,
-                            ),
-                            const SizedBox(height: Constantes.separacion),
-                            _buildTextFieldWhiteBorder(
-                              _contrasenaController,
-                              _contrasenaFocusNode,
-                              hint: 'Crea tu contraseña',
-                              isPassword: true,
-                            ),
-                            const SizedBox(height: Constantes.separacion),
-                            _buildTextFieldWhiteBorder(
-                              _confirmaContrasenaController,
-                              _confirmaContrasenaFocusNode,
-                              hint: 'Confirma tu contraseña',
-                              isPassword: true,
-                            ),
-                          ],
-                        ),
-                      ),
+                    _buildCheckboxItem(
+                      value: ref.watch(acceptTermsProvider),
+                      onChanged: (value) {
+                        ref.read(acceptTermsProvider.notifier).state =
+                            value ?? false;
+                      },
+                      text: 'Acepta términos y condiciones',
                     ),
-                    const SizedBox(height: Constantes.separacion * 2),
-                    Container(
-                      width: double.infinity,
-                      margin: const EdgeInsets.symmetric(horizontal: 50),
-                      child: Column(
-                        children: [
-                          _buildCheckboxItem(
-                            value: ref.watch(acceptTermsProvider),
-                            onChanged: (value) {
-                              ref.read(acceptTermsProvider.notifier).state =
-                                  value ?? false;
-                            },
-                            text: 'Acepta términos y condiciones',
-                          ),
-                          const SizedBox(height: 12),
-                          _buildCheckboxItem(
-                            value: ref.watch(acceptDataPolicyProvider),
-                            onChanged: (value) {
-                              ref
-                                      .read(acceptDataPolicyProvider.notifier)
-                                      .state =
-                                  value ?? false;
-                            },
-                            text: 'Aceptar política de uso de datos',
-                          ),
-                          const SizedBox(height: 12),
-                          _buildCheckboxItem(
-                            value: ref.watch(acceptPromotionsProvider),
-                            onChanged: (value) {
-                              ref
-                                      .read(acceptPromotionsProvider.notifier)
-                                      .state =
-                                  value ?? false;
-                            },
-                            text: 'Recibir por correo electrónico promociones',
-                          ),
-                        ],
-                      ),
+                    const SizedBox(height: 12),
+                    _buildCheckboxItem(
+                      value: ref.watch(acceptDataPolicyProvider),
+                      onChanged: (value) {
+                        ref.read(acceptDataPolicyProvider.notifier).state =
+                            value ?? false;
+                      },
+                      text: 'Aceptar política de uso de datos',
                     ),
-                    const SizedBox(height: Constantes.separacion * 2),
+                    const SizedBox(height: 12),
+                    _buildCheckboxItem(
+                      value: ref.watch(acceptPromotionsProvider),
+                      onChanged: (value) {
+                        ref.read(acceptPromotionsProvider.notifier).state =
+                            value ?? false;
+                      },
+                      text: 'Recibir por correo electrónico promociones',
+                    ),
                   ],
                 ),
               ),
-            ),
-            Container(
-              width: double.infinity,
-              height: Constantes.botonHeight,
-              margin: const EdgeInsets.symmetric(horizontal: 50),
-              child: ElevatedButton(
-                onPressed:
-                    (ref.watch(acceptTermsProvider) &&
-                        ref.watch(acceptDataPolicyProvider))
-                    ? _handleSubmit
-                    : null,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Tema.negro,
-                  foregroundColor: Tema.blanco,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+              const SizedBox(height: Constantes.separacion * 2),
+              Container(
+                width: double.infinity,
+                height: Constantes.botonHeight,
+                margin: const EdgeInsets.symmetric(horizontal: 50),
+                child: ElevatedButton(
+                  onPressed:
+                      (ref.watch(acceptTermsProvider) &&
+                          ref.watch(acceptDataPolicyProvider))
+                      ? _handleSubmit
+                      : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Tema.negro,
+                    foregroundColor: Tema.blanco,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    elevation: 0,
                   ),
-                  elevation: 0,
+                  child: Text(
+                    'Crear cuenta',
+                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                      color: Tema.blanco,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18.0,
+                    ),
+                  ),
                 ),
+              ),
+              TextButton(
+                onPressed: () {
+                  // Navegar a login
+                },
                 child: Text(
-                  'Crear cuenta',
-                  style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                  'Ya tienes una cuenta',
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                     color: Tema.blanco,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18.0,
+                    decoration: TextDecoration.underline,
+                    decorationColor: Tema.blanco,
                   ),
                 ),
               ),
-            ),
-            TextButton(
-              onPressed: () {
-                // Navegar a login
-              },
-              child: Text(
-                'Ya tienes una cuenta',
-                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                  color: Tema.blanco,
-                  decoration: TextDecoration.underline,
-                  decorationColor: Tema.blanco,
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-          ],
+              const SizedBox(height: 16),
+            ],
+          ),
         ),
       ),
     );

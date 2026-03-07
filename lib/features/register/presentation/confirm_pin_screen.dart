@@ -34,6 +34,8 @@ class _ConfirmPinScreenState extends ConsumerState<ConfirmPinScreen> {
   void _onCodeChanged(String value, int index) {
     if (value.length == 1 && index < 5) {
       _focusNodes[index + 1].requestFocus();
+    } else if (value.length == 1 && index == 5) {
+      FocusScope.of(context).unfocus();
     }
     if (value.isEmpty && index > 0) {
       _focusNodes[index - 1].requestFocus();

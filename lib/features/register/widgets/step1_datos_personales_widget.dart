@@ -92,117 +92,115 @@ class _Step1DatosPersonalesWidgetState
   Widget build(BuildContext context) {
     return FadeInUp(
       duration: Constantes.standardAnimation,
-      child: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      margin: const EdgeInsets.symmetric(horizontal: 40),
-                      decoration: BoxDecoration(
-                        color: Tema.primaryColor,
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: Tema.blanco, width: 0.5),
+      child: SingleChildScrollView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+        ),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              Container(
+                width: double.infinity,
+                margin: const EdgeInsets.symmetric(horizontal: 40),
+                decoration: BoxDecoration(
+                  color: Tema.primaryColor,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Tema.blanco, width: 0.5),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Column(
+                    children: [
+                      _buildDropdown(
+                        'Tipo de persona',
+                        {'Natural': 1, 'Jurídica': 2},
+                        valorSeleccionado: _tipoPersona,
+                        onChanged: (value) => ref
+                            .read(registerProvider.notifier)
+                            .setTipoPersona(value ?? 0),
                       ),
-                      child: SingleChildScrollView(
-                        padding: const EdgeInsets.all(10),
-                        child: Column(
-                          children: [
-                            _buildDropdown(
-                              'Tipo de persona',
-                              {'Natural': 1, 'Jurídica': 2},
-                              valorSeleccionado: _tipoPersona,
-                              onChanged: (value) => ref
-                                  .read(registerProvider.notifier)
-                                  .setTipoPersona(value ?? 0),
-                            ),
-                            const SizedBox(height: Constantes.separacion),
-                            _buildDropdown(
-                              'Tipo de documento',
-                              {'DNI': 1, 'CE': 2, 'Pasaporte': 3},
-                              valorSeleccionado: _tipoDocumento,
-                              onChanged: (value) => ref
-                                  .read(registerProvider.notifier)
-                                  .setTipoDocumento(value ?? 0),
-                            ),
-                            const SizedBox(height: Constantes.separacion),
-                            _buildTextField(
-                              hint: 'Nro documento',
-                              _numeroDocumentoController,
-                              _numeroDocumentoFocus,
-                              isDNI:
-                                  ref.watch(
-                                    registerProvider.select(
-                                      (state) => state.tipoDocumento,
-                                    ),
-                                  ) ==
-                                  1,
-                            ),
-                            const SizedBox(height: Constantes.separacion),
-                            _buildTextField(
-                              hint: 'Apellido paterno',
-                              _primerApellidoController,
-                              _primerApellidoFocus,
-                            ),
-                            const SizedBox(height: Constantes.separacion),
-                            _buildTextField(
-                              hint: 'Apellido materno',
-                              _segundoApellidoController,
-                              _segundoApellidoFocus,
-                            ),
-                            const SizedBox(height: Constantes.separacion),
-                            _buildTextField(
-                              hint: 'Nombres',
-                              _nombresController,
-                              _nombresFocus,
-                            ),
-                            const SizedBox(height: Constantes.separacion),
-                            _buildDatePicker(
-                              hint: 'Fecha de nacimiento',
-                              _fechaNacimientoController,
-                              _fechaNacimientoFocus,
-                            ),
-                            const SizedBox(height: Constantes.separacion),
-                            _buildDropdown(
-                              'Sexo',
-                              {'Masculino': true, 'Femenino': false},
-                              valorSeleccionado: _sexo,
-                              onChanged: (value) => ref
-                                  .read(registerProvider.notifier)
-                                  .setSexo(value ?? true),
-                            ),
-                            const SizedBox(height: Constantes.separacion),
-                            _buildTextField(
-                              hint: 'Celular',
-                              _celularController,
-                              _celularFocus,
-                              isCelular: true,
-                            ),
-                            const SizedBox(height: Constantes.separacion),
-                            _buildTextField(
-                              hint: 'Contacto',
-                              _contactoController,
-                              _contactoFocus,
-                              isCelular: true,
-                            ),
-                          ],
-                        ),
+                      const SizedBox(height: Constantes.separacion),
+                      _buildDropdown(
+                        'Tipo de documento',
+                        {'DNI': 1, 'CE': 2, 'Pasaporte': 3},
+                        valorSeleccionado: _tipoDocumento,
+                        onChanged: (value) => ref
+                            .read(registerProvider.notifier)
+                            .setTipoDocumento(value ?? 0),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: Constantes.separacion),
+                      _buildTextField(
+                        hint: 'Nro documento',
+                        _numeroDocumentoController,
+                        _numeroDocumentoFocus,
+                        isDNI:
+                            ref.watch(
+                              registerProvider.select(
+                                (state) => state.tipoDocumento,
+                              ),
+                            ) ==
+                            1,
+                      ),
+                      const SizedBox(height: Constantes.separacion),
+                      _buildTextField(
+                        hint: 'Apellido paterno',
+                        _primerApellidoController,
+                        _primerApellidoFocus,
+                      ),
+                      const SizedBox(height: Constantes.separacion),
+                      _buildTextField(
+                        hint: 'Apellido materno',
+                        _segundoApellidoController,
+                        _segundoApellidoFocus,
+                      ),
+                      const SizedBox(height: Constantes.separacion),
+                      _buildTextField(
+                        hint: 'Nombres',
+                        _nombresController,
+                        _nombresFocus,
+                      ),
+                      const SizedBox(height: Constantes.separacion),
+                      _buildDatePicker(
+                        hint: 'Fecha de nacimiento',
+                        _fechaNacimientoController,
+                        _fechaNacimientoFocus,
+                      ),
+                      const SizedBox(height: Constantes.separacion),
+                      _buildDropdown(
+                        'Sexo',
+                        {'Masculino': true, 'Femenino': false},
+                        valorSeleccionado: _sexo,
+                        onChanged: (value) => ref
+                            .read(registerProvider.notifier)
+                            .setSexo(value ?? true),
+                      ),
+                      const SizedBox(height: Constantes.separacion),
+                      _buildTextField(
+                        hint: 'Celular',
+                        _celularController,
+                        _celularFocus,
+                        isCelular: true,
+                      ),
+                      const SizedBox(height: Constantes.separacion),
+                      _buildTextField(
+                        hint: 'Contacto',
+                        _contactoController,
+                        _contactoFocus,
+                        isCelular: true,
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
+              // Botón siempre al fondo
+              const SizedBox(height: Constantes.separacionFormulario),
+              _buildContinueButton(context),
+              const SizedBox(height: Constantes.separacionFormulario * 2),
+            ],
           ),
-          // Botón siempre al fondo
-          const SizedBox(height: Constantes.separacionFormulario),
-          _buildContinueButton(context),
-          const SizedBox(height: Constantes.separacionFormulario * 2),
-        ],
+        ),
       ),
     );
   }
@@ -370,11 +368,9 @@ class _Step1DatosPersonalesWidgetState
           lastDate: DateTime.now().subtract(const Duration(days: 365 * 18)),
         );
 
-        if (pickedDate != null) {
-          String formattedDate =
-              '${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}';
-          controller?.text = formattedDate;
-        }
+        String formattedDate =
+            '${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}';
+        controller?.text = formattedDate;
       },
       validator: (value) {
         return ref.read(registerProvider.notifier).validarCampo(value!, hint);

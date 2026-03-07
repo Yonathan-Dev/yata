@@ -30,7 +30,6 @@ class _Step2DatosIdentificacionWidgetState
             child: SingleChildScrollView(
               child: Container(
                 width: double.infinity,
-                color: Tema.primaryColor,
                 margin: const EdgeInsets.symmetric(horizontal: 40),
                 padding: const EdgeInsets.all(24),
                 child: Column(

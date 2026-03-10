@@ -369,7 +369,7 @@ class _Step1DatosPersonalesWidgetState
         );
 
         String formattedDate =
-            '${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}';
+            '${pickedDate?.year}-${pickedDate?.month.toString().padLeft(2, '0')}-${pickedDate?.day.toString().padLeft(2, '0')}';
         controller?.text = formattedDate;
       },
       validator: (value) {

@@ -316,8 +316,8 @@ class _FormularioWidgetState extends ConsumerState<FormularioWidget> {
 
   Widget _buildCreateAccountSection(BuildContext context) {
     return Center(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: Wrap(
+        alignment: WrapAlignment.center,
         children: [
           Text(
             '¿Aún no tienes una cuenta? ',

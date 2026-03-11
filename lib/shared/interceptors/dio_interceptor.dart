@@ -63,6 +63,7 @@ class DioInterceptor extends Interceptor {
 
         // Intentar extraer el mensaje de error de campos comunes
         errorMessage =
+            responseData['errorMensaje'] ??
             responseData['message'] ??
             responseData['error'] ??
             responseData['vDesc'] ??

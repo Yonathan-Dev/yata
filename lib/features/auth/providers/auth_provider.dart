@@ -220,3 +220,13 @@ final logoutProvider = FutureProvider<void>((ref) async {
   final fingerprintState = await ref.watch(fingerPrintProvider.future);
   await repository.logout(refreshTokenState!, fingerprintState);
 });
+
+final restaurarClaveProvider = FutureProvider<String>((ref) async {
+  final repository = ref.watch(authRepositoryProvider);
+  final state = ref.watch(registerProvider);
+  return await repository.restaurarClave(
+    state.correo,
+    state.numeroDocumento,
+    state.correo,
+  );
+});

@@ -46,4 +46,12 @@ class AuthRepository {
   Future<void> logout(String refreshToken, String fingerprint) async {
     await dataSource.logout(refreshToken, fingerprint);
   }
+
+  Future<String> restaurarClave(
+    String correo,
+    String numeroDocumento,
+    String login,
+  ) async {
+    return await dataSource.restaurarClave(login, numeroDocumento, correo);
+  }
 }

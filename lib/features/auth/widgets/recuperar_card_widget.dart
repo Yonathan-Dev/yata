@@ -3,15 +3,20 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import '../../../core/app_exports.dart';
 
-class EmailCardWidget extends StatelessWidget {
+class RecuperarCardWidget extends StatelessWidget {
+  final TextEditingController loginController;
+  final TextEditingController numeroDocumentoController;
   final TextEditingController emailController;
+
   final VoidCallback onBack;
   final VoidCallback onContinue;
   final Widget Function(BuildContext, {required VoidCallback onPressed})
   buildContinuarButton;
 
-  const EmailCardWidget({
+  const RecuperarCardWidget({
     super.key,
+    required this.loginController,
+    required this.numeroDocumentoController,
     required this.emailController,
     required this.onBack,
     required this.onContinue,
@@ -56,7 +61,7 @@ class EmailCardWidget extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Text(
-              'Ingresa tu correo electrónico para enviarte un código de verificación',
+              'Ingresa tus datos para recibir una contraseña temporal',
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                 color: Tema.negro,
@@ -65,7 +70,41 @@ class EmailCardWidget extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: Constantes.separacionFormulario),
+            TextField(
+              controller: loginController,
+              keyboardType: TextInputType.emailAddress,
+              decoration: InputDecoration(
+                hintText: 'Logín',
+                filled: true,
+                fillColor: const Color(0xFFF5F5F5),
+                prefixIcon: const Icon(Icons.person_outline, color: Tema.gris),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+                counterText: '',
+              ),
+              maxLength: 35,
+            ),
+            const SizedBox(height: Constantes.separacionFormulario),
+            TextField(
+              controller: numeroDocumentoController,
+              keyboardType: TextInputType.text,
+              decoration: InputDecoration(
+                hintText: 'Número documento',
+                filled: true,
+                fillColor: const Color(0xFFF5F5F5),
+                prefixIcon: const Icon(Icons.badge_outlined, color: Tema.gris),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+                counterText: '',
+              ),
+              maxLength: 15,
+            ),
+            const SizedBox(height: Constantes.separacionFormulario),
             TextField(
               controller: emailController,
               keyboardType: TextInputType.emailAddress,
@@ -78,7 +117,9 @@ class EmailCardWidget extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide.none,
                 ),
+                counterText: '',
               ),
+              maxLength: 35,
             ),
             const SizedBox(height: 24),
             buildContinuarButton(context, onPressed: onContinue),

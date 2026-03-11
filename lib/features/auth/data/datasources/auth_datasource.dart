@@ -191,4 +191,59 @@ class AuthDataSource {
       rethrow;
     }
   }
+
+  Future<String> restaurarClave(
+    String login,
+    String numeroDocumento,
+    String email,
+  ) async {
+    try {
+      final response = await dio.post(
+        '/api/Usuario/restaurarClave',
+        data: {
+          'login': login,
+          'numeroDocumento': numeroDocumento,
+          'email': email,
+        },
+        options: Options(
+          contentType: Headers.jsonContentType,
+          sendTimeout: Duration(milliseconds: 30000),
+          receiveTimeout: Duration(milliseconds: 30000),
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        if (data == null) {
+          return 'Respuesta vacía del servidor';
+        }
+
+        final errorCodigo = data['errorCodigo'];
+        final errorMensaje = data['errorMensaje'] ?? 'Error desconocido';
+        if (errorCodigo != 'OK') {
+          return errorMensaje;
+        }
+        return errorMensaje;
+      } else {
+        final data = response.data;
+        if (data != null && data['errorMensaje'] != null) {
+          return data['errorMensaje'];
+        } else {
+          return 'Error al solicitar código de recuperación: ${response.statusCode}';
+        }
+      }
+    } on DioException catch (e) {
+      final responseData = e.response?.data;
+      if (responseData != null && responseData is Map<String, dynamic>) {
+        final errorMensaje = responseData['errorMensaje'];
+        if (errorMensaje != null) {
+          return errorMensaje;
+        }
+      }
+      return 'Error en la solicitud: ${e.message}';
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

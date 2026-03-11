@@ -370,7 +370,10 @@ class _Step1DatosPersonalesWidgetState
 
         String formattedDate =
             '${pickedDate?.year}-${pickedDate?.month.toString().padLeft(2, '0')}-${pickedDate?.day.toString().padLeft(2, '0')}';
-        controller?.text = formattedDate;
+
+        pickedDate != null
+            ? controller?.text = formattedDate
+            : controller?.text = '';
       },
       validator: (value) {
         return ref.read(registerProvider.notifier).validarCampo(value!, hint);

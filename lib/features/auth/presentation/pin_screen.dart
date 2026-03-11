@@ -250,7 +250,6 @@ class _PinScreenState extends ConsumerState<PinScreen> {
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
         child: Stack(
           children: [
-            // QR centrado
             Center(
               child: QrImageView(
                 data: 'yata-payment-user-id-123456',
@@ -335,7 +334,7 @@ class _PinScreenState extends ConsumerState<PinScreen> {
             _buildPinIndicators(),
             Expanded(child: _buildNumericKeyboard(context)),
             _buildForgotButton(context),
-            const SizedBox(height: 20),
+            const SizedBox(height: 35),
           ],
         ),
       ),

@@ -99,7 +99,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
       loginController: _loginController,
       numeroDocumentoController: _numeroDocumentoController,
       emailController: _emailController,
-      onBack: () => context.pop(),
+      onBack: () => context.go('/auth'),
       onContinue: () {
         if (_loginController.text.isEmpty) {
           SnackbarUtil.snackbarNotificationPush(

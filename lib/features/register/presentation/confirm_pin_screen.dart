@@ -72,9 +72,11 @@ class _ConfirmPinScreenState extends ConsumerState<ConfirmPinScreen> {
 
     ref
         .read(registrarCuentaProvider.future)
-        .then((response) {
+        .then((response) async {
           ref.read(registerProvider.notifier).setIsLoading(false);
           if (response == 'OK') {
+            await secureStorage.write(key: 'flagRegistrado', value: 'true');
+
             if (!mounted) return;
             SnackbarUtil.snackbarNotificationPush(
               context,

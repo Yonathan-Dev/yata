@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/constantes.dart';
 import '../../../core/tema.dart';
+import '../../../core/secure.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../../shared/providers/shared_providers.dart';
 
@@ -57,25 +58,26 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
     if (!mounted) return;
 
-    // Verificar el estado de autenticación
     final authState = ref.read(authProvider);
 
-    // Esperar un momento adicional si aún está cargando
     if (authState.isLoading) {
       await Future.delayed(const Duration(milliseconds: 500));
       if (!mounted) return;
     }
 
-    // Marcar que ya vio el splash en SharedPreferences
     final prefsService = ref.read(preferencesServiceProvider);
     await prefsService.setHasSeenSplash(true);
 
-    // Navegar según el estado de autenticación
+    final flagRegistrado = await secureStorage.read(key: 'flagRegistrado');
+    final isRegistered = flagRegistrado == 'true';
+
     final isAuthenticated = ref.read(authProvider).isAuthenticated;
 
     if (!mounted) return;
     if (isAuthenticated) {
       context.go('/home');
+    } else if (isRegistered) {
+      context.go('/pin');
     } else {
       context.go('/auth');
     }

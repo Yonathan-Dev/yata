@@ -73,12 +73,12 @@ class _VerificationOtpScreenState extends ConsumerState<VerificationOtpScreen> {
               key: 'tokenType',
               value: response.tokenType,
             );
-            if (mounted) {
-              SnackbarUtil.snackbarNotificationPush(
-                context,
-                message: 'Código verificado correctamente',
-              );
-            }
+            if (!mounted) return;
+            SnackbarUtil.snackbarNotificationPush(
+              context,
+              message: 'Código verificado correctamente',
+            );
+
             if (mounted) {
               context.go('/pin');
             }
@@ -194,7 +194,6 @@ class _VerificationOtpScreenState extends ConsumerState<VerificationOtpScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Título
               Text(
                 'Revisa tu correo',
                 style: Theme.of(context).textTheme.headlineMedium!.copyWith(
@@ -203,7 +202,6 @@ class _VerificationOtpScreenState extends ConsumerState<VerificationOtpScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-              // Descripción
               Text(
                 'Ingresa el código de verificación que hemos enviado a tu correo, sino lo encuentras revisa tu bandeja de spam.',
                 textAlign: TextAlign.center,

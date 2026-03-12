@@ -44,7 +44,7 @@ class RegisterState {
     this.confirmaCorreo = '',
     this.contrasena = '',
     this.confirmaContrasena = '',
-    this.pcIp = '',
+    this.pcIp = '0.0.0.0',
     this.error = '',
     this.isLoading = false,
     this.mensaje = '',

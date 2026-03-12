@@ -48,6 +48,13 @@ class _VerifyCodeScreenState extends ConsumerState<VerifyCodeScreen> {
 
   void _handleContinuar() {
     final code = _fullCode;
+    if (code.length != 6) {
+      SnackbarUtil.snackbarNotificationPush(
+        context,
+        message: 'Por favor ingresa un código de 6 dígitos',
+      );
+      return;
+    }
     if (code.length == 6) {
       ref.read(verifyCodeProvider.notifier).setIsLoading(true);
       ref.read(verifyCodeProvider.notifier).setMensaje('Verificando código...');
@@ -56,24 +63,17 @@ class _VerifyCodeScreenState extends ConsumerState<VerifyCodeScreen> {
       ref
           .read(enviarCodigoOTPProvider.future)
           .then((response) {
-            if (mounted) {
-              SnackbarUtil.snackbarSuccess(context, message: response);
-              context.push('/create-pin');
-            }
+            if (!mounted) return;
+            SnackbarUtil.snackbarNotificationPush(context, message: response);
+            context.push('/create-pin');
           })
           .catchError((error) {
-            if (mounted) {
-              SnackbarUtil.snackbarError(context, message: error.toString());
-            }
+            if (!mounted) return;
+            SnackbarUtil.snackbarError(context, message: error.toString());
           })
           .whenComplete(() {
             ref.read(verifyCodeProvider.notifier).resetEstado();
           });
-    } else {
-      SnackbarUtil.snackbarNotificationPush(
-        context,
-        message: 'Por favor ingresa los 6 dígitos',
-      );
     }
   }
 
@@ -192,7 +192,6 @@ class _VerifyCodeScreenState extends ConsumerState<VerifyCodeScreen> {
               const SizedBox(height: 32),
               _buildCodeInputs(context),
               const SizedBox(height: 32),
-              // Botón continuar
               _buildContinuarButton(context),
             ],
           ),
@@ -272,7 +271,6 @@ class _VerifyCodeScreenState extends ConsumerState<VerifyCodeScreen> {
               borderRadius: BorderRadius.circular(10),
             ),
           ),
-          // Botón transparente encima
           Positioned.fill(
             child: ElevatedButton(
               onPressed: _handleContinuar,

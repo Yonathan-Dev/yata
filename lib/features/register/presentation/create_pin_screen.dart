@@ -48,14 +48,16 @@ class _CreatePinScreenState extends ConsumerState<CreatePinScreen> {
 
   void _handleContinuar() {
     final code = _fullCode;
+    if (code.length < 6) {
+      SnackbarUtil.snackbarNotificationPush(
+        context,
+        message: 'Por favor, ingresa una clave de 6 dígitos',
+      );
+      return;
+    }
     if (code.length == 6) {
       ref.read(registerPinProvider.notifier).setPin(code);
       context.push('/confirm-pin');
-    } else {
-      SnackbarUtil.snackbarError(
-        context,
-        message: 'Por favor ingresa tu contraseña de 6 dígitos',
-      );
     }
   }
 

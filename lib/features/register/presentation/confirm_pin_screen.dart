@@ -48,59 +48,58 @@ class _ConfirmPinScreenState extends ConsumerState<ConfirmPinScreen> {
 
   void _handleContinuar() {
     final code = _fullCode;
-    if (code.length == 6) {
-      ref.read(registerPinProvider.notifier).setConfirmPin(code);
-      if (ref.read(registerPinProvider.notifier).validarPin() == true) {
-        ref.read(registerProvider.notifier).setIsLoading(true);
-        ref
-            .read(registerProvider.notifier)
-            .setMensaje('Registrando tu cuenta...');
 
-        ref
-            .read(registrarCuentaProvider.future)
-            .then((response) {
-              ref.read(registerProvider.notifier).setIsLoading(false);
-              if (response == 'OK') {
-                if (mounted) {
-                  SnackbarUtil.snackbarSuccess(
-                    context,
-                    message: 'Cuenta registrada exitosamente',
-                  );
-                  context.go('/pin');
-                }
-              } else {
-                if (mounted) {
-                  SnackbarUtil.snackbarError(
-                    context,
-                    message: 'Error al registrar la cuenta: $response',
-                  );
-                }
-              }
-            })
-            .catchError((error) {
-              if (mounted) {
-                SnackbarUtil.snackbarError(
-                  context,
-                  message: 'Error al registrar la cuenta: ${error.toString()}',
-                );
-              }
-            })
-            .whenComplete(() {
-              ref.read(registerProvider.notifier).setIsLoading(false);
-              ref.read(registerProvider.notifier).setMensaje('');
-            });
-      } else {
-        SnackbarUtil.snackbarNotificationPush(
-          context,
-          message: 'Los PIN no coinciden, por favor intenta de nuevo',
-        );
-      }
-    } else {
-      SnackbarUtil.snackbarError(
+    if (code.length < 6) {
+      SnackbarUtil.snackbarNotificationPush(
         context,
-        message: 'Por favor ingresa tu PIN de 6 dígitos',
+        message: 'Por favor, ingresa una clave de 6 dígitos',
       );
+      return;
     }
+
+    ref.read(registerPinProvider.notifier).setConfirmPin(code);
+
+    if (ref.read(registerPinProvider.notifier).validarPin() == false) {
+      SnackbarUtil.snackbarNotificationPush(
+        context,
+        message: 'Las claves no coinciden, por favor intenta de nuevo',
+      );
+      return;
+    }
+
+    ref.read(registerProvider.notifier).setIsLoading(true);
+    ref.read(registerProvider.notifier).setMensaje('Registrando tu cuenta...');
+
+    ref
+        .read(registrarCuentaProvider.future)
+        .then((response) {
+          ref.read(registerProvider.notifier).setIsLoading(false);
+          if (response == 'OK') {
+            if (!mounted) return;
+            SnackbarUtil.snackbarNotificationPush(
+              context,
+              message: 'Cuenta registrada exitosamente',
+            );
+            context.go('/pin');
+          } else {
+            if (!mounted) return;
+            SnackbarUtil.snackbarError(
+              context,
+              message: 'Error al registrar la cuenta: $response',
+            );
+          }
+        })
+        .catchError((error) {
+          if (!mounted) return;
+          SnackbarUtil.snackbarError(
+            context,
+            message: 'Error al registrar la cuenta: ${error.toString()}',
+          );
+        })
+        .whenComplete(() {
+          ref.read(registerProvider.notifier).setIsLoading(false);
+          ref.read(registerProvider.notifier).setMensaje('');
+        });
   }
 
   @override

@@ -172,7 +172,9 @@ class SnackbarUtil {
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(Constantes.borderRadius),
+          side: BorderSide(color: Tema.blanco.withValues(alpha: 0.5), width: 1),
         ),
+
         margin: EdgeInsets.only(
           left: Constantes.padding,
           right: Constantes.padding,

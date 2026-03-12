@@ -176,8 +176,7 @@ class SnackbarUtil {
         margin: EdgeInsets.only(
           left: Constantes.padding,
           right: Constantes.padding,
-          top: Constantes.padding,
-          bottom: MediaQuery.of(context).size.height - 200,
+          bottom: Constantes.padding,
         ),
         duration: duration,
       ),

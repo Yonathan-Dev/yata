@@ -41,6 +41,11 @@ class _Step3DatosIngresoWidgetState
   String? _handleSubmit() {
     if (_formKey.currentState!.validate()) {
       ref.read(registerProvider.notifier).setIsLoading(true);
+      ref.read(registerProvider.notifier).setMensaje('Enviando OTP...');
+      _correoFocusNode.unfocus();
+      _confirmaCorreoFocusNode.unfocus();
+      _contrasenaFocusNode.unfocus();
+      _confirmaContrasenaFocusNode.unfocus();
       ref
           .read(registerProvider.notifier)
           .setCorreo(_correoController.text.trim());
@@ -74,15 +79,13 @@ class _Step3DatosIngresoWidgetState
       ref
           .read(enviarOTPProvider.future)
           .then((response) {
-            if (mounted) {
-              SnackbarUtil.snackbarNotificationPush(context, message: response);
-              context.push('/verify-code');
-            }
+            if (!mounted) return;
+            SnackbarUtil.snackbarNotificationPush(context, message: response);
+            context.push('/verify-code');
           })
           .catchError((error) {
-            if (mounted) {
-              SnackbarUtil.snackbarError(context, message: error.toString());
-            }
+            if (!mounted) return;
+            SnackbarUtil.snackbarError(context, message: error.toString());
           })
           .whenComplete(() {
             if (mounted) {

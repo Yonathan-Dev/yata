@@ -14,16 +14,72 @@ class ForgotPasswordScreen extends ConsumerStatefulWidget {
 }
 
 class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
+  int _currentStep = 0;
   final _emailController = TextEditingController();
   final _numeroDocumentoController = TextEditingController();
   final _loginController = TextEditingController();
 
+  final List<TextEditingController> _codeControllers = List.generate(
+    4,
+    (_) => TextEditingController(),
+  );
+  final List<TextEditingController> _pinControllers = List.generate(
+    4,
+    (_) => TextEditingController(),
+  );
+  final List<TextEditingController> _confirmPinControllers = List.generate(
+    4,
+    (_) => TextEditingController(),
+  );
+  final List<FocusNode> _codeFocusNodes = List.generate(4, (_) => FocusNode());
+  final List<FocusNode> _pinFocusNodes = List.generate(4, (_) => FocusNode());
+  final List<FocusNode> _confirmPinFocusNodes = List.generate(
+    4,
+    (_) => FocusNode(),
+  );
+
   @override
   void dispose() {
     _emailController.dispose();
-    _numeroDocumentoController.dispose();
-    _loginController.dispose();
+    for (final c in _codeControllers) {
+      c.dispose();
+    }
+    for (final c in _pinControllers) {
+      c.dispose();
+    }
+    for (final c in _confirmPinControllers) {
+      c.dispose();
+    }
+    for (final n in _codeFocusNodes) {
+      n.dispose();
+    }
+    for (final n in _pinFocusNodes) {
+      n.dispose();
+    }
+    for (final n in _confirmPinFocusNodes) {
+      n.dispose();
+    }
     super.dispose();
+  }
+
+  void _nextStep() {
+    if (_currentStep < 3) {
+      setState(() {
+        _currentStep++;
+      });
+    } else {
+      context.go('/pin');
+    }
+  }
+
+  void _previousStep() {
+    if (_currentStep > 0) {
+      setState(() {
+        _currentStep--;
+      });
+    } else {
+      context.pop();
+    }
   }
 
   @override
@@ -32,13 +88,14 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
       bottom: false,
       child: Scaffold(
         backgroundColor: Tema.blanco,
-        body: Column(
-          children: [
-            // Logo superior
-            SafeArea(bottom: false, child: _buildLogoSection(context)),
-            // Contenido con pasos
-            Expanded(child: _buildVioletSection(context)),
-          ],
+        resizeToAvoidBottomInset: true,
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              SafeArea(bottom: false, child: _buildLogoSection(context)),
+              _buildVioletSection(context),
+            ],
+          ),
         ),
       ),
     );
@@ -58,31 +115,49 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
 
   Widget _buildVioletSection(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        ClipPath(
-          clipper: ConvexCurveClipper(
-            screenHeight: screenSize.height,
-            screenWidth: screenSize.width,
+    return SizedBox(
+      height: screenSize.height * 0.75,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          ClipPath(
+            clipper: ConvexCurveClipper(
+              screenHeight: screenSize.height,
+              screenWidth: screenSize.width,
+            ),
+            child: Container(width: double.infinity, color: Tema.primaryColor),
           ),
-          child: Container(width: double.infinity, color: Tema.primaryColor),
-        ),
-        Positioned(
-          top: -50,
-          left: 24,
-          right: 24,
-          child: Column(
-            children: [
-              _buildRecuperarCard(context),
-              const SizedBox(height: 24),
-              _buildRobotSection(context),
-            ],
+          Positioned(
+            top: -50,
+            left: 24,
+            right: 24,
+            child: Column(
+              children: [
+                _buildCurrentStepCard(context),
+                const SizedBox(height: 24),
+                _buildRobotSection(context),
+              ],
+            ),
           ),
-        ),
-        _buildLoadingIndicator(context),
-      ],
+          _buildLoadingIndicator(context),
+        ],
+      ),
     );
+  }
+
+  Widget _buildCurrentStepCard(BuildContext context) {
+    switch (_currentStep) {
+      case 0:
+        return _buildRecuperarCard(context);
+      case 1:
+        return _buildVerifyCodeCard(context);
+      case 2:
+        return _buildCreatePinCard(context);
+      case 3:
+        return _buildConfirmPinCard(context);
+      default:
+        return _buildRecuperarCard(context);
+    }
   }
 
   Widget _buildLoadingIndicator(BuildContext context) {
@@ -94,6 +169,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
     return const SizedBox.shrink();
   }
 
+  // PASO 1: Ingresar correo
   Widget _buildRecuperarCard(BuildContext context) {
     return RecuperarCardWidget(
       loginController: _loginController,
@@ -174,6 +250,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
       ref.read(authProvider.notifier).setLoading(isLoading: false, mensaje: '');
       SnackbarUtil.snackbarNotificationPush(context, message: response);
       context.go('/auth');
+      //_nextStep();
     } catch (error) {
       if (!mounted) return;
       ref.read(authProvider.notifier).setLoading(isLoading: false, mensaje: '');
@@ -182,6 +259,40 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
         message: error.toString().replaceAll('Exception: ', ''),
       );
     }
+  }
+
+  // PASO 2: Verificar código
+  Widget _buildVerifyCodeCard(BuildContext context) {
+    return VerifyCodeCardWidget(
+      codeControllers: _codeControllers,
+      codeFocusNodes: _codeFocusNodes,
+      onBack: _previousStep,
+      onContinue: _nextStep,
+      buildContinuarButton: _buildContinuarButton,
+    );
+  }
+
+  // PASO 3: Crear PIN
+  Widget _buildCreatePinCard(BuildContext context) {
+    return CreatePinCardWidget(
+      codeControllers: _pinControllers,
+      codeFocusNodes: _pinFocusNodes,
+      onBack: _previousStep,
+      onContinue: _nextStep,
+      buildContinuarButton: _buildContinuarButton,
+    );
+  }
+
+  // PASO 4: Confirmar PIN
+  Widget _buildConfirmPinCard(BuildContext context) {
+    return ConfirmPinCardWidget(
+      pinControllers: _pinControllers,
+      confirmPinControllers: _confirmPinControllers,
+      confirmPinFocusNodes: _confirmPinFocusNodes,
+      onBack: _previousStep,
+      onContinue: _nextStep,
+      buildContinuarButton: _buildContinuarButton,
+    );
   }
 
   Widget _buildContinuarButton(
@@ -193,7 +304,6 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
       height: Constantes.botonHeightMedium,
       child: Stack(
         children: [
-          // Fondo con gradiente
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -204,7 +314,6 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
               borderRadius: BorderRadius.circular(10),
             ),
           ),
-          // Botón transparente encima
           Positioned.fill(
             child: ElevatedButton(
               onPressed: onPressed,

@@ -35,13 +35,6 @@ class _FormularioWidgetState extends ConsumerState<FormularioWidget> {
   void _handleLogin() {
     if (_formLoginKey.currentState!.validate()) {
       ref
-          .read(registerProvider.notifier)
-          .setCorreo(_usuarioController.text.trim());
-      ref
-          .read(registerProvider.notifier)
-          .setContrasena(_passwordController.text.trim());
-
-      ref
           .read(authProvider.notifier)
           .setLoading(isLoading: true, mensaje: 'Iniciando sesión...');
       () async {
@@ -50,6 +43,13 @@ class _FormularioWidgetState extends ConsumerState<FormularioWidget> {
               await secureStorage.read(key: 'passwordTemporary') ?? '';
 
           final response = await ref.read(loginCorreoProvider.future);
+
+          ref.read(authProvider.notifier).setIdUsuario(response.idUsuario);
+          ref.read(authProvider.notifier).setLogin(response.login);
+          ref
+              .read(authProvider.notifier)
+              .setPassword(_passwordController.text.trim());
+
           if (response.requiereVerificacion) {
             if (!mounted) return;
             SnackbarUtil.snackbarNotificationPush(

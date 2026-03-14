@@ -6,6 +6,9 @@ import '../../../shared/shared_exports.dart';
 
 // Estado de autenticación
 class AuthState {
+  final int idUsuario;
+  final String login;
+  final String password;
   final bool isAuthenticated;
   final bool isLoading;
   final String? error;
@@ -13,6 +16,9 @@ class AuthState {
   final User? user;
 
   const AuthState({
+    this.idUsuario = 0,
+    this.login = '',
+    this.password = '',
     this.isAuthenticated = false,
     this.isLoading = false,
     this.error,
@@ -21,6 +27,9 @@ class AuthState {
   });
 
   AuthState copyWith({
+    int? idUsuario,
+    String? login,
+    String? password,
     bool? isAuthenticated,
     bool? isLoading,
     String? error,
@@ -28,6 +37,9 @@ class AuthState {
     User? user,
   }) {
     return AuthState(
+      idUsuario: idUsuario ?? this.idUsuario,
+      login: login ?? this.login,
+      password: password ?? this.password,
       isAuthenticated: isAuthenticated ?? this.isAuthenticated,
       isLoading: isLoading ?? this.isLoading,
       error: error,
@@ -44,6 +56,18 @@ class AuthNotifier extends Notifier<AuthState> {
     // Ejecutar la verificación después de que el estado se inicialice
     Future.microtask(() => _checkAuthStatus());
     return const AuthState();
+  }
+
+  setIdUsuario(int value) {
+    state = state.copyWith(idUsuario: value);
+  }
+
+  setLogin(String value) {
+    state = state.copyWith(login: value);
+  }
+
+  setPassword(String value) {
+    state = state.copyWith(password: value);
   }
 
   // Verificar el estado de autenticación al inicializar
@@ -142,6 +166,10 @@ class AuthNotifier extends Notifier<AuthState> {
     }
   }
 
+  void resetearEstado() {
+    state = const AuthState();
+  }
+
   // Establecer estado de carga
   void setLoading({required bool isLoading, String mensaje = ''}) {
     state = state.copyWith(isLoading: isLoading, mensaje: mensaje);
@@ -228,7 +256,3 @@ final restaurarClaveProvider = FutureProvider<String>((ref) async {
     state.correo,
   );
 });
-
-final obscureCurrentPasswordProvider = StateProvider<bool>((ref) => true);
-final obscureNewPasswordProvider = StateProvider<bool>((ref) => true);
-final obscureConfirmPasswordProvider = StateProvider<bool>((ref) => true);

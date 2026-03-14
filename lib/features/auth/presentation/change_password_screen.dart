@@ -2,6 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/app_exports.dart';
 import '../../../shared/shared_exports.dart';
 
@@ -15,7 +16,7 @@ class ChangePasswordScreen extends ConsumerStatefulWidget {
 
 class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _currentPasswordController = TextEditingController();
+  final _passwordTemporalController = TextEditingController();
   final _newPasswordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   final List<TextEditingController> otpControllers = List.generate(
@@ -26,7 +27,7 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
 
   @override
   void dispose() {
-    _currentPasswordController.dispose();
+    _passwordTemporalController.dispose();
     _newPasswordController.dispose();
     _confirmPasswordController.dispose();
     for (final c in otpControllers) {
@@ -39,7 +40,7 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
   }
 
   void _handleChangePassword() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       final code = _fullCode;
       if (_formKey.currentState!.validate()) {
         if (_newPasswordController.text != _confirmPasswordController.text) {
@@ -49,29 +50,65 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
           );
           return;
         }
-        if (code.length == 6) {
-          ref
-              .read(authProvider.notifier)
-              .setLoading(isLoading: true, mensaje: 'Verificando...');
-          Future.delayed(const Duration(seconds: 2), () {
-            ref.read(authProvider.notifier).setLoading(isLoading: false);
-            SnackbarUtil.snackbarSuccess(
-              context,
-              message: 'Contraseña cambiada exitosamente',
-            );
-          });
+        if (code.length < 6) {
+          SnackbarUtil.snackbarNotificationPush(
+            context,
+            message: 'Por favor ingresa el código OTP completo',
+          );
+          return;
+        }
+        ref
+            .read(forgotProvider.notifier)
+            .setPasswordTemporal(_passwordTemporalController.text);
+        ref
+            .read(forgotProvider.notifier)
+            .setPasswordNueva(_newPasswordController.text);
+        ref.read(forgotProvider.notifier).setCodigoOtp(code);
+        ref
+            .read(forgotProvider.notifier)
+            .setLoading(isLoading: true, mensaje: 'Verificando...');
+
+        final response = await ref.read(cambiarClaveProvider.future);
+        try {
+          if (!mounted) return;
+          SnackbarUtil.snackbarNotificationPush(context, message: response);
+          await secureStorage.write(key: 'passwordTemporary', value: 'false');
+          await secureStorage.write(key: 'flagRegistrado', value: 'true');
+
+          if (!mounted) return;
+          context.go('/pin');
+        } catch (e) {
+          if (!mounted) return;
+          SnackbarUtil.snackbarError(context, message: e.toString());
+        } finally {
+          ref.read(forgotProvider.notifier).resetearEstado();
         }
       }
     });
   }
 
   void _handleSendCode() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (_formKey.currentState!.validate()) {
-        SnackbarUtil.snackbarSuccess(
-          context,
-          message: 'Código OTP enviado a tu correo',
-        );
+        try {
+          ref
+              .read(forgotProvider.notifier)
+              .setLoading(isLoading: true, mensaje: 'Enviando código...');
+
+          ref.invalidate(solicitoCambioClaveProvider);
+          final response = await ref.read(solicitoCambioClaveProvider.future);
+
+          if (!mounted) return;
+          SnackbarUtil.snackbarNotificationPush(
+            context,
+            message: response.toString(),
+          );
+        } catch (e) {
+          if (!mounted) return;
+          SnackbarUtil.snackbarError(context, message: e.toString());
+        } finally {
+          ref.read(forgotProvider.notifier).setLoading(isLoading: false);
+        }
       }
     });
   }
@@ -144,8 +181,8 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
   }
 
   Widget _buildLoadingIndicator(BuildContext context) {
-    final authState = ref.watch(authProvider);
-    if (authState.isLoading) {
+    final forgotState = ref.watch(forgotProvider);
+    if (forgotState.isLoading) {
       return const LoadingWidget(mensaje: 'Procesando...');
     }
     return const SizedBox.shrink();
@@ -205,7 +242,7 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
                 _buildPasswordField(
                   context,
                   label: 'Contraseña actual (temporal)',
-                  controller: _currentPasswordController,
+                  controller: _passwordTemporalController,
                   obscureText: ref.watch(obscureCurrentPasswordProvider),
                   onToggleVisibility: () {
                     ref

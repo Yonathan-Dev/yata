@@ -61,15 +61,22 @@ class DioInterceptor extends Interceptor {
         ).convert(responseData);
         log('Error Response Data: $dataJson');
 
-        // Intentar extraer el mensaje de error de campos comunes
-        errorMessage =
-            responseData['errorMensaje'] ??
-            responseData['message'] ??
-            responseData['error'] ??
-            responseData['vDesc'] ??
-            responseData['msg'] ??
-            responseData['mensaje'] ??
-            'Error del servidor (Status: $statusCode)';
+        // Extraer mensaje de error de campos comunes
+        if (responseData['error'] != null &&
+            responseData['error'] is Map<String, dynamic>) {
+          final errorMap = responseData['error'] as Map<String, dynamic>;
+          errorMessage =
+              errorMap['message'] ?? errorMap['header'] ?? 'Error desconocido';
+        } else {
+          errorMessage =
+              responseData['errorMensaje'] ??
+              responseData['message'] ??
+              responseData['error'] ??
+              responseData['vDesc'] ??
+              responseData['msg'] ??
+              responseData['mensaje'] ??
+              'Error del servidor (Status: $statusCode)';
+        }
       }
       // Si es una respuesta de texto plano
       else if (responseData is String && responseData.isNotEmpty) {

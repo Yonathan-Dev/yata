@@ -54,4 +54,24 @@ class AuthRepository {
   ) async {
     return await dataSource.restaurarClave(correo, numeroDocumento, login);
   }
+
+  Future<String> cambiarClave(
+    int idUsuario,
+    String login,
+    String passwordAnterior,
+    String claveNueva,
+    String codigoOtp,
+  ) async {
+    return await dataSource.cambiarClave(
+      idUsuario,
+      login,
+      passwordAnterior,
+      claveNueva,
+      codigoOtp,
+    );
+  }
+
+  Future<String> solicitarCambioClave(int idUsuario, String login) async {
+    return await dataSource.solicitarCambioClave(idUsuario, login);
+  }
 }

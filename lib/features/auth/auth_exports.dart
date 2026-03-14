@@ -10,6 +10,7 @@ export 'providers/auth_provider.dart';
 export 'providers/secure_provider.dart';
 export 'providers/pin_provider.dart';
 export 'providers/biometric_provider.dart';
+export 'providers/forgot_provider.dart';
 // Widgets
 export 'widgets/formulario_widget.dart';
 export 'widgets/recuperar_card_widget.dart';

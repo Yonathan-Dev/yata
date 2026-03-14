@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/app_exports.dart';
 import '../../../shared/shared_exports.dart';
 
-// Modelo de estado registrar
+// Modelo de verificación de código OTP
 class VerifyCodeState {
   final String codigoOtp;
   final String error;

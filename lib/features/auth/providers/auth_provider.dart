@@ -48,10 +48,7 @@ class AuthNotifier extends Notifier<AuthState> {
 
   // Verificar el estado de autenticación al inicializar
   Future<void> _checkAuthStatus() async {
-    state = state.copyWith(
-      isLoading: true,
-      mensaje: 'Verificando estado de autenticación...',
-    );
+    state = state.copyWith(isLoading: true, mensaje: '');
     //esppera unos 2 segundos
     await Future.delayed(const Duration(seconds: 2));
     state = state.copyWith(isLoading: false, mensaje: '');

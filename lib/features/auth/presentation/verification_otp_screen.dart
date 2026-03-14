@@ -79,19 +79,16 @@ class _VerificationOtpScreenState extends ConsumerState<VerificationOtpScreen> {
               message: 'Código verificado correctamente',
             );
 
-            if (mounted) {
-              context.go('/pin');
-            }
+            await secureStorage.write(key: 'flagRegistrado', value: 'true');
+            if (!mounted) return;
+            context.go('/pin');
           })
           .catchError((error) {
-            if (mounted) {
-              SnackbarUtil.snackbarError(context, message: error.toString());
-            }
-            if (mounted) {
-              SnackbarUtil.snackbarError(context, message: error.toString());
-            }
+            if (!mounted) return;
+            SnackbarUtil.snackbarError(context, message: error.toString());
           })
           .whenComplete(() {
+            ref.read(verifyCodeProvider.notifier).setIsLoading(false);
             ref.read(verifyCodeProvider.notifier).resetEstado();
           });
     } else {

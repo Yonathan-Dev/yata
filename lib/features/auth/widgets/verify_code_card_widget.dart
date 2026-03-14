@@ -1,4 +1,3 @@
-//crea un EmailCardWidget que extienda StatelessWidget y tenga un String email como parametro requerido, el widget debe mostrar el email en un Card con un icono de correo a la izquierda del email
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

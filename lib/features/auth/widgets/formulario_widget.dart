@@ -46,6 +46,15 @@ class _FormularioWidgetState extends ConsumerState<FormularioWidget> {
           .setLoading(isLoading: true, mensaje: 'Iniciando sesión...');
       () async {
         try {
+          final passwordTemporary = await secureStorage.read(
+            key: 'passwordTemporary',
+          );
+          if (passwordTemporary != null && passwordTemporary.isNotEmpty) {
+            if (!mounted) return;
+            context.go('/change-password');
+            return;
+          }
+
           final response = await ref.read(loginCorreoProvider.future);
           if (response.requiereVerificacion) {
             if (!mounted) return;
@@ -81,8 +90,8 @@ class _FormularioWidgetState extends ConsumerState<FormularioWidget> {
           await secureStorage.write(key: 'userCorreo', value: response.login);
           await secureStorage.write(key: 'flagRegistrado', value: 'true');
 
-          if (!mounted) return;
-          context.go('/home');
+          /*if (!mounted) return;
+          context.go('/home');*/
 
           if (!mounted) return;
           context.go('/pin');

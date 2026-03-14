@@ -4,6 +4,7 @@ export 'presentation/auth_screen.dart';
 export 'presentation/pin_screen.dart';
 export 'presentation/forgot_password_screen.dart';
 export 'presentation/verification_otp_screen.dart';
+export 'presentation/change_password_screen.dart';
 // Providers
 export 'providers/auth_provider.dart';
 export 'providers/secure_provider.dart';
@@ -12,7 +13,6 @@ export 'providers/biometric_provider.dart';
 // Widgets
 export 'widgets/formulario_widget.dart';
 export 'widgets/recuperar_card_widget.dart';
-export 'widgets/verify_code_card_widget.dart';
 export 'widgets/create_pin_card_widget.dart';
 export 'widgets/confirm_pin_card_widget.dart';
 export 'widgets/robot_section_widget.dart';

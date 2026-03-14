@@ -62,6 +62,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: 'verificationOtp',
         builder: (context, state) => const VerificationOtpScreen(),
       ),
+      GoRoute(
+        path: '/change-password',
+        name: 'changePassword',
+        builder: (context, state) => const ChangePasswordScreen(),
+      ),
     ],
   );
 });

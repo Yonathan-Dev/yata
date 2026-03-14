@@ -79,6 +79,11 @@ class _FormularioWidgetState extends ConsumerState<FormularioWidget> {
               value: response.tokenType,
             );
 
+            await secureStorage.write(key: 'flagRegistrado', value: 'true');
+
+            if (!mounted) return;
+            context.go('/home');
+
             if (!mounted) return;
             context.go('/pin');
           })

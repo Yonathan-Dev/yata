@@ -228,3 +228,7 @@ final restaurarClaveProvider = FutureProvider<String>((ref) async {
     state.correo,
   );
 });
+
+final obscureCurrentPasswordProvider = StateProvider<bool>((ref) => true);
+final obscureNewPasswordProvider = StateProvider<bool>((ref) => true);
+final obscureConfirmPasswordProvider = StateProvider<bool>((ref) => true);

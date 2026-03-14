@@ -14,26 +14,21 @@ class ChangePasswordScreen extends ConsumerStatefulWidget {
 }
 
 class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
-  final TextEditingController currentPasswordController =
-      TextEditingController();
-  final TextEditingController newPasswordController = TextEditingController();
-  final TextEditingController confirmPasswordController =
-      TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  final _currentPasswordController = TextEditingController();
+  final _newPasswordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
   final List<TextEditingController> otpControllers = List.generate(
-    4,
+    6,
     (_) => TextEditingController(),
   );
-  final List<FocusNode> otpFocusNodes = List.generate(4, (_) => FocusNode());
-
-  bool _obscureCurrentPassword = true;
-  bool _obscureNewPassword = true;
-  bool _obscureConfirmPassword = true;
+  final List<FocusNode> otpFocusNodes = List.generate(6, (_) => FocusNode());
 
   @override
   void dispose() {
-    currentPasswordController.dispose();
-    newPasswordController.dispose();
-    confirmPasswordController.dispose();
+    _currentPasswordController.dispose();
+    _newPasswordController.dispose();
+    _confirmPasswordController.dispose();
     for (final c in otpControllers) {
       c.dispose();
     }
@@ -41,6 +36,48 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
       n.dispose();
     }
     super.dispose();
+  }
+
+  void _handleChangePassword() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final code = _fullCode;
+      if (_formKey.currentState!.validate()) {
+        if (_newPasswordController.text != _confirmPasswordController.text) {
+          SnackbarUtil.snackbarNotificationPush(
+            context,
+            message: 'Las contraseñas no coinciden',
+          );
+          return;
+        }
+        if (code.length == 6) {
+          ref
+              .read(authProvider.notifier)
+              .setLoading(isLoading: true, mensaje: 'Verificando...');
+          Future.delayed(const Duration(seconds: 2), () {
+            ref.read(authProvider.notifier).setLoading(isLoading: false);
+            SnackbarUtil.snackbarSuccess(
+              context,
+              message: 'Contraseña cambiada exitosamente',
+            );
+          });
+        }
+      }
+    });
+  }
+
+  void _handleSendCode() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_formKey.currentState!.validate()) {
+        SnackbarUtil.snackbarSuccess(
+          context,
+          message: 'Código OTP enviado a tu correo',
+        );
+      }
+    });
+  }
+
+  String get _fullCode {
+    return otpControllers.map((c) => c.text).join();
   }
 
   @override
@@ -130,78 +167,87 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
             ),
           ],
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Align(
-              alignment: Alignment.centerLeft,
-              child: IconButton(
-                icon: const Icon(Icons.arrow_back, color: Tema.negro),
-                onPressed: () => Navigator.of(context).pop(),
-                splashRadius: 24,
-                tooltip: 'Volver',
-              ),
+        child: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: IconButton(
+                    icon: const Icon(Icons.arrow_back, color: Tema.negro),
+                    onPressed: () => Navigator.of(context).pop(),
+                    splashRadius: 24,
+                    tooltip: 'Volver',
+                  ),
+                ),
+                Text(
+                  'Cambiar Contraseña',
+                  style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                    color: Tema.primaryColor,
+                    fontWeight: FontWeight.bold,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+                const SizedBox(height: Constantes.separacionFormulario),
+                Text(
+                  'Ingresa tu contraseña actual (temporal), la nueva contraseña y el código OTP para confirmar el cambio.',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                    color: Tema.negro,
+                    height: 1.4,
+                    fontSize: 10.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: Constantes.separacionFormulario),
+                _buildPasswordField(
+                  context,
+                  label: 'Contraseña actual (temporal)',
+                  controller: _currentPasswordController,
+                  obscureText: ref.watch(obscureCurrentPasswordProvider),
+                  onToggleVisibility: () {
+                    ref
+                        .read(obscureCurrentPasswordProvider.notifier)
+                        .state = !ref
+                        .read(obscureCurrentPasswordProvider.notifier)
+                        .state;
+                  },
+                ),
+                const SizedBox(height: Constantes.separacionFormulario),
+                _buildPasswordField(
+                  context,
+                  label: 'Nueva contraseña',
+                  controller: _newPasswordController,
+                  obscureText: ref.watch(obscureNewPasswordProvider),
+                  onToggleVisibility: () {
+                    ref.read(obscureNewPasswordProvider.notifier).state = !ref
+                        .read(obscureNewPasswordProvider.notifier)
+                        .state;
+                  },
+                ),
+                const SizedBox(height: Constantes.separacionFormulario),
+                _buildPasswordField(
+                  context,
+                  label: 'Confirmar contraseña',
+                  controller: _confirmPasswordController,
+                  obscureText: ref.watch(obscureConfirmPasswordProvider),
+                  onToggleVisibility: () {
+                    ref
+                        .read(obscureConfirmPasswordProvider.notifier)
+                        .state = !ref
+                        .read(obscureConfirmPasswordProvider.notifier)
+                        .state;
+                  },
+                ),
+                const SizedBox(height: Constantes.separacionFormulario),
+                _buildOtpSection(context),
+                const SizedBox(height: Constantes.separacionFormulario),
+                _buildButtons(context),
+              ],
             ),
-            Text(
-              'Cambiar Contraseña',
-              style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                color: Tema.primaryColor,
-                fontWeight: FontWeight.bold,
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              'Ingresa tu contraseña actual (temporal), la nueva contraseña y el código OTP para confirmar el cambio.',
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                color: Tema.negro,
-                height: 1.4,
-                fontSize: 10.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 24),
-            _buildPasswordField(
-              context,
-              label: 'Contraseña actual (temporal)',
-              controller: currentPasswordController,
-              obscureText: _obscureCurrentPassword,
-              onToggleVisibility: () {
-                setState(() {
-                  _obscureCurrentPassword = !_obscureCurrentPassword;
-                });
-              },
-            ),
-            const SizedBox(height: 16),
-            _buildPasswordField(
-              context,
-              label: 'Nueva contraseña',
-              controller: newPasswordController,
-              obscureText: _obscureNewPassword,
-              onToggleVisibility: () {
-                setState(() {
-                  _obscureNewPassword = !_obscureNewPassword;
-                });
-              },
-            ),
-            const SizedBox(height: 16),
-            _buildPasswordField(
-              context,
-              label: 'Confirmar contraseña',
-              controller: confirmPasswordController,
-              obscureText: _obscureConfirmPassword,
-              onToggleVisibility: () {
-                setState(() {
-                  _obscureConfirmPassword = !_obscureConfirmPassword;
-                });
-              },
-            ),
-            const SizedBox(height: 24),
-            _buildOtpSection(context),
-            const SizedBox(height: 24),
-            _buildButtons(context),
-          ],
+          ),
         ),
       ),
     );
@@ -261,7 +307,14 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
               ),
               onPressed: onToggleVisibility,
             ),
+            counterText: '',
           ),
+          maxLength: 20,
+          validator: (value) => value == null || value.isEmpty
+              ? 'Este campo es obligatorio'
+              : value.length < 8
+              ? 'Contraseña minimo 8 caracteres'
+              : null,
         ),
       ],
     );
@@ -279,58 +332,66 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
           ),
         ),
         const SizedBox(height: 8),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: List.generate(4, (index) {
-            return Expanded(
-              child: Container(
-                margin: EdgeInsets.only(right: index < 3 ? 8 : 0),
-                height: 55,
-                child: TextField(
-                  controller: otpControllers[index],
-                  focusNode: otpFocusNodes[index],
-                  textAlign: TextAlign.center,
-                  keyboardType: TextInputType.number,
-                  maxLength: 1,
-                  style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: Tema.blanco,
-                  ),
-                  decoration: InputDecoration(
-                    counterText: '',
-                    filled: true,
-                    fillColor: Tema.negro,
-                    contentPadding: EdgeInsets.zero,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
+        LayoutBuilder(
+          builder: (context, constraints) {
+            const spacing = 8.0;
+            const totalSpacing = spacing * 5;
+            final fieldWidth = (constraints.maxWidth - totalSpacing) / 6;
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: List.generate(6, (index) {
+                return Container(
+                  width: fieldWidth,
+                  height: 55,
+                  margin: EdgeInsets.only(right: index < 5 ? spacing : 0),
+                  child: TextField(
+                    controller: otpControllers[index],
+                    focusNode: otpFocusNodes[index],
+                    textAlign: TextAlign.center,
+                    keyboardType: TextInputType.number,
+                    maxLength: 1,
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Tema.blanco,
                     ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                        color: Tema.primaryColor,
-                        width: 2,
+                    decoration: InputDecoration(
+                      counterText: '',
+                      filled: true,
+                      fillColor: Tema.negro,
+                      contentPadding: EdgeInsets.zero,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(
+                          color: Tema.primaryColor,
+                          width: 2,
+                        ),
                       ),
                     ),
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    onChanged: (value) {
+                      if (value.length == 1 && index < 5) {
+                        otpFocusNodes[index + 1].requestFocus();
+                      } else if (value.length == 1 && index == 5) {
+                        FocusScope.of(context).unfocus();
+                      }
+                      if (value.isEmpty && index > 0) {
+                        otpFocusNodes[index - 1].requestFocus();
+                      }
+                    },
                   ),
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  onChanged: (value) {
-                    if (value.length == 1 && index < 3) {
-                      otpFocusNodes[index + 1].requestFocus();
-                    }
-                    if (value.isEmpty && index > 0) {
-                      otpFocusNodes[index - 1].requestFocus();
-                    }
-                  },
-                ),
-              ),
+                );
+              }),
             );
-          }),
+          },
         ),
       ],
     );
@@ -339,12 +400,13 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
   Widget _buildButtons(BuildContext context) {
     return Column(
       children: [
-        // Botón Enviar código
         SizedBox(
           width: double.infinity,
           height: 50,
           child: OutlinedButton(
-            onPressed: ref.watch(authProvider).isLoading ? null : _onSendCode,
+            onPressed: ref.watch(authProvider).isLoading
+                ? null
+                : _handleSendCode,
             style: OutlinedButton.styleFrom(
               foregroundColor: Tema.primaryColor,
               side: const BorderSide(color: Tema.primaryColor, width: 2),
@@ -364,15 +426,14 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
                   ),
           ),
         ),
-        const SizedBox(height: 16),
-        // Botón Cambiar contraseña
+        const SizedBox(height: Constantes.separacion),
         SizedBox(
           width: double.infinity,
           height: 50,
           child: ElevatedButton(
             onPressed: ref.watch(authProvider).isLoading
                 ? null
-                : _onChangePassword,
+                : _handleChangePassword,
             style: ElevatedButton.styleFrom(
               backgroundColor: Tema.primaryColor,
               foregroundColor: Tema.blanco,
@@ -397,15 +458,5 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
         ),
       ],
     );
-  }
-
-  void _onSendCode() {}
-
-  void _onChangePassword() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Tu lógica de navegación aquí
-      // Ejemplo:
-      // Navigator.of(context).push(...);
-    });
   }
 }

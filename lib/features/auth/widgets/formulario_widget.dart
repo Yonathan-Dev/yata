@@ -82,14 +82,12 @@ class _FormularioWidgetState extends ConsumerState<FormularioWidget> {
             value: response.tokenType,
           );
           await secureStorage.write(key: 'userCorreo', value: response.login);
-          await secureStorage.write(key: 'flagRegistrado', value: 'true');
-
           if (passwordTemporary.isNotEmpty) {
             if (!mounted) return;
             context.push('/change-password');
             return;
           }
-
+          await secureStorage.write(key: 'flagRegistrado', value: 'true');
           if (!mounted) return;
           context.go('/pin');
         } catch (error) {
@@ -275,7 +273,7 @@ class _FormularioWidgetState extends ConsumerState<FormularioWidget> {
               return 'Por favor ingresa tu contraseña';
             }
             if (value.length < 8) {
-              return 'Mínimo 8 caracteres';
+              return 'Contraseña minimo 8 caracteres';
             }
             return null;
           },

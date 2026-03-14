@@ -7,6 +7,7 @@ export 'services/preferences_service.dart';
 // Providers
 export 'providers/dio_providers.dart';
 export 'providers/dispositivo_providers.dart';
+export 'providers/fingerprint_crypto_provider.dart';
 export 'providers/shared_providers.dart';
 // Widgets
 export 'widgets/appbar_widget.dart';

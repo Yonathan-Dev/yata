@@ -49,7 +49,7 @@ class _FormularioWidgetState extends ConsumerState<FormularioWidget> {
           .then((response) async {
             if (response.requiereVerificacion) {
               if (!mounted) return;
-              SnackbarUtil.snackbarInfo(
+              SnackbarUtil.snackbarNotificationPush(
                 context,
                 message: response.mensajeVerificacion,
               );

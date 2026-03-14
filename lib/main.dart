@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:uuid/uuid.dart';
 import 'core/app_exports.dart';
 
 Future<void> main() async {
@@ -15,10 +14,6 @@ Future<void> main() async {
   ]);
 
   await dotenv.load(fileName: ".env");
-  final existingFingerprint = await secureStorage.read(key: 'fingerprint');
-  if (existingFingerprint == null || existingFingerprint.isEmpty) {
-    await secureStorage.write(key: 'fingerprint', value: const Uuid().v4());
-  }
 
   runApp(const ProviderScope(child: MyApp()));
 }

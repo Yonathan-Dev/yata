@@ -513,7 +513,7 @@ class _PinScreenState extends ConsumerState<PinScreen> {
     return TextButton(
       onPressed: () {},
       child: Text(
-        'Olvido o cambio de clave',
+        '¿Olvidaste tu clave?',
         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
           color: Tema.blanco,
           fontWeight: FontWeight.w600,

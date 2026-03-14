@@ -198,7 +198,7 @@ class AuthDataSource {
   Future<String> restaurarClave(
     String login,
     String numeroDocumento,
-    String email,
+    String correoInstitucional,
   ) async {
     try {
       final response = await dio.post(
@@ -206,7 +206,7 @@ class AuthDataSource {
         data: {
           'login': login,
           'numeroDocumento': numeroDocumento,
-          'email': email,
+          'correoInstitucional': correoInstitucional,
         },
         options: Options(
           contentType: Headers.jsonContentType,

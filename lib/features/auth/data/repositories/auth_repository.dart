@@ -52,6 +52,6 @@ class AuthRepository {
     String numeroDocumento,
     String login,
   ) async {
-    return await dataSource.restaurarClave(login, numeroDocumento, correo);
+    return await dataSource.restaurarClave(correo, numeroDocumento, login);
   }
 }

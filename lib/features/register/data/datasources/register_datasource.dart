@@ -48,7 +48,7 @@ class RegisterDataSource {
     try {
       final response = await dio.post(
         '/api/Usuario/verificarOTPRegistro',
-        data: jsonEncode({'correo': correo, 'codigoOtp': codigoOtp}),
+        data: jsonEncode({'correo': correo, 'codigo': codigoOtp}),
         options: Options(
           headers: {'Content-Type': 'application/json'},
           receiveTimeout: const Duration(minutes: 5),
@@ -84,8 +84,8 @@ class RegisterDataSource {
       final response = await dio.post(
         '/api/Usuario/registroCliente',
         data: jsonEncode({
-          'tipoPersona': registerState.tipoPersona,
-          'tipoDocumento': registerState.tipoDocumento,
+          'idTipoPersona': registerState.tipoPersona,
+          'idTipoDocumento': registerState.tipoDocumento,
           'numeroDocumento': registerState.numeroDocumento,
           'primerApellido': registerState.primerApellido,
           'segundoApellido': registerState.segundoApellido,

@@ -441,7 +441,7 @@ class _PinScreenState extends ConsumerState<PinScreen> {
               shape: BoxShape.circle,
             ),
             padding: const EdgeInsets.all(10),
-            child: Icon(Icons.close, color: Tema.blanco, size: 32),
+            child: Icon(Icons.backspace_outlined, color: Tema.blanco, size: 32),
           ),
           onTap: _onDeletePressed,
           noBackground: true,

@@ -119,7 +119,7 @@ class AuthDataSource {
         '/api/Usuario/verificar-dispositivo',
         data: {
           'verificationToken': verificationToken,
-          'codigoOtp': codigoOtp,
+          'codigo': codigoOtp,
           'fingerprint': fingerprint,
         },
         options: Options(

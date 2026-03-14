@@ -42,7 +42,7 @@ class _PinScreenState extends ConsumerState<PinScreen> {
             .then((response) async {
               if (response.requiereVerificacion) {
                 if (!mounted) return;
-                SnackbarUtil.snackbarInfo(
+                SnackbarUtil.snackbarNotificationPush(
                   context,
                   message: response.mensajeVerificacion,
                 );
@@ -77,7 +77,7 @@ class _PinScreenState extends ConsumerState<PinScreen> {
               );
               await secureStorage.write(
                 key: 'userCorreo',
-                value: ref.read(registerProvider).correo,
+                value: response.login,
               );
               await secureStorage.write(
                 key: 'pin',
@@ -87,15 +87,15 @@ class _PinScreenState extends ConsumerState<PinScreen> {
 
               if (!mounted) return;
               context.go('/home');
-              SnackbarUtil.snackbarSuccess(
+              SnackbarUtil.snackbarNotificationPush(
                 context,
                 message: '¡Bienvenido, ${response.apellidosyNombres}!',
               );
             })
             .catchError((error) {
-              if (mounted) {
-                SnackbarUtil.snackbarError(context, message: error.toString());
-              }
+              if (!mounted) return;
+              SnackbarUtil.snackbarError(context, message: error.toString());
+
               ref.read(pinProvider.notifier).state = '';
             })
             .whenComplete(() {

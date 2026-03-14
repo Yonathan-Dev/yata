@@ -174,10 +174,10 @@ final tokenProvider = StateProvider<String>((ref) {
 
 final loginPinProvider = FutureProvider<AuthModel>((ref) async {
   final repository = ref.watch(authRepositoryProvider);
-  final state = ref.watch(registerProvider);
+  final correo = await secureStorage.read(key: 'userCorreo');
   final pinState = ref.watch(pinProvider);
   final fingerprintState = await ref.watch(fingerPrintProvider.future);
-  return await repository.postAuthPin(state.correo, pinState, fingerprintState);
+  return await repository.postAuthPin(correo ?? '', pinState, fingerprintState);
 });
 
 final loginCorreoProvider = FutureProvider<AuthModel>((ref) async {

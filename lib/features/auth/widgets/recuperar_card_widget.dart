@@ -7,9 +7,14 @@ class RecuperarCardWidget extends StatelessWidget {
   final TextEditingController loginController;
   final TextEditingController numeroDocumentoController;
   final TextEditingController emailController;
+  final TextEditingController passwordController;
   final FocusNode loginFocusNode;
   final FocusNode numeroDocumentoFocusNode;
   final FocusNode emailFocusNode;
+  final FocusNode passwordFocusNode;
+  final String tipoRecuperacion;
+  final String titulo;
+  final String subtitulo;
 
   final VoidCallback onBack;
   final VoidCallback onContinue;
@@ -22,12 +27,17 @@ class RecuperarCardWidget extends StatelessWidget {
     required this.loginController,
     required this.numeroDocumentoController,
     required this.emailController,
+    required this.passwordController,
     required this.loginFocusNode,
     required this.numeroDocumentoFocusNode,
     required this.emailFocusNode,
+    required this.passwordFocusNode,
     required this.onBack,
     required this.onContinue,
     required this.buildContinuarButton,
+    required this.tipoRecuperacion,
+    required this.titulo,
+    required this.subtitulo,
   });
 
   @override
@@ -63,7 +73,7 @@ class RecuperarCardWidget extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'Recuperar contraseña',
+                  titulo,
                   style: Theme.of(context).textTheme.headlineSmall!.copyWith(
                     color: Tema.primaryColor,
                     fontWeight: FontWeight.bold,
@@ -71,7 +81,7 @@ class RecuperarCardWidget extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  'Ingresa tus datos para recibir una contraseña temporal',
+                  subtitulo,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                     color: Tema.negro,
@@ -81,64 +91,67 @@ class RecuperarCardWidget extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: Constantes.separacionFormulario),
-                TextFormField(
-                  controller: loginController,
-                  focusNode: loginFocusNode,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    hintText: 'Logín',
-                    filled: true,
-                    fillColor: const Color(0xFFF5F5F5),
-                    prefixIcon: const Icon(
-                      Icons.person_outline,
-                      color: Tema.gris,
+                if (tipoRecuperacion == 'password') ...[
+                  TextFormField(
+                    controller: loginController,
+                    focusNode: loginFocusNode,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: InputDecoration(
+                      hintText: 'Logín',
+                      filled: true,
+                      fillColor: const Color(0xFFF5F5F5),
+                      prefixIcon: const Icon(
+                        Icons.person_outline,
+                        color: Tema.gris,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
+                      counterText: '',
                     ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
-                    counterText: '',
+                    maxLength: 35,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Ingresa tu logín';
+                      }
+                      if (!RegExp(
+                        r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                      ).hasMatch(value)) {
+                        return 'Ingresa un logín válido';
+                      }
+                      return null;
+                    },
                   ),
-                  maxLength: 35,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Ingresa tu logín';
-                    }
-                    if (!RegExp(
-                      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                    ).hasMatch(value)) {
-                      return 'Ingresa un logín válido';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: Constantes.separacionFormulario),
-                TextFormField(
-                  controller: numeroDocumentoController,
-                  focusNode: numeroDocumentoFocusNode,
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                    hintText: 'Número documento',
-                    filled: true,
-                    fillColor: const Color(0xFFF5F5F5),
-                    prefixIcon: const Icon(
-                      Icons.badge_outlined,
-                      color: Tema.gris,
+
+                  const SizedBox(height: Constantes.separacionFormulario),
+                  TextFormField(
+                    controller: numeroDocumentoController,
+                    focusNode: numeroDocumentoFocusNode,
+                    keyboardType: TextInputType.text,
+                    decoration: InputDecoration(
+                      hintText: 'Número documento',
+                      filled: true,
+                      fillColor: const Color(0xFFF5F5F5),
+                      prefixIcon: const Icon(
+                        Icons.badge_outlined,
+                        color: Tema.gris,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
+                      counterText: '',
                     ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
-                    counterText: '',
+                    maxLength: 15,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Ingresa tu número de documento';
+                      }
+                      return null;
+                    },
                   ),
-                  maxLength: 15,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Ingresa tu número de documento';
-                    }
-                    return null;
-                  },
-                ),
+                ],
                 const SizedBox(height: Constantes.separacionFormulario),
                 TextFormField(
                   controller: emailController,
@@ -171,6 +184,38 @@ class RecuperarCardWidget extends StatelessWidget {
                     return null;
                   },
                 ),
+
+                if (tipoRecuperacion == 'pin') ...[
+                  const SizedBox(height: Constantes.separacionFormulario),
+                  // Campo para ingresar la contraseña del correo para verificar identidad
+                  TextFormField(
+                    controller: passwordController,
+                    focusNode: passwordFocusNode,
+                    keyboardType: TextInputType.visiblePassword,
+                    obscureText: true,
+                    decoration: InputDecoration(
+                      hintText: 'Contraseña',
+                      filled: true,
+                      fillColor: const Color(0xFFF5F5F5),
+                      prefixIcon: const Icon(
+                        Icons.lock_outline,
+                        color: Tema.gris,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
+                      counterText: '',
+                    ),
+                    maxLength: 35,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Ingresa tu contraseña';
+                      }
+                      return null;
+                    },
+                  ),
+                ],
                 const SizedBox(height: 24),
                 buildContinuarButton(context, onPressed: onContinue),
               ],

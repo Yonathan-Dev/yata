@@ -67,6 +67,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: 'changePassword',
         builder: (context, state) => const ChangePasswordScreen(),
       ),
+      GoRoute(
+        path: '/forgot-pin',
+        name: 'forgotPin',
+        builder: (context, state) => const ForgotPinScreen(),
+      ),
     ],
   );
 });

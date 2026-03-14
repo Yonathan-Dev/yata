@@ -5,15 +5,14 @@ import 'package:go_router/go_router.dart';
 import '../../../core/app_exports.dart';
 import '../../../shared/shared_exports.dart';
 
-class ForgotPasswordScreen extends ConsumerStatefulWidget {
-  const ForgotPasswordScreen({super.key});
+class ForgotPinScreen extends ConsumerStatefulWidget {
+  const ForgotPinScreen({super.key});
 
   @override
-  ConsumerState<ForgotPasswordScreen> createState() =>
-      _ForgotPasswordScreenState();
+  ConsumerState<ForgotPinScreen> createState() => _ForgotPinScreenState();
 }
 
-class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
+class _ForgotPinScreenState extends ConsumerState<ForgotPinScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _numeroDocumentoController = TextEditingController();
@@ -120,50 +119,41 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
       numeroDocumentoFocusNode: _numeroDocumentoFocusNode,
       emailFocusNode: _emailFocusNode,
       passwordFocusNode: _passwordFocusNode,
-      onBack: () => context.go('/auth'),
+      onBack: () => context.go('/pin'),
       onContinue: () {
         if (!_formKey.currentState!.validate()) {
           return;
         }
 
-        if (_loginController.text.toLowerCase() !=
-            _emailController.text.toLowerCase()) {
-          SnackbarUtil.snackbarNotificationPush(
-            context,
-            message: 'El logín debe coincidir con el correo electrónico',
-          );
-          return;
-        }
-
-        ref.read(authProvider.notifier).setLogin(_loginController.text);
-        ref
-            .read(authProvider.notifier)
-            .setNumeroDocumento(_numeroDocumentoController.text);
+        ref.read(authProvider.notifier).setLogin(_emailController.text);
+        ref.read(authProvider.notifier).setPassword(_passwordController.text);
         ref
             .read(authProvider.notifier)
             .setLoading(
               isLoading: true,
-              mensaje: 'Solicitando contraseña de recuperación...',
+              mensaje: 'Solicitando OTP para  de recuperación...',
             );
-        _solicitarRecuperacion();
+        //_solicitarRecuperacion();
+        _validarUsuario();
       },
       buildContinuarButton: _buildContinuarButton,
-      tipoRecuperacion: 'password',
-      titulo: 'Recuperar contraseña',
-      subtitulo: 'Ingresa tus datos para recibir una contraseña temporal',
+      tipoRecuperacion: 'pin',
+      titulo: 'Recuperar PIN',
+      subtitulo:
+          'Por favor, ingresa tu correo electrónico. Te enviaremos un código para recuperar tu PIN.',
     );
   }
 
-  Future<void> _solicitarRecuperacion() async {
+  Future<void> _validarUsuario() async {
     try {
-      ref.invalidate(restaurarClaveProvider);
-      final response = await ref.read(restaurarClaveProvider.future);
+      ref.invalidate(loginCorreoProvider);
+      final response = await ref.read(loginCorreoProvider.future);
 
-      await secureStorage.write(key: 'passwordTemporary', value: 'true');
+      ref.read(authProvider.notifier).setIdUsuario(response.idUsuario);
+      ref.read(authProvider.notifier).setLogin(response.login);
 
       if (!mounted) return;
-      SnackbarUtil.snackbarNotificationPush(context, message: response);
-      context.go('/auth');
+      //context.go('/recuperar-pin-otp');
     } catch (error) {
       SnackbarUtil.snackbarNotificationPush(
         context,
@@ -173,6 +163,26 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
       ref.read(authProvider.notifier).setLoading(isLoading: false, mensaje: '');
     }
   }
+
+  /*Future<void> _solicitarRecuperacion() async {
+    try {
+      ref.invalidate(solicitoCambioPinProvider);
+      final response = await ref.read(solicitoCambioPinProvider.future);
+
+      await secureStorage.write(key: 'pinTemporary', value: 'true');
+
+      if (!mounted) return;
+      SnackbarUtil.snackbarNotificationPush(context, message: response);
+      //context.go('/auth');
+    } catch (error) {
+      SnackbarUtil.snackbarNotificationPush(
+        context,
+        message: error.toString().replaceAll('Exception: ', ''),
+      );
+    } finally {
+      ref.read(authProvider.notifier).setLoading(isLoading: false, mensaje: '');
+    }
+  }*/
 
   Widget _buildContinuarButton(
     BuildContext context, {

@@ -112,6 +112,14 @@ final solicitoCambioClaveProvider = FutureProvider<String>((ref) async {
   return await repository.solicitarCambioClave(idUsuario, login);
 });
 
+final solicitoCambioPinProvider = FutureProvider<String>((ref) async {
+  final repository = ref.watch(forgotRepositoryProvider);
+  final authState = ref.watch(authProvider);
+  final idUsuario = authState.idUsuario;
+  final login = authState.login;
+  return await repository.solicitarCambioPin(idUsuario, login);
+});
+
 final obscureCurrentPasswordProvider = StateProvider<bool>((ref) => true);
 final obscureNewPasswordProvider = StateProvider<bool>((ref) => true);
 final obscureConfirmPasswordProvider = StateProvider<bool>((ref) => true);

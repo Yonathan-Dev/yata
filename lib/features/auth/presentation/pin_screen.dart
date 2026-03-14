@@ -319,7 +319,7 @@ class _PinScreenState extends ConsumerState<PinScreen> {
             const SizedBox(height: 16),
             _buildPinIndicators(),
             Expanded(child: _buildNumericKeyboard(context)),
-            _buildForgotButton(context),
+            //_buildForgotButton(context),
             const SizedBox(height: 35),
           ],
         ),
@@ -509,9 +509,11 @@ class _PinScreenState extends ConsumerState<PinScreen> {
     );
   }
 
-  Widget _buildForgotButton(BuildContext context) {
+  /*Widget _buildForgotButton(BuildContext context) {
     return TextButton(
-      onPressed: () {},
+      onPressed: () {
+        context.push('/forgot-pin');
+      },
       child: Text(
         '¿Olvidaste tu clave?',
         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
@@ -521,5 +523,5 @@ class _PinScreenState extends ConsumerState<PinScreen> {
         ),
       ),
     );
-  }
+  }*/
 }

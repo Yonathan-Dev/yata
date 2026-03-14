@@ -74,4 +74,8 @@ class AuthRepository {
   Future<String> solicitarCambioClave(int idUsuario, String login) async {
     return await dataSource.solicitarCambioClave(idUsuario, login);
   }
+
+  Future<String> solicitarCambioPin(int idUsuario, String login) async {
+    return await dataSource.solicitarCambioPin(idUsuario, login);
+  }
 }

@@ -341,4 +341,48 @@ class AuthDataSource {
       rethrow;
     }
   }
+
+  Future<String> solicitarCambioPin(int idUsuario, String correo) async {
+    try {
+      final response = await dio.post(
+        '/api/Usuario/solicitarCodigoCambioPin',
+        data: {'idUsuario': idUsuario, 'correo': correo},
+        options: Options(
+          contentType: Headers.jsonContentType,
+          sendTimeout: Duration(milliseconds: 30000),
+          receiveTimeout: Duration(milliseconds: 30000),
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        if (data == null) {
+          throw Exception('Respuesta vacía del servidor');
+        }
+
+        final errorCodigo = data['errorCodigo'];
+        final errorMensaje = data['errorMensaje'] ?? 'Error desconocido';
+        if (errorCodigo != 'OK') {
+          throw Exception(errorMensaje);
+        }
+        return data['value'];
+      } else {
+        throw Exception(
+          'Error al solicitar cambio de PIN: ${response.statusCode}',
+        );
+      }
+    } on DioException catch (e) {
+      final responseData = e.response?.data;
+      if (responseData != null && responseData is Map<String, dynamic>) {
+        final errorMensaje = responseData['errorMensaje'];
+        if (errorMensaje != null) {
+          throw Exception(errorMensaje);
+        }
+      }
+      throw Exception('Error en la solicitud: ${e.message}');
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

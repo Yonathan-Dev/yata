@@ -5,6 +5,7 @@ export 'presentation/pin_screen.dart';
 export 'presentation/forgot_password_screen.dart';
 export 'presentation/verification_otp_screen.dart';
 export 'presentation/change_password_screen.dart';
+export 'presentation/forgot_pin_screen.dart';
 // Providers
 export 'providers/auth_provider.dart';
 export 'providers/secure_provider.dart';

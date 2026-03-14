@@ -9,6 +9,7 @@ class AuthState {
   final int idUsuario;
   final String login;
   final String password;
+  final String numeroDocumento;
   final bool isAuthenticated;
   final bool isLoading;
   final String? error;
@@ -19,6 +20,7 @@ class AuthState {
     this.idUsuario = 0,
     this.login = '',
     this.password = '',
+    this.numeroDocumento = '',
     this.isAuthenticated = false,
     this.isLoading = false,
     this.error,
@@ -30,6 +32,7 @@ class AuthState {
     int? idUsuario,
     String? login,
     String? password,
+    String? numeroDocumento,
     bool? isAuthenticated,
     bool? isLoading,
     String? error,
@@ -40,6 +43,7 @@ class AuthState {
       idUsuario: idUsuario ?? this.idUsuario,
       login: login ?? this.login,
       password: password ?? this.password,
+      numeroDocumento: numeroDocumento ?? this.numeroDocumento,
       isAuthenticated: isAuthenticated ?? this.isAuthenticated,
       isLoading: isLoading ?? this.isLoading,
       error: error,
@@ -68,6 +72,10 @@ class AuthNotifier extends Notifier<AuthState> {
 
   setPassword(String value) {
     state = state.copyWith(password: value);
+  }
+
+  setNumeroDocumento(String value) {
+    state = state.copyWith(numeroDocumento: value);
   }
 
   // Verificar el estado de autenticación al inicializar
@@ -249,10 +257,10 @@ final logoutProvider = FutureProvider<void>((ref) async {
 
 final restaurarClaveProvider = FutureProvider<String>((ref) async {
   final repository = ref.watch(authRepositoryProvider);
-  final state = ref.watch(registerProvider);
+  final state = ref.watch(authProvider);
   return await repository.restaurarClave(
-    state.correo,
+    state.login,
     state.numeroDocumento,
-    state.correo,
+    state.login,
   );
 });

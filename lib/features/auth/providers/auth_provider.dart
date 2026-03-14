@@ -130,6 +130,7 @@ class AuthNotifier extends Notifier<AuthState> {
       await secureStorage.delete(key: 'expiresAt');
       await secureStorage.delete(key: 'tokenType');
       await secureStorage.delete(key: 'userName');
+      await secureStorage.delete(key: 'passwordTemporary');
       ref.read(navigationIndexProvider.notifier).state = 0;
       state = const AuthState();
     } catch (e) {

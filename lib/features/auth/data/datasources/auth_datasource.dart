@@ -201,7 +201,7 @@ class AuthDataSource {
     String correoInstitucional,
   ) async {
     try {
-      final response = await dio.post(
+      final response = await dio.put(
         '/api/Usuario/restaurarClave',
         data: {
           'login': login,

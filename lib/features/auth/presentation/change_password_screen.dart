@@ -401,5 +401,11 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
 
   void _onSendCode() {}
 
-  void _onChangePassword() {}
+  void _onChangePassword() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Tu lógica de navegación aquí
+      // Ejemplo:
+      // Navigator.of(context).push(...);
+    });
+  }
 }

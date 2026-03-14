@@ -219,14 +219,14 @@ final loginPinProvider = FutureProvider<AuthModel>((ref) async {
 
 final loginCorreoProvider = FutureProvider<AuthModel>((ref) async {
   final repository = ref.watch(authRepositoryProvider);
-  final state = ref.watch(registerProvider);
+  final state = ref.watch(authProvider);
   final fingerprintState = await ref.watch(fingerPrintProvider.future);
   final nombreDispositivo = ref.watch(dispositivoProvider).plataforma;
   final ipAddress = ref.watch(dispositivoProvider).ipAddress;
   final userAgent = ref.watch(dispositivoProvider).userAgent;
   return await repository.loginConCorreo(
-    state.correo,
-    state.contrasena,
+    state.login,
+    state.password,
     fingerprintState,
     nombreDispositivo,
     ipAddress,

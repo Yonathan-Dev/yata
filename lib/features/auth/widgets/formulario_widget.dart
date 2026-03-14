@@ -42,13 +42,17 @@ class _FormularioWidgetState extends ConsumerState<FormularioWidget> {
           final passwordTemporary =
               await secureStorage.read(key: 'passwordTemporary') ?? '';
 
+          ref
+              .read(authProvider.notifier)
+              .setLogin(_usuarioController.text.trim());
+          ref
+              .read(authProvider.notifier)
+              .setPassword(_passwordController.text.trim());
+
           final response = await ref.read(loginCorreoProvider.future);
 
           ref.read(authProvider.notifier).setIdUsuario(response.idUsuario);
           ref.read(authProvider.notifier).setLogin(response.login);
-          ref
-              .read(authProvider.notifier)
-              .setPassword(_passwordController.text.trim());
 
           if (response.requiereVerificacion) {
             if (!mounted) return;

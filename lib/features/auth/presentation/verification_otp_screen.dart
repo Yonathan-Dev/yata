@@ -54,43 +54,41 @@ class _VerificationOtpScreenState extends ConsumerState<VerificationOtpScreen> {
       ref.read(verifyCodeProvider.notifier).setMensaje('Verificando código...');
       ref.read(verifyCodeProvider.notifier).setCodigoOtp(code);
 
-      ref
-          .read(loginCodigoOtpProvider.future)
-          .then((response) async {
-            await secureStorage.write(
-              key: 'accessToken',
-              value: response.accessToken,
-            );
-            await secureStorage.write(
-              key: 'refreshToken',
-              value: response.refreshToken,
-            );
-            await secureStorage.write(
-              key: 'expiresAt',
-              value: response.expiresAt.toIso8601String(),
-            );
-            await secureStorage.write(
-              key: 'tokenType',
-              value: response.tokenType,
-            );
-            if (!mounted) return;
-            SnackbarUtil.snackbarNotificationPush(
-              context,
-              message: 'Código verificado correctamente',
-            );
-
-            await secureStorage.write(key: 'flagRegistrado', value: 'true');
-            if (!mounted) return;
-            context.go('/pin');
-          })
-          .catchError((error) {
-            if (!mounted) return;
-            SnackbarUtil.snackbarError(context, message: error.toString());
-          })
-          .whenComplete(() {
-            ref.read(verifyCodeProvider.notifier).setIsLoading(false);
-            ref.read(verifyCodeProvider.notifier).resetEstado();
-          });
+      () async {
+        try {
+          final response = await ref.read(loginCodigoOtpProvider.future);
+          await secureStorage.write(
+            key: 'accessToken',
+            value: response.accessToken,
+          );
+          await secureStorage.write(
+            key: 'refreshToken',
+            value: response.refreshToken,
+          );
+          await secureStorage.write(
+            key: 'expiresAt',
+            value: response.expiresAt.toIso8601String(),
+          );
+          await secureStorage.write(
+            key: 'tokenType',
+            value: response.tokenType,
+          );
+          if (!mounted) return;
+          SnackbarUtil.snackbarNotificationPush(
+            context,
+            message: 'Código verificado correctamente',
+          );
+          await secureStorage.write(key: 'flagRegistrado', value: 'true');
+          if (!mounted) return;
+          context.go('/pin');
+        } catch (e) {
+          if (!mounted) return;
+          SnackbarUtil.snackbarError(context, message: e.toString());
+        } finally {
+          ref.read(verifyCodeProvider.notifier).setIsLoading(false);
+          ref.read(verifyCodeProvider.notifier).resetEstado();
+        }
+      }();
     } else {
       SnackbarUtil.snackbarNotificationPush(
         context,

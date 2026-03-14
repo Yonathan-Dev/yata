@@ -37,74 +37,66 @@ class _PinScreenState extends ConsumerState<PinScreen> {
         ref
             .read(authProvider.notifier)
             .setLoading(isLoading: true, mensaje: 'Verificando...');
-        ref
-            .read(loginPinProvider.future)
-            .then((response) async {
-              if (response.requiereVerificacion) {
-                if (!mounted) return;
-                SnackbarUtil.snackbarNotificationPush(
-                  context,
-                  message: response.mensajeVerificacion,
-                );
-                await secureStorage.write(
-                  key: 'verificationToken',
-                  value: response.verificationToken,
-                );
-                if (!mounted) return;
-                context.push('/verification-otp');
-                return;
-              }
-
-              await secureStorage.write(
-                key: 'accessToken',
-                value: response.accessToken,
-              );
-              await secureStorage.write(
-                key: 'refreshToken',
-                value: response.refreshToken,
-              );
-              await secureStorage.write(
-                key: 'expiresAt',
-                value: response.expiresAt.toIso8601String(),
-              );
-              await secureStorage.write(
-                key: 'tokenType',
-                value: response.tokenType,
-              );
-              await secureStorage.write(
-                key: 'userName',
-                value: response.apellidosyNombres,
-              );
-              await secureStorage.write(
-                key: 'userCorreo',
-                value: response.login,
-              );
-              await secureStorage.write(
-                key: 'pin',
-                value: ref.read(pinProvider),
-              );
-              await secureStorage.write(key: 'biometricEnabled', value: 'true');
-
+        () async {
+          try {
+            final response = await ref.read(loginPinProvider.future);
+            if (response.requiereVerificacion) {
               if (!mounted) return;
-              context.go('/home');
               SnackbarUtil.snackbarNotificationPush(
                 context,
-                message: '¡Bienvenido, ${response.apellidosyNombres}!',
+                message: response.mensajeVerificacion,
               );
-            })
-            .catchError((error) {
+              await secureStorage.write(
+                key: 'verificationToken',
+                value: response.verificationToken,
+              );
               if (!mounted) return;
-              SnackbarUtil.snackbarError(context, message: error.toString());
+              context.push('/verification-otp');
+              return;
+            }
 
-              ref.read(pinProvider.notifier).state = '';
-            })
-            .whenComplete(() {
-              _shuffleNumbers();
-              ref.read(pinProvider.notifier).state = '';
-              ref
-                  .read(authProvider.notifier)
-                  .setLoading(isLoading: false, mensaje: '');
-            });
+            await secureStorage.write(
+              key: 'accessToken',
+              value: response.accessToken,
+            );
+            await secureStorage.write(
+              key: 'refreshToken',
+              value: response.refreshToken,
+            );
+            await secureStorage.write(
+              key: 'expiresAt',
+              value: response.expiresAt.toIso8601String(),
+            );
+            await secureStorage.write(
+              key: 'tokenType',
+              value: response.tokenType,
+            );
+            await secureStorage.write(
+              key: 'userName',
+              value: response.apellidosyNombres,
+            );
+            await secureStorage.write(key: 'userCorreo', value: response.login);
+            await secureStorage.write(key: 'pin', value: ref.read(pinProvider));
+            await secureStorage.write(key: 'biometricEnabled', value: 'true');
+
+            if (!mounted) return;
+            context.go('/home');
+            SnackbarUtil.snackbarNotificationPush(
+              context,
+              message: '¡Bienvenido, ${response.apellidosyNombres}!',
+            );
+          } catch (error) {
+            if (!mounted) return;
+            SnackbarUtil.snackbarError(context, message: error.toString());
+            ref.read(pinProvider.notifier).state = '';
+          } finally {
+            _shuffleNumbers();
+            ref.read(pinProvider.notifier).state = '';
+            ref
+                .read(authProvider.notifier)
+                .setLoading(isLoading: false, mensaje: '');
+          }
+        }();
       }
     }
   }
@@ -162,63 +154,57 @@ class _PinScreenState extends ConsumerState<PinScreen> {
           .read(authProvider.notifier)
           .setLoading(isLoading: true, mensaje: 'Verificando...');
 
-      ref
-          .read(loginPinProvider.future)
-          .then((response) async {
-            if (response.requiereVerificacion) {
-              if (!mounted) return;
-              SnackbarUtil.snackbarInfo(
-                context,
-                message: response.mensajeVerificacion,
-              );
-              await secureStorage.write(
-                key: 'verificationToken',
-                value: response.verificationToken,
-              );
-              if (!mounted) return;
-              context.push('/verification-otp');
-              return;
-            }
+      try {
+        final response = await ref.read(loginPinProvider.future);
+        if (response.requiereVerificacion) {
+          if (!mounted) return;
+          SnackbarUtil.snackbarInfo(
+            context,
+            message: response.mensajeVerificacion,
+          );
+          await secureStorage.write(
+            key: 'verificationToken',
+            value: response.verificationToken,
+          );
+          if (!mounted) return;
+          context.push('/verification-otp');
+          return;
+        }
 
-            await secureStorage.write(
-              key: 'accessToken',
-              value: response.accessToken,
-            );
-            await secureStorage.write(
-              key: 'refreshToken',
-              value: response.refreshToken,
-            );
-            await secureStorage.write(
-              key: 'expiresAt',
-              value: response.expiresAt.toIso8601String(),
-            );
-            await secureStorage.write(
-              key: 'tokenType',
-              value: response.tokenType,
-            );
-            await secureStorage.write(
-              key: 'userName',
-              value: response.apellidosyNombres,
-            );
+        await secureStorage.write(
+          key: 'accessToken',
+          value: response.accessToken,
+        );
+        await secureStorage.write(
+          key: 'refreshToken',
+          value: response.refreshToken,
+        );
+        await secureStorage.write(
+          key: 'expiresAt',
+          value: response.expiresAt.toIso8601String(),
+        );
+        await secureStorage.write(key: 'tokenType', value: response.tokenType);
+        await secureStorage.write(
+          key: 'userName',
+          value: response.apellidosyNombres,
+        );
 
-            if (!mounted) return;
-            context.go('/home');
-            SnackbarUtil.snackbarSuccess(
-              context,
-              message: '¡Bienvenido, ${response.apellidosyNombres}!',
-            );
-          })
-          .catchError((error) {
-            if (mounted) {
-              SnackbarUtil.snackbarError(context, message: error.toString());
-            }
-          })
-          .whenComplete(() {
-            ref.read(pinProvider.notifier).state = '';
-            ref
-                .read(authProvider.notifier)
-                .setLoading(isLoading: false, mensaje: '');
-          });
+        if (!mounted) return;
+        context.go('/home');
+        SnackbarUtil.snackbarSuccess(
+          context,
+          message: '¡Bienvenido, ${response.apellidosyNombres}!',
+        );
+      } catch (error) {
+        if (mounted) {
+          SnackbarUtil.snackbarError(context, message: error.toString());
+        }
+      } finally {
+        ref.read(pinProvider.notifier).state = '';
+        ref
+            .read(authProvider.notifier)
+            .setLoading(isLoading: false, mensaje: '');
+      }
     }
   }
 

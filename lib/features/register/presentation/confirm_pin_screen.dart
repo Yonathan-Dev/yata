@@ -70,38 +70,36 @@ class _ConfirmPinScreenState extends ConsumerState<ConfirmPinScreen> {
     ref.read(registerProvider.notifier).setIsLoading(true);
     ref.read(registerProvider.notifier).setMensaje('Registrando tu cuenta...');
 
-    ref
-        .read(registrarCuentaProvider.future)
-        .then((response) async {
-          ref.read(registerProvider.notifier).setIsLoading(false);
-          if (response == 'OK') {
-            await secureStorage.write(key: 'flagRegistrado', value: 'true');
-
-            if (!mounted) return;
-            SnackbarUtil.snackbarNotificationPush(
-              context,
-              message: 'Cuenta registrada exitosamente',
-            );
-            context.go('/pin');
-          } else {
-            if (!mounted) return;
-            SnackbarUtil.snackbarError(
-              context,
-              message: 'Error al registrar la cuenta: $response',
-            );
-          }
-        })
-        .catchError((error) {
+    () async {
+      try {
+        final response = await ref.read(registrarCuentaProvider.future);
+        ref.read(registerProvider.notifier).setIsLoading(false);
+        if (response == 'OK') {
+          await secureStorage.write(key: 'flagRegistrado', value: 'true');
+          if (!mounted) return;
+          SnackbarUtil.snackbarNotificationPush(
+            context,
+            message: 'Cuenta registrada exitosamente',
+          );
+          context.go('/pin');
+        } else {
           if (!mounted) return;
           SnackbarUtil.snackbarError(
             context,
-            message: 'Error al registrar la cuenta: ${error.toString()}',
+            message: 'Error al registrar la cuenta: $response',
           );
-        })
-        .whenComplete(() {
-          ref.read(registerProvider.notifier).setIsLoading(false);
-          ref.read(registerProvider.notifier).setMensaje('');
-        });
+        }
+      } catch (e) {
+        if (!mounted) return;
+        SnackbarUtil.snackbarError(
+          context,
+          message: 'Error al registrar la cuenta: ${e.toString()}',
+        );
+      } finally {
+        ref.read(registerProvider.notifier).setIsLoading(false);
+        ref.read(registerProvider.notifier).setMensaje('');
+      }
+    }();
   }
 
   @override

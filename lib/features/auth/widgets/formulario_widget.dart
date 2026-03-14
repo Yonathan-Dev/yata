@@ -44,61 +44,59 @@ class _FormularioWidgetState extends ConsumerState<FormularioWidget> {
       ref
           .read(authProvider.notifier)
           .setLoading(isLoading: true, mensaje: 'Iniciando sesión...');
-      ref
-          .read(loginCorreoProvider.future)
-          .then((response) async {
-            if (response.requiereVerificacion) {
-              if (!mounted) return;
-              SnackbarUtil.snackbarNotificationPush(
-                context,
-                message: response.mensajeVerificacion,
-              );
-              await secureStorage.write(
-                key: 'verificationToken',
-                value: response.verificationToken,
-              );
-              if (!mounted) return;
-              context.push('/verification-otp');
-              return;
-            }
+      () async {
+        try {
+          final response = await ref.read(loginCorreoProvider.future);
+          if (response.requiereVerificacion) {
+            if (!mounted) return;
+            SnackbarUtil.snackbarNotificationPush(
+              context,
+              message: response.mensajeVerificacion,
+            );
+            await secureStorage.write(
+              key: 'verificationToken',
+              value: response.verificationToken,
+            );
+            if (!mounted) return;
+            context.push('/verification-otp');
+            return;
+          }
 
-            await secureStorage.write(
-              key: 'accessToken',
-              value: response.accessToken,
-            );
-            await secureStorage.write(
-              key: 'refreshToken',
-              value: response.refreshToken,
-            );
-            await secureStorage.write(
-              key: 'expiresAt',
-              value: response.expiresAt.toIso8601String(),
-            );
-            await secureStorage.write(
-              key: 'tokenType',
-              value: response.tokenType,
-            );
-            await secureStorage.write(key: 'userCorreo', value: response.login);
-            await secureStorage.write(key: 'flagRegistrado', value: 'true');
+          await secureStorage.write(
+            key: 'accessToken',
+            value: response.accessToken,
+          );
+          await secureStorage.write(
+            key: 'refreshToken',
+            value: response.refreshToken,
+          );
+          await secureStorage.write(
+            key: 'expiresAt',
+            value: response.expiresAt.toIso8601String(),
+          );
+          await secureStorage.write(
+            key: 'tokenType',
+            value: response.tokenType,
+          );
+          await secureStorage.write(key: 'userCorreo', value: response.login);
+          await secureStorage.write(key: 'flagRegistrado', value: 'true');
 
-            if (!mounted) return;
-            context.go('/home');
+          if (!mounted) return;
+          context.go('/home');
 
-            if (!mounted) return;
-            context.go('/pin');
-          })
-          .catchError((error) {
-            if (!mounted) return;
-            SnackbarUtil.snackbarError(context, message: error.toString());
-          })
-          .whenComplete(() {
-            if (!mounted) return;
-            _usuarioFocusNode.unfocus();
-            _passwordFocusNode.unfocus();
-            ref
-                .read(authProvider.notifier)
-                .setLoading(isLoading: false, mensaje: '');
-          });
+          if (!mounted) return;
+          context.go('/pin');
+        } catch (error) {
+          if (!mounted) return;
+          SnackbarUtil.snackbarError(context, message: error.toString());
+        } finally {
+          _usuarioFocusNode.unfocus();
+          _passwordFocusNode.unfocus();
+          ref
+              .read(authProvider.notifier)
+              .setLoading(isLoading: false, mensaje: '');
+        }
+      }();
     }
   }
 

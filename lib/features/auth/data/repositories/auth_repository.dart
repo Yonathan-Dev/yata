@@ -43,8 +43,8 @@ class AuthRepository {
     );
   }
 
-  Future<void> logout(String refreshToken, String fingerprint) async {
-    await dataSource.logout(refreshToken, fingerprint);
+  Future<bool> logout(String refreshToken, String fingerprint) async {
+    return await dataSource.logout(refreshToken, fingerprint);
   }
 
   Future<String> restaurarClave(

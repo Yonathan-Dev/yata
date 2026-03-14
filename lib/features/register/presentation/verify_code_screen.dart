@@ -60,20 +60,19 @@ class _VerifyCodeScreenState extends ConsumerState<VerifyCodeScreen> {
       ref.read(verifyCodeProvider.notifier).setMensaje('Verificando código...');
       ref.read(verifyCodeProvider.notifier).setCodigoOtp(code);
 
-      ref
-          .read(enviarCodigoOTPProvider.future)
-          .then((response) {
-            if (!mounted) return;
-            SnackbarUtil.snackbarNotificationPush(context, message: response);
-            context.push('/create-pin');
-          })
-          .catchError((error) {
-            if (!mounted) return;
-            SnackbarUtil.snackbarError(context, message: error.toString());
-          })
-          .whenComplete(() {
-            ref.read(verifyCodeProvider.notifier).resetEstado();
-          });
+      () async {
+        try {
+          final response = await ref.read(enviarCodigoOTPProvider.future);
+          if (!mounted) return;
+          SnackbarUtil.snackbarNotificationPush(context, message: response);
+          context.push('/create-pin');
+        } catch (e) {
+          if (!mounted) return;
+          SnackbarUtil.snackbarError(context, message: e.toString());
+        } finally {
+          ref.read(verifyCodeProvider.notifier).resetEstado();
+        }
+      }();
     }
   }
 

@@ -159,7 +159,7 @@ class AuthDataSource {
     }
   }
 
-  Future<void> logout(String refreshToken, String fingerprint) async {
+  Future<bool> logout(String refreshToken, String fingerprint) async {
     try {
       final response = await dio.post(
         '/api/Usuario/logout',
@@ -182,6 +182,9 @@ class AuthDataSource {
         if (errorCodigo != 'OK') {
           throw Exception(data['errorMensaje'] ?? 'Error desconocido');
         }
+
+        final value = data['value'];
+        return value == true;
       } else {
         throw Exception('Error al cerrar sesión: ${response.statusCode}');
       }

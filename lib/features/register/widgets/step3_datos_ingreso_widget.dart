@@ -76,22 +76,22 @@ class _Step3DatosIngresoWidgetState
         return null;
       }
 
-      ref
-          .read(enviarOTPProvider.future)
-          .then((response) {
-            if (!mounted) return;
-            SnackbarUtil.snackbarNotificationPush(context, message: response);
-            context.push('/verify-code');
-          })
-          .catchError((error) {
-            if (!mounted) return;
-            SnackbarUtil.snackbarError(context, message: error.toString());
-          })
-          .whenComplete(() {
-            if (mounted) {
-              ref.read(registerProvider.notifier).setIsLoading(false);
-            }
-          });
+      ref.read(enviarOTPProvider.future).then((response) async {
+        if (!mounted) return;
+        try {
+          await ref.read(enviarOTPProvider.future);
+          if (!mounted) return;
+          SnackbarUtil.snackbarNotificationPush(context, message: response);
+          context.push('/verify-code');
+        } catch (e) {
+          if (!mounted) return;
+          SnackbarUtil.snackbarError(context, message: e.toString());
+        } finally {
+          if (mounted) {
+            ref.read(registerProvider.notifier).setIsLoading(false);
+          }
+        }
+      });
     }
     return null;
   }

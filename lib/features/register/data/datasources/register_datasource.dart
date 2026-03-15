@@ -99,6 +99,9 @@ class RegisterDataSource {
           'celular': registerState.celular,
           'rutaImagen1': registerState.rutaImagen1,
           'fingerprint': fingerprintState,
+          'terminos': registerState.terminos,
+          'politicaDatos': registerState.politicaDatos,
+          'promociones': registerState.promociones,
         }),
         options: Options(
           headers: {'Content-Type': 'application/json'},

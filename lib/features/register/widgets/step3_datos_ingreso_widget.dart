@@ -38,7 +38,7 @@ class _Step3DatosIngresoWidgetState
     super.dispose();
   }
 
-  String? _handleSubmit() {
+  Future<String?> _handleSubmit() async {
     if (_formKey.currentState!.validate()) {
       ref.read(registerProvider.notifier).setIsLoading(true);
       ref.read(registerProvider.notifier).setMensaje('Enviando OTP...');
@@ -76,22 +76,19 @@ class _Step3DatosIngresoWidgetState
         return null;
       }
 
-      ref.read(enviarOTPProvider.future).then((response) async {
-        if (!mounted) return;
-        try {
-          await ref.read(enviarOTPProvider.future);
-          if (!mounted) return;
-          SnackbarUtil.snackbarNotificationPush(context, message: response);
-          context.push('/verify-code');
-        } catch (e) {
-          if (!mounted) return;
-          SnackbarUtil.snackbarError(context, message: e.toString());
-        } finally {
-          if (mounted) {
-            ref.read(registerProvider.notifier).setIsLoading(false);
-          }
-        }
-      });
+      try {
+        final response = await ref.read(enviarOTPProvider.future);
+        if (!mounted) return null;
+
+        SnackbarUtil.snackbarNotificationPush(context, message: response);
+        context.push('/verify-code');
+      } catch (e) {
+        if (!mounted) return null;
+        SnackbarUtil.snackbarError(context, message: e.toString());
+      } finally {
+        ref.read(registerProvider.notifier).setIsLoading(false);
+        ref.read(registerProvider.notifier).setMensaje('');
+      }
     }
     return null;
   }
@@ -158,28 +155,31 @@ class _Step3DatosIngresoWidgetState
                 child: Column(
                   children: [
                     _buildCheckboxItem(
-                      value: ref.watch(acceptTermsProvider),
+                      value: ref.watch(registerProvider).terminos,
                       onChanged: (value) {
-                        ref.read(acceptTermsProvider.notifier).state =
-                            value ?? false;
+                        ref
+                            .read(registerProvider.notifier)
+                            .setTerminos(value ?? false);
                       },
                       text: 'Acepta términos y condiciones',
                     ),
                     const SizedBox(height: 12),
                     _buildCheckboxItem(
-                      value: ref.watch(acceptDataPolicyProvider),
+                      value: ref.watch(registerProvider).politicaDatos,
                       onChanged: (value) {
-                        ref.read(acceptDataPolicyProvider.notifier).state =
-                            value ?? false;
+                        ref
+                            .read(registerProvider.notifier)
+                            .setPoliticaDatos(value ?? false);
                       },
                       text: 'Aceptar política de uso de datos',
                     ),
                     const SizedBox(height: 12),
                     _buildCheckboxItem(
-                      value: ref.watch(acceptPromotionsProvider),
+                      value: ref.watch(registerProvider).promociones,
                       onChanged: (value) {
-                        ref.read(acceptPromotionsProvider.notifier).state =
-                            value ?? false;
+                        ref
+                            .read(registerProvider.notifier)
+                            .setPromociones(value ?? false);
                       },
                       text: 'Recibir por correo electrónico promociones',
                     ),
@@ -192,9 +192,7 @@ class _Step3DatosIngresoWidgetState
                 height: Constantes.botonHeight,
                 margin: const EdgeInsets.symmetric(horizontal: 50),
                 child: ElevatedButton(
-                  onPressed:
-                      (ref.watch(acceptTermsProvider) &&
-                          ref.watch(acceptDataPolicyProvider))
+                  onPressed: (ref.watch(registerProvider).terminos)
                       ? _handleSubmit
                       : null,
                   style: ElevatedButton.styleFrom(
@@ -217,7 +215,7 @@ class _Step3DatosIngresoWidgetState
               ),
               TextButton(
                 onPressed: () {
-                  // Navegar a login
+                  context.go('/login');
                 },
                 child: Text(
                   'Ya tienes una cuenta',

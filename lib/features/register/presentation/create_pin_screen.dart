@@ -101,7 +101,6 @@ class _CreatePinScreenState extends ConsumerState<CreatePinScreen> {
           ),
           child: Container(width: double.infinity, color: Tema.primaryColor),
         ),
-        // Contenido: Card + Logo debajo
         Positioned(
           top: -60,
           left: 24,
@@ -140,7 +139,6 @@ class _CreatePinScreenState extends ConsumerState<CreatePinScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Título
               Text(
                 'Crea tu contraseña',
                 textAlign: TextAlign.center,
@@ -150,7 +148,6 @@ class _CreatePinScreenState extends ConsumerState<CreatePinScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-              // Descripción
               Text(
                 'Crea una clave de 6 dígitos que consideres segura. Sé original',
                 textAlign: TextAlign.center,
@@ -237,7 +234,6 @@ class _CreatePinScreenState extends ConsumerState<CreatePinScreen> {
       height: Constantes.botonHeightMedium,
       child: Stack(
         children: [
-          // Fondo con gradiente
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -248,7 +244,6 @@ class _CreatePinScreenState extends ConsumerState<CreatePinScreen> {
               borderRadius: BorderRadius.circular(10),
             ),
           ),
-          // Botón transparente encima
           Positioned.fill(
             child: ElevatedButton(
               onPressed: _handleContinuar,

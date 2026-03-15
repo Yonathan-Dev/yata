@@ -23,6 +23,9 @@ class RegisterState {
   final String contrasena;
   final String confirmaContrasena;
   final String pcIp;
+  final bool terminos;
+  final bool politicaDatos;
+  final bool promociones;
   final String error;
   final bool isLoading;
   final String mensaje;
@@ -45,6 +48,9 @@ class RegisterState {
     this.contrasena = '',
     this.confirmaContrasena = '',
     this.pcIp = '0.0.0.0',
+    this.terminos = false,
+    this.politicaDatos = false,
+    this.promociones = false,
     this.error = '',
     this.isLoading = false,
     this.mensaje = '',
@@ -68,6 +74,9 @@ class RegisterState {
     String? contrasena,
     String? confirmaContrasena,
     String? pcIp,
+    bool? terminos,
+    bool? politicaDatos,
+    bool? promociones,
     String? error,
     bool? isLoading,
     String? mensaje,
@@ -90,6 +99,9 @@ class RegisterState {
       contrasena: contrasena ?? this.contrasena,
       confirmaContrasena: confirmaContrasena ?? this.confirmaContrasena,
       pcIp: pcIp ?? this.pcIp,
+      terminos: terminos ?? this.terminos,
+      politicaDatos: politicaDatos ?? this.politicaDatos,
+      promociones: promociones ?? this.promociones,
       error: error ?? this.error,
       isLoading: isLoading ?? this.isLoading,
       mensaje: mensaje ?? this.mensaje,
@@ -170,6 +182,18 @@ class RegisterNotifier extends Notifier<RegisterState> {
 
   void setPcIp(String value) {
     state = state.copyWith(pcIp: value);
+  }
+
+  void setTerminos(bool value) {
+    state = state.copyWith(terminos: value);
+  }
+
+  void setPoliticaDatos(bool value) {
+    state = state.copyWith(politicaDatos: value);
+  }
+
+  void setPromociones(bool value) {
+    state = state.copyWith(promociones: value);
   }
 
   void setError(String value) {
@@ -254,6 +278,10 @@ class RegisterNotifier extends Notifier<RegisterState> {
     required String confirmaCorreo,
     required String contrasena,
     required String confirmaContrasena,
+    required String pcIp,
+    required bool terminos,
+    required bool politicaDatos,
+    required bool promociones,
   }) {
     state = state.copyWith(
       tipoPersona: tipoPersona,
@@ -272,6 +300,10 @@ class RegisterNotifier extends Notifier<RegisterState> {
       confirmaCorreo: confirmaCorreo,
       contrasena: contrasena,
       confirmaContrasena: confirmaContrasena,
+      pcIp: pcIp,
+      terminos: terminos,
+      politicaDatos: politicaDatos,
+      promociones: promociones,
     );
   }
 }
@@ -289,10 +321,6 @@ final registerDataSourceProvider = Provider<RegisterDataSource>((ref) {
   final dio = ref.watch(dioYataProvider);
   return RegisterDataSource(dio: dio);
 });
-
-final acceptTermsProvider = StateProvider<bool>((ref) => false);
-final acceptDataPolicyProvider = StateProvider<bool>((ref) => false);
-final acceptPromotionsProvider = StateProvider<bool>((ref) => false);
 
 final enviarOTPProvider = FutureProvider<String>((ref) async {
   final repository = ref.watch(registerRepositoryProvider);

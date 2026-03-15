@@ -150,28 +150,35 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
 
   Widget _buildVioletSection(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-    return SizedBox(
-      height: screenSize.height * 0.75,
+    return ConstrainedBox(
+      constraints: BoxConstraints(minHeight: screenSize.height * 0.75),
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          ClipPath(
-            clipper: ConvexCurveClipper(
-              screenHeight: screenSize.height,
-              screenWidth: screenSize.width,
+          Positioned.fill(
+            child: ClipPath(
+              clipper: ConvexCurveClipper(
+                screenHeight: screenSize.height,
+                screenWidth: screenSize.width,
+              ),
+              child: Container(color: Tema.primaryColor),
             ),
-            child: Container(width: double.infinity, color: Tema.primaryColor),
           ),
-          Positioned(
-            top: -50,
-            left: 24,
-            right: 24,
-            child: Column(
-              children: [
-                _buildChangePasswordCard(context),
-                const SizedBox(height: 24),
-                _buildRobotSection(context),
-              ],
+          Transform.translate(
+            offset: const Offset(0, -50), // ← sube el card, ajusta este valor
+            child: Padding(
+              padding: const EdgeInsets.only(
+                left: 24,
+                right: 24,
+              ), // solo positivos
+              child: Column(
+                children: [
+                  _buildChangePasswordCard(context),
+                  const SizedBox(height: 24),
+                  _buildRobotSection(context),
+                  const SizedBox(height: 40),
+                ],
+              ),
             ),
           ),
           _buildLoadingIndicator(context),
@@ -304,14 +311,6 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-            color: Tema.negro,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: 8),
         TextFormField(
           controller: controller,
           obscureText: obscureText,
@@ -319,6 +318,7 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
             context,
           ).textTheme.bodyLarge!.copyWith(color: Tema.negro),
           decoration: InputDecoration(
+            hintText: label,
             filled: true,
             fillColor: Colors.grey.shade100,
             contentPadding: const EdgeInsets.symmetric(

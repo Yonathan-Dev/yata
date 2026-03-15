@@ -175,8 +175,6 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
                 children: [
                   _buildChangePasswordCard(context),
                   const SizedBox(height: 24),
-                  _buildRobotSection(context),
-                  const SizedBox(height: 40),
                 ],
               ),
             ),
@@ -295,10 +293,6 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
         ),
       ),
     );
-  }
-
-  Widget _buildRobotSection(BuildContext context) {
-    return RobotSectionWidget();
   }
 
   Widget _buildPasswordField(

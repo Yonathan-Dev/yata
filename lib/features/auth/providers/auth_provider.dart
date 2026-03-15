@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import '../../../core/app_exports.dart';
@@ -84,73 +83,6 @@ class AuthNotifier extends Notifier<AuthState> {
     //esppera unos 2 segundos
     await Future.delayed(const Duration(seconds: 2));
     state = state.copyWith(isLoading: false, mensaje: '');
-  }
-
-  // Iniciar sesión
-  Future<void> login(String usuario, String password, String plataforma) async {
-    state = state.copyWith(isLoading: true, error: null);
-    try {
-      /*final repository = ref.read(authRepositoryProvider);
-      state = state.copyWith(mensaje: 'Iniciando sesión...');
-
-      final authModel = await repository.postAuth(
-        usuario,
-        password,
-        plataforma,
-      );*/
-
-      /*if (authModel.estado != 1) {
-        state = state.copyWith(
-          isAuthenticated: false,
-          isLoading: false,
-          error: 'Usuario inactivo. Contacte al administrador.',
-          mensaje: '',
-        );
-      }
-      state = state.copyWith(user: null);
-
-      User user = User(
-        id: authModel.usuarioId,
-        username: authModel.login,
-        password: password,
-        name: authModel.descripcion,
-        email: authModel.correo,
-        isActive: authModel.estado,
-        role: authModel.codigoPerfil,
-      );*/
-
-      /*final prefsService = ref.read(preferencesServiceProvider);
-      await prefsService.saveAuthToken('fake_token');
-      await prefsService.saveUserId(user.id.toString());
-      if (ref.read(recordarProvider.notifier).state == true) {
-        await prefsService.saveSavedUsername(usuario);
-        await prefsService.saveSavedPassword(password);
-      } else {
-        await prefsService.removeSavedUsername();
-        await prefsService.removeSavedPassword();
-      }
-
-      state = state.copyWith(
-        isAuthenticated: true,
-        isLoading: false,
-        mensaje: '',
-        user: user,
-      );*/
-    } on DioException catch (e) {
-      state = state.copyWith(
-        isAuthenticated: false,
-        isLoading: false,
-        error: e.message ?? 'Error desconocido',
-        mensaje: '',
-      );
-    } catch (e) {
-      state = state.copyWith(
-        isAuthenticated: false,
-        isLoading: false,
-        error: e.toString(),
-        mensaje: '',
-      );
-    }
   }
 
   // Cerrar sesión

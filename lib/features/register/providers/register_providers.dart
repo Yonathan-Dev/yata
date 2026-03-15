@@ -17,6 +17,7 @@ class RegisterState {
   final String celular;
   final String contacto;
   final String imagen1;
+  final String imagen1Base64;
   final String rutaImagen1;
   final String correo;
   final String confirmaCorreo;
@@ -42,6 +43,7 @@ class RegisterState {
     this.celular = '',
     this.contacto = '',
     this.imagen1 = '',
+    this.imagen1Base64 = '',
     this.rutaImagen1 = '',
     this.correo = '',
     this.confirmaCorreo = '',
@@ -68,6 +70,7 @@ class RegisterState {
     String? celular,
     String? contacto,
     String? imagen1,
+    String? imagen1Base64,
     String? rutaImagen1,
     String? correo,
     String? confirmaCorreo,
@@ -93,6 +96,7 @@ class RegisterState {
       celular: celular ?? this.celular,
       contacto: contacto ?? this.contacto,
       imagen1: imagen1 ?? this.imagen1,
+      imagen1Base64: imagen1Base64 ?? this.imagen1Base64,
       rutaImagen1: rutaImagen1 ?? this.rutaImagen1,
       correo: correo ?? this.correo,
       confirmaCorreo: confirmaCorreo ?? this.confirmaCorreo,
@@ -158,6 +162,10 @@ class RegisterNotifier extends Notifier<RegisterState> {
 
   void setImagen1(String value) {
     state = state.copyWith(imagen1: value);
+  }
+
+  void setImagen1Base64(String value) {
+    state = state.copyWith(imagen1Base64: value);
   }
 
   void setRutaImagen1(String value) {
@@ -273,6 +281,7 @@ class RegisterNotifier extends Notifier<RegisterState> {
     required String celular,
     required String contacto,
     required String imagen1,
+    required String imagen1Base64,
     required String rutaImagen1,
     required String correo,
     required String confirmaCorreo,
@@ -295,6 +304,7 @@ class RegisterNotifier extends Notifier<RegisterState> {
       celular: celular,
       contacto: contacto,
       imagen1: imagen1,
+      imagen1Base64: imagen1Base64,
       rutaImagen1: rutaImagen1,
       correo: correo,
       confirmaCorreo: confirmaCorreo,

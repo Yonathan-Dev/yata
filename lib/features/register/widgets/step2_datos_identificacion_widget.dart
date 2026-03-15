@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../core/app_exports.dart';
+import '../../../shared/shared_exports.dart';
 
 class Step2DatosIdentificacionWidget extends ConsumerStatefulWidget {
   final int currentStep;
@@ -114,9 +117,18 @@ class _Step2DatosIdentificacionWidgetState
                   source: ImageSource.camera,
                 );
                 if (photo != null) {
+                  final XFile compressed = await comprimirArchivo(
+                    photo,
+                    tipo: TipoImagen.documento,
+                  );
+                  final bytes = await compressed.readAsBytes();
+                  final base64Image = base64Encode(bytes);
                   ref
                       .read(registerProvider.notifier)
-                      .setRutaImagen1(photo.path);
+                      .setRutaImagen1(compressed.path);
+                  ref
+                      .read(registerProvider.notifier)
+                      .setImagen1Base64(base64Image);
                   widget.onStepChanged?.call(widget.currentStep + 1);
                 }
               },

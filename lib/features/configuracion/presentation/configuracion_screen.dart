@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../core/app_exports.dart';
 import '../../../shared/shared_exports.dart';
 
@@ -55,17 +56,13 @@ class ConfiguracionScreen extends ConsumerWidget {
             _buildSeccionTitulo(context, 'Soporte'),
             _buildTarjetaConfiguracion(
               context: context,
-              children: [
-                _buildOpcionSoporteWhatsapp(context), // RF-38
-              ],
+              children: [_buildOpcionSoporteWhatsapp(context)],
             ),
             const SizedBox(height: Constantes.separacion * 2),
-            _buildSeccionTituloDestructivo(context, 'Zona de riesgo'),
+            _buildSeccionTitulo(context, 'Zona de riesgo'),
             _buildTarjetaConfiguracion(
               context: context,
-              children: [
-                _buildOpcionCancelarCuenta(context, ref), // RF-38
-              ],
+              children: [_buildOpcionCancelarCuenta(context, ref)],
             ),
             const SizedBox(height: Constantes.separacion * 4),
             _buildTarjetaConfiguracion(
@@ -141,18 +138,6 @@ class ConfiguracionScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildSeccionTituloDestructivo(BuildContext context, String titulo) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 4, bottom: 8),
-      child: Text(
-        titulo,
-        style: Theme.of(
-          context,
-        ).textTheme.titleMedium?.copyWith(color: Colors.red[700]),
-      ),
-    );
-  }
-
   Widget _buildTarjetaConfiguracion({
     required BuildContext context,
     required List<Widget> children,
@@ -200,7 +185,7 @@ class ConfiguracionScreen extends ConsumerWidget {
   Widget _buildOpcionContrasena(BuildContext context) {
     return _buildTile(
       context: context,
-      iconBg: Colors.orange.withValues(alpha: 0.12),
+      iconBg: Tema.naranja.withValues(alpha: 0.12),
       icon: Icons.lock_outline_rounded,
       iconColor: Colors.orange[800]!,
       title: 'Contraseña',
@@ -229,7 +214,7 @@ class ConfiguracionScreen extends ConsumerWidget {
         vertical: 6,
       ),
       leading: _iconBox(
-        color: Colors.blue.withValues(alpha: 0.1),
+        color: Tema.azul.withValues(alpha: 0.1),
         icon: Icons.smartphone_rounded,
         iconColor: Colors.blue[700]!,
       ),
@@ -376,7 +361,18 @@ class ConfiguracionScreen extends ConsumerWidget {
           const Icon(Icons.chevron_right_rounded, color: Colors.grey),
         ],
       ),
-      onTap: () {},
+      onTap: () async {
+        const phone = '966105060';
+        final url = Uri.parse('https://wa.me/$phone');
+        if (await canLaunchUrl(url)) {
+          await launchUrl(url, mode: LaunchMode.externalApplication);
+        } else {
+          if (!context.mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('No se pudo abrir WhatsApp')),
+          );
+        }
+      },
     );
   }
 

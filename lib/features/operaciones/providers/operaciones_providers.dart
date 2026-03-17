@@ -192,7 +192,7 @@ final enviarRegistroProvider = FutureProvider.autoDispose<String>((ref) async {
   final repository = ref.watch(registrarRepositoryProvider);
   final registrarState = ref.read(registrarProvider);
   final vFechaEvento = DateFormat('dd/MM/yyyy HH:mm:ss').format(DateTime.now());
-  final vUsuario = ref.watch(authProvider).user?.username;
+  final vUsuario = ref.watch(authProvider).user?.login;
   final seguimiento = ref.watch(seguimientoProvider);
   return await repository.enviarRegistro(
     vUsuario!,

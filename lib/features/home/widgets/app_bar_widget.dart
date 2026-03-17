@@ -31,7 +31,6 @@ class AppBarWidget extends ConsumerWidget {
               ),
             ),
           ),
-          // Icono robot
           Container(
             width: 42,
             height: 42,

@@ -6,10 +6,10 @@ class YatasListNotifier extends AsyncNotifier<List<YataModel>> {
   @override
   Future<List<YataModel>> build() async {
     final repository = ref.read(registrarRepositoryProvider);
-    final usuario = ref.read(authProvider).user?.username ?? '';
+    final login = ref.read(authProvider).user?.login ?? '';
 
     try {
-      final yata = await repository.obteneryataOperador(usuario);
+      final yata = await repository.obteneryataOperador(login);
       if (yata != null) {
         return [yata];
       }
@@ -22,10 +22,10 @@ class YatasListNotifier extends AsyncNotifier<List<YataModel>> {
   Future<void> recargaryata() async {
     state = const AsyncValue.loading();
     final repository = ref.read(registrarRepositoryProvider);
-    final usuario = ref.read(authProvider).user?.username ?? '';
+    final login = ref.read(authProvider).user?.login ?? '';
 
     state = await AsyncValue.guard(() async {
-      final yata = await repository.obteneryataOperador(usuario);
+      final yata = await repository.obteneryataOperador(login);
       if (yata != null) {
         return [yata];
       }

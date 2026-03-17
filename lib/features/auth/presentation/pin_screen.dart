@@ -79,6 +79,18 @@ class _PinScreenState extends ConsumerState<PinScreen> {
             await secureStorage.write(key: 'pin', value: ref.read(pinProvider));
             await secureStorage.write(key: 'biometricEnabled', value: 'true');
 
+            ref
+                .read(authProvider.notifier)
+                .setUser(
+                  User(
+                    idUsuario: response.idUsuario,
+                    login: response.login,
+                    apellidosyNombres: response.apellidosyNombres,
+                    correoInstitucional: response.correoInstitucional,
+                    numeroDocumento: response.numeroDocumento,
+                  ),
+                );
+
             if (!mounted) return;
             context.go('/home');
             SnackbarUtil.snackbarNotificationPush(

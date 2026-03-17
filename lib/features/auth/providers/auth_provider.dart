@@ -73,6 +73,10 @@ class AuthNotifier extends Notifier<AuthState> {
     state = state.copyWith(password: value);
   }
 
+  setUser(User value) {
+    state = state.copyWith(user: value);
+  }
+
   setNumeroDocumento(String value) {
     state = state.copyWith(numeroDocumento: value);
   }

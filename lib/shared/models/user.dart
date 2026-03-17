@@ -1,63 +1,51 @@
 class User {
-  final int id;
-  final String username;
-  final String password;
-  final String name;
-  final String email;
-  final int isActive;
-  final int role;
+  final int idUsuario;
+  final String login;
+  final String apellidosyNombres;
+  final String correoInstitucional;
+  final String numeroDocumento;
 
   const User({
-    required this.id,
-    required this.username,
-    required this.password,
-    required this.name,
-    required this.email,
-    required this.isActive,
-    required this.role,
+    required this.idUsuario,
+    required this.login,
+    required this.apellidosyNombres,
+    required this.correoInstitucional,
+    required this.numeroDocumento,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: json['id'] ?? 0,
-      username: json['username'] ?? '',
-      password: json['password'] ?? '',
-      name: json['name'] ?? '',
-      email: json['email'] ?? '',
-      isActive: json['isActive'] ?? 0,
-      role: json['role'] ?? 0,
+      idUsuario: json['idUsuario'] ?? 0,
+      login: json['login'] ?? '',
+      apellidosyNombres: json['apellidosyNombres'] ?? '',
+      correoInstitucional: json['correoInstitucional'] ?? '',
+      numeroDocumento: json['numeroDocumento'] ?? '',
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
-      'username': username,
-      'password': password,
-      'name': name,
-      'email': email,
-      'isActive': isActive,
-      'role': role,
+      'idUsuario': idUsuario,
+      'login': login,
+      'apellidosyNombres': apellidosyNombres,
+      'correoInstitucional': correoInstitucional,
+      'numeroDocumento': numeroDocumento,
     };
   }
 
   User copyWith({
-    int? id,
-    String? username,
-    String? password,
-    String? name,
-    String? email,
-    int? isActive,
-    int? role,
+    int? idUsuario,
+    String? login,
+    String? apellidosyNombres,
+    String? correoInstitucional,
+    String? numeroDocumento,
   }) {
     return User(
-      id: id ?? this.id,
-      username: username ?? this.username,
-      password: password ?? this.password,
-      name: name ?? this.name,
-      email: email ?? this.email,
-      isActive: isActive ?? this.isActive,
-      role: role ?? this.role,
+      idUsuario: idUsuario ?? this.idUsuario,
+      login: login ?? this.login,
+      apellidosyNombres: apellidosyNombres ?? this.apellidosyNombres,
+      correoInstitucional: correoInstitucional ?? this.correoInstitucional,
+      numeroDocumento: numeroDocumento ?? this.numeroDocumento,
     );
   }
 }

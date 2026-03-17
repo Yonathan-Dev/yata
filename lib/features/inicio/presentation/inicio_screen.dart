@@ -28,19 +28,14 @@ class _InicioScreenState extends ConsumerState<InicioScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 16),
-                    // Saludo
                     _buildSaludo(context),
                     const SizedBox(height: 20),
-                    // Card de saldo
                     _buildSaldoCard(context),
                     const SizedBox(height: 24),
-                    // Pregunta de acciones
                     _buildPreguntaAcciones(context),
                     const SizedBox(height: 16),
-                    // Grid de acciones
                     _buildAccionesGrid(context),
                     const SizedBox(height: 24),
-                    // Card de movimientos
                     _buildMovimientosCard(context),
                     const SizedBox(height: 20),
                   ],
@@ -62,7 +57,7 @@ class _InicioScreenState extends ConsumerState<InicioScreen> {
           Icon(Icons.person_outline, color: Tema.negro, size: 24),
           const SizedBox(width: 8),
           Text(
-            '¡Hola, Yonathan!',
+            '¡Hola, ${ref.watch(authProvider).user?.apellidosyNombres.split(',').last.trim()}!',
             style: Theme.of(context).textTheme.titleLarge!.copyWith(
               color: Tema.negro,
               fontWeight: FontWeight.w500,

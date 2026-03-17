@@ -87,7 +87,7 @@ class ConfiguracionScreen extends ConsumerWidget {
             radius: 35,
             backgroundColor: Tema.primaryColor,
             child: Text(
-              user?.name.substring(0, 1).toUpperCase() ?? 'U',
+              user?.apellidosyNombres.substring(0, 1).toUpperCase() ?? 'U',
               style: const TextStyle(fontSize: 28, color: Tema.blanco),
             ),
           ),
@@ -97,12 +97,12 @@ class ConfiguracionScreen extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  user?.name ?? 'Usuario',
+                  user?.apellidosyNombres ?? 'Usuario',
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  user?.email ?? 'Sin correo',
+                  user?.correoInstitucional ?? 'Sin correo',
                   style: Theme.of(
                     context,
                   ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),

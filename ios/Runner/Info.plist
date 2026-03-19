@@ -36,11 +36,6 @@
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
-	</array>
-	<key>UISupportedInterfaceOrientations~ipad</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
@@ -49,17 +44,11 @@
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>Esta aplicación necesita acceso a la cámara para tomar fotografías de los componentes de saneamiento.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Esta aplicación necesita acceso a la galería para seleccionar fotografías.</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Esta aplicación necesita acceso para guardar fotografías en la galería.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Esta aplicación necesita acceso a tu ubicación para registrar datos georreferenciados.</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Esta aplicación necesita acceso a tu ubicación para registrar datos georreferenciados.</string>
+	<string>La aplicación requiere acceso a la cámara para capturar la imagen del documento de identidad del usuario, con el fin de validar su identidad durante el registro en la billetera digital.</string>
 	<key>keychain-access-groups</key>
 	<array>
+	<key>NSFaceIDUsageDescription</key>
+	<string>La aplicación utiliza Face ID para autenticar al usuario de forma segura en el acceso a la billetera digital.</string>
 	<string>$(AppIdentifierPrefix)com.yata.wallet</string>
 	</array>
 </dict>

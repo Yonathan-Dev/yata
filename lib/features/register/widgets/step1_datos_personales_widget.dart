@@ -194,7 +194,6 @@ class _Step1DatosPersonalesWidgetState
                   ),
                 ),
               ),
-              // Botón siempre al fondo
               const SizedBox(height: Constantes.separacionFormulario),
               _buildContinueButton(context),
               const SizedBox(height: Constantes.separacionFormulario * 2),

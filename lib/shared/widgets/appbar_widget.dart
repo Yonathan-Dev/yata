@@ -11,15 +11,23 @@ class AppBarWidget extends ConsumerWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return AppBar(
-      title: Text(titulo, style: Theme.of(context).textTheme.titleLarge),
+      backgroundColor: Theme.of(context).colorScheme.primary,
+      title: Text(
+        titulo,
+        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+          color: Theme.of(context).colorScheme.onPrimary,
+        ),
+      ),
       centerTitle: false,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back),
+        color: Theme.of(context).colorScheme.onPrimary,
         onPressed: () {
-          context.go('/home');
+          context.pop();
         },
       ),
       actions: actions,
+      elevation: 0,
     );
   }
 

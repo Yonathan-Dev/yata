@@ -72,6 +72,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: 'forgotPin',
         builder: (context, state) => const ForgotPinScreen(),
       ),
+      GoRoute(
+        path: '/configuracion/perfil-datos',
+        name: 'perfilDatos',
+        builder: (context, state) => const PerfilDatosScreen(),
+      ),
     ],
   );
 });

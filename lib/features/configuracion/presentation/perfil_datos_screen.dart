@@ -1,0 +1,519 @@
+import 'package:animate_do/animate_do.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/app_exports.dart' hide AppBarWidget;
+import '../../../shared/shared_exports.dart';
+
+class PerfilDatosScreen extends ConsumerStatefulWidget {
+  const PerfilDatosScreen({super.key});
+
+  @override
+  ConsumerState<PerfilDatosScreen> createState() => _PerfilDatosScreenState();
+}
+
+class _PerfilDatosScreenState extends ConsumerState<PerfilDatosScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _loginController = TextEditingController();
+  final _loginFocus = FocusNode();
+  final _celularController = TextEditingController();
+  final _celularFocus = FocusNode();
+  final _numeroDocumentoController = TextEditingController();
+  final _numeroDocumentoFocus = FocusNode();
+  final _primerApellidoController = TextEditingController();
+  final _primerApellidoFocus = FocusNode();
+  final _segundoApellidoController = TextEditingController();
+  final _segundoApellidoFocus = FocusNode();
+  final _nombresController = TextEditingController();
+  final _nombresFocus = FocusNode();
+  final _fechaNacimientoController = TextEditingController();
+  final _fechaNacimientoFocus = FocusNode();
+  final _correoController = TextEditingController();
+  final _correoFocus = FocusNode();
+
+  @override
+  void dispose() {
+    _loginController.dispose();
+    _loginFocus.dispose();
+    _celularController.dispose();
+    _celularFocus.dispose();
+    _numeroDocumentoController.dispose();
+    _numeroDocumentoFocus.dispose();
+    _primerApellidoController.dispose();
+    _primerApellidoFocus.dispose();
+    _segundoApellidoController.dispose();
+    _segundoApellidoFocus.dispose();
+    _nombresController.dispose();
+    _nombresFocus.dispose();
+    _fechaNacimientoController.dispose();
+    _fechaNacimientoFocus.dispose();
+    _correoController.dispose();
+    _correoFocus.dispose();
+    super.dispose();
+  }
+
+  void _handleGuardar() {
+    if (_formKey.currentState!.validate()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Cambios guardados exitosamente')),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      bottom: false,
+      child: Scaffold(
+        appBar: const AppBarWidget(titulo: 'Modificar datos del perfil'),
+        backgroundColor: Tema.blanco,
+        body: Stack(
+          children: [
+            SingleChildScrollView(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    SafeArea(bottom: false, child: _buildLogoSection(context)),
+                    _buildVioletSection(context),
+                  ],
+                ),
+              ),
+            ),
+            _buildLoadingIndicator(context),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLogoSection(BuildContext context) {
+    return ZoomIn(
+      duration: Constantes.standardAnimation,
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 20, bottom: 75),
+          child: const IconoYataWidget(),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLoadingIndicator(BuildContext context) {
+    final verifyCodeState = ref.watch(verifyCodeProvider);
+
+    if (verifyCodeState.isLoading) {
+      return LoadingWidget(mensaje: verifyCodeState.mensaje);
+    }
+    return const SizedBox.shrink();
+  }
+
+  Widget _buildVioletSection(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    return SizedBox(
+      width: double.infinity,
+      height: screenSize.height * 0.7,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          ClipPath(
+            clipper: ConvexCurveClipper(
+              screenHeight: screenSize.height,
+              screenWidth: screenSize.width,
+            ),
+            child: Container(width: double.infinity, color: Tema.primaryColor),
+          ),
+          Positioned(
+            top: -60,
+            left: 24,
+            right: 24,
+            child: SizedBox(
+              height: screenSize.height * 0.7 + 60,
+              child: _buildFormCard(context),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFormCard(BuildContext context) {
+    return FadeInUp(
+      duration: Constantes.standardAnimation,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: Container(
+          padding: const EdgeInsets.all(32),
+          decoration: BoxDecoration(
+            color: Tema.blanco,
+            borderRadius: BorderRadius.circular(30),
+            boxShadow: [
+              BoxShadow(
+                color: Tema.negro.withValues(alpha: 0.3),
+                blurRadius: 24,
+                spreadRadius: 2,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildTextField(hint: 'Login', _loginController, _loginFocus),
+                const SizedBox(height: Constantes.separacion),
+                _buildTextField(
+                  hint: 'Celular',
+                  _celularController,
+                  _celularFocus,
+                  isCelular: true,
+                ),
+                const SizedBox(height: Constantes.separacion),
+                _buildSexoField(context),
+                const SizedBox(height: Constantes.separacion),
+                DropdownButtonFormField<String>(
+                  initialValue: null,
+                  decoration: InputDecoration(
+                    hintText: 'Tipo de persona',
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 16,
+                    ),
+                    filled: true,
+                    fillColor: Tema.blanco,
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(
+                        color: Tema.primaryColor.withValues(alpha: 0.4),
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(
+                        color: Tema.primaryColor,
+                        width: 2,
+                      ),
+                    ),
+                  ),
+                  items: const [
+                    DropdownMenuItem(
+                      value: 'Natural',
+                      child: Text('Persona Natural'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'Juridica',
+                      child: Text('Persona Jurídica'),
+                    ),
+                  ],
+                  onChanged: (value) {
+                    // Handle selection
+                  },
+                  validator: (value) {
+                    if (value == null) return 'Seleccione el tipo de persona';
+                    return null;
+                  },
+                ),
+                const SizedBox(height: Constantes.separacion),
+                DropdownButtonFormField<int>(
+                  initialValue: null,
+                  decoration: InputDecoration(
+                    hintText: 'Tipo de documento',
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 16,
+                    ),
+                    filled: true,
+                    fillColor: Tema.blanco,
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(
+                        color: Tema.primaryColor.withValues(alpha: 0.4),
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(
+                        color: Tema.primaryColor,
+                        width: 2,
+                      ),
+                    ),
+                  ),
+                  items: const [
+                    DropdownMenuItem(value: 1, child: Text('DNI')),
+                    DropdownMenuItem(
+                      value: 2,
+                      child: Text('Carnet de extranjería'),
+                    ),
+                    DropdownMenuItem(value: 3, child: Text('Pasaporte')),
+                  ],
+                  onChanged: (value) {
+                    if (value != null) {
+                      ref
+                          .read(registerProvider.notifier)
+                          .setTipoDocumento(value);
+                    }
+                  },
+                  validator: (value) {
+                    if (value == null) return 'Seleccione el tipo de documento';
+                    return null;
+                  },
+                ),
+                const SizedBox(height: Constantes.separacion),
+                _buildTextField(
+                  hint: 'Número de documento',
+                  _numeroDocumentoController,
+                  _numeroDocumentoFocus,
+                  isDNI:
+                      ref.watch(
+                        registerProvider.select((state) => state.tipoDocumento),
+                      ) ==
+                      1,
+                ),
+                const SizedBox(height: Constantes.separacion),
+                _buildTextField(
+                  hint: 'Apellido paterno',
+                  _primerApellidoController,
+                  _primerApellidoFocus,
+                ),
+                const SizedBox(height: Constantes.separacion),
+                _buildTextField(
+                  hint: 'Apellido materno',
+                  _segundoApellidoController,
+                  _segundoApellidoFocus,
+                ),
+                const SizedBox(height: Constantes.separacion),
+                _buildTextField(
+                  hint: 'Nombres',
+                  _nombresController,
+                  _nombresFocus,
+                ),
+                const SizedBox(height: Constantes.separacion),
+                _buildFechaNacimientoField(context),
+                const SizedBox(height: Constantes.separacion),
+                _buildTextField(
+                  hint: 'Correo',
+                  _correoController,
+                  _correoFocus,
+                  isCorreo: true,
+                ),
+                const SizedBox(height: Constantes.separacion),
+                _buildGuardarButton(context),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField(
+    TextEditingController? controller,
+    FocusNode? focusNode, {
+    required String hint,
+    bool isPassword = false,
+    bool isDNI = false,
+    bool isCelular = false,
+    bool isCorreo = false,
+  }) {
+    return TextFormField(
+      controller: controller,
+      focusNode: focusNode,
+      cursorColor: Tema.primaryColor,
+      style: const TextStyle(color: Colors.black87, fontSize: 14),
+      decoration: InputDecoration(
+        hintText: hint,
+        labelStyle: TextStyle(color: Tema.primaryColor, fontSize: 14),
+        hintStyle: TextStyle(color: Colors.grey[500], fontSize: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 24,
+          vertical: 16,
+        ),
+        filled: true,
+        fillColor: Tema.blanco,
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(
+            color: Tema.primaryColor.withValues(alpha: 0.4),
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: Tema.primaryColor, width: 2),
+        ),
+        suffixIcon: isPassword
+            ? Icon(Icons.visibility_off, color: Tema.primaryColor)
+            : null,
+        errorStyle: Theme.of(
+          context,
+        ).textTheme.bodySmall!.copyWith(color: Tema.primaryColor),
+        counterText: '',
+      ),
+      validator: (value) {
+        if (isCorreo) {
+          return ref.read(registerProvider.notifier).validarCorreo(value!);
+        }
+        return ref.read(registerProvider.notifier).validarCampo(value!, hint);
+      },
+      maxLength: isDNI
+          ? 8
+          : isCelular
+          ? 9
+          : 25,
+      keyboardType: isDNI
+          ? TextInputType.number
+          : isCelular
+          ? TextInputType.phone
+          : TextInputType.text,
+      inputFormatters: isDNI
+          ? [FilteringTextInputFormatter.digitsOnly]
+          : isCelular
+          ? [FilteringTextInputFormatter.digitsOnly]
+          : [FilteringTextInputFormatter.singleLineFormatter],
+    );
+  }
+
+  Widget _buildSexoField(BuildContext context) {
+    /*final selectedSexo = ref.watch(
+      registerProvider.select((state) => state.sexo),
+    );*/
+    return DropdownButtonFormField<String>(
+      initialValue: null,
+      decoration: InputDecoration(
+        hintText: 'Sexo',
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 24,
+          vertical: 16,
+        ),
+        filled: true,
+        fillColor: Tema.blanco,
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(
+            color: Tema.primaryColor.withValues(alpha: 0.4),
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: Tema.primaryColor, width: 2),
+        ),
+      ),
+      items: [
+        DropdownMenuItem(value: 'Masculino', child: Text('Masculino')),
+        DropdownMenuItem(value: 'Femenino', child: Text('Femenino')),
+      ],
+      onChanged: (value) {
+        // Handle selection
+      },
+      validator: (value) {
+        if (value == null) return 'Seleccione el sexo';
+        return null;
+      },
+    );
+  }
+
+  Widget _buildFechaNacimientoField(BuildContext context) {
+    return TextFormField(
+      controller: _fechaNacimientoController,
+      focusNode: _fechaNacimientoFocus,
+      readOnly: true,
+      decoration: InputDecoration(
+        hintText: 'Fecha de nacimiento',
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 24,
+          vertical: 16,
+        ),
+        filled: true,
+        fillColor: Tema.blanco,
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(
+            color: Tema.primaryColor.withValues(alpha: 0.4),
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: Tema.primaryColor, width: 2),
+        ),
+        suffixIcon: Icon(Icons.calendar_today, color: Tema.primaryColor),
+        errorStyle: Theme.of(
+          context,
+        ).textTheme.bodySmall!.copyWith(color: Tema.primaryColor),
+        counterText: '',
+      ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Seleccione la fecha de nacimiento';
+        }
+        final birthDate = DateTime.tryParse(value);
+        if (birthDate == null) return 'Fecha inválida';
+        final now = DateTime.now();
+        final age =
+            now.year -
+            birthDate.year -
+            ((now.month < birthDate.month ||
+                    (now.month == birthDate.month && now.day < birthDate.day))
+                ? 1
+                : 0);
+        if (age < 18) return 'Debe ser mayor de edad';
+        return null;
+      },
+      onTap: () async {
+        FocusScope.of(context).requestFocus(FocusNode());
+        final maxDate = DateTime.now().subtract(const Duration(days: 365 * 18));
+        final picked = await showDatePicker(
+          context: context,
+          initialDate: maxDate,
+          firstDate: DateTime(1900),
+          lastDate: maxDate,
+          locale: const Locale('es'),
+        );
+        if (picked != null) {
+          final formatted =
+              "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
+          _fechaNacimientoController.text = formatted;
+        }
+      },
+    );
+  }
+
+  Widget _buildGuardarButton(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      height: Constantes.botonHeightMedium,
+      child: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Tema.negro, Tema.primaryColor],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+              ),
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          Positioned.fill(
+            child: ElevatedButton(
+              onPressed: _handleGuardar,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                shadowColor: Colors.transparent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                elevation: 0,
+              ),
+              child: Text(
+                'Guardar cambios',
+                style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                  color: Tema.blanco,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

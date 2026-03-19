@@ -287,8 +287,10 @@ class ConfiguracionScreen extends ConsumerWidget {
       icon: Icons.person_outline_rounded,
       iconColor: Tema.primaryColor,
       title: 'Modificar datos del perfil',
-      subtitle: 'Nombre, correo, teléfono y foto',
-      onTap: () {},
+      subtitle: 'Nombre, correo, teléfono y más',
+      onTap: () {
+        context.push('/configuracion/perfil-datos');
+      },
     );
   }
 

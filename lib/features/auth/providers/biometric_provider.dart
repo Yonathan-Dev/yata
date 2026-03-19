@@ -98,9 +98,12 @@ class BiometricNotifier extends StateNotifier<BiometricState> {
     try {
       state = state.copyWith(isAuthenticating: true, error: null);
 
+      // ← Agrega este delay
+      await Future.delayed(const Duration(milliseconds: 200));
+
       final bool autenticado = await _auth.authenticate(
         localizedReason: 'Ingresa con tu huella dactilar',
-        persistAcrossBackgrounding: true,
+        persistAcrossBackgrounding: false,
         biometricOnly: true,
       );
 
@@ -112,17 +115,37 @@ class BiometricNotifier extends StateNotifier<BiometricState> {
 
       return (success: false, correo: null, pin: null);
     } on LocalAuthException catch (e) {
-      state = state.copyWith(
-        isAuthenticating: false,
-        error:
-            e.code != LocalAuthExceptionCode.userCanceled &&
-                e.code != LocalAuthExceptionCode.systemCanceled
-            ? e.description
-            : null,
-      );
+      if (e.description?.contains('lockout') == true) {
+        state = state.copyWith(
+          isAuthenticating: false,
+          error:
+              'Demasiados intentos fallidos. Intenta nuevamente en 30 segundos.',
+        );
+      } else {
+        state = state.copyWith(
+          isAuthenticating: false,
+          error:
+              e.code != LocalAuthExceptionCode.userCanceled &&
+                  e.code != LocalAuthExceptionCode.systemCanceled
+              ? e.description
+              : null,
+        );
+      }
       return (success: false, correo: null, pin: null);
     } on PlatformException catch (e) {
-      state = state.copyWith(isAuthenticating: false, error: e.message);
+      if (e.code == 'lockedOut' || (e.message?.contains('lockout') ?? false)) {
+        state = state.copyWith(
+          isAuthenticating: false,
+          error:
+              'Demasiados intentos fallidos. Intenta nuevamente en 30 segundos.',
+        );
+      } else if (e.code == 'authCanceled' ||
+          e.code == 'SystemCancel' ||
+          (e.message?.contains('cancel') ?? false)) {
+        state = state.copyWith(isAuthenticating: false, error: null);
+      } else {
+        state = state.copyWith(isAuthenticating: false, error: e.message);
+      }
       return (success: false, correo: null, pin: null);
     } catch (e) {
       state = state.copyWith(

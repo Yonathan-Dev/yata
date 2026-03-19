@@ -128,15 +128,6 @@ class _PinScreenState extends ConsumerState<PinScreen> {
     await biometricNotifier.refresh();
     final biometricState = ref.read(biometricProvider);
 
-    if (!biometricState.isEnabled) {
-      if (!mounted) return;
-      SnackbarUtil.snackbarInfo(
-        context,
-        message: 'Primero ingresa con tu PIN para activar la huella',
-      );
-      return;
-    }
-
     if (!biometricState.isSupported) {
       if (!mounted) return;
       SnackbarUtil.snackbarError(
@@ -146,13 +137,49 @@ class _PinScreenState extends ConsumerState<PinScreen> {
       return;
     }
 
+    // Validación específica: biometría no activada por login PIN
+    if (!biometricState.isEnabled) {
+      if (!mounted) return;
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Biometría no activada'),
+          content: const Text(
+            'Primero debes iniciar sesión con tu PIN para activar la biometría. Luego podrás usar tu huella.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Aceptar'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
     final resultado = await biometricNotifier.autenticarYObtenerCredenciales();
-
     if (!mounted) return;
-
     final error = ref.read(biometricProvider).error;
     if (error != null) {
-      SnackbarUtil.snackbarError(context, message: error);
+      // Si el error es lockout, mostrar un diálogo
+      if (error.contains('Demasiados intentos fallidos')) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Bloqueo biométrico'),
+            content: Text(error),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Aceptar'),
+              ),
+            ],
+          ),
+        );
+      } else {
+        SnackbarUtil.snackbarError(context, message: error);
+      }
       return;
     }
 
@@ -431,7 +458,6 @@ class _PinScreenState extends ConsumerState<PinScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        // Botón de huella digital sin fondo
         _buildSpecialButton(
           child: Container(
             decoration: BoxDecoration(
@@ -444,7 +470,6 @@ class _PinScreenState extends ConsumerState<PinScreen> {
           onTap: _onBiometricPressed,
           noBackground: true,
         ),
-        // Último número
         _buildKeyButton(_shuffledNumbers[9]),
         _buildSpecialButton(
           child: Container(

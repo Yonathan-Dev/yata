@@ -41,6 +41,7 @@ class _PerfilDatosScreenState extends ConsumerState<PerfilDatosScreen> {
     try {
       ref.read(perfilProvider.notifier).setIsLoading(true);
       ref.read(perfilProvider.notifier).setMensaje('Cargando datos...');
+      ref.invalidate(obtenerPerfilProvider);
       final response = await ref.read(obtenerPerfilProvider.future);
 
       _loginController.text = response.login;

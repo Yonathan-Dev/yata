@@ -22,3 +22,4 @@ export 'utils/snackbar_util.dart';
 export 'utils/dialog_utils.dart';
 // Interceptors
 export 'interceptors/dio_interceptor.dart';
+export 'interceptors/dio_auth_interceptor.dart';

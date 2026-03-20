@@ -498,7 +498,6 @@ class ConfiguracionScreen extends ConsumerWidget {
             await ref.read(logoutProvider.future);
             if (!context.mounted) return;
             authNotifier.logout();
-            context.go('/pin');
           } catch (e) {
             if (!context.mounted) return;
             SnackbarUtil.snackbarError(context, message: e.toString());

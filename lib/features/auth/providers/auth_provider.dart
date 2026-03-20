@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/app_exports.dart';
 import '../../../shared/shared_exports.dart';
 
@@ -100,6 +101,8 @@ class AuthNotifier extends Notifier<AuthState> {
       await secureStorage.delete(key: 'userName');
       await secureStorage.delete(key: 'passwordTemporary');
       ref.read(navigationIndexProvider.notifier).state = 0;
+      //envia a la pantalla de pin
+      navigatorKey.currentContext?.go('/pin');
       state = const AuthState();
     } catch (e) {
       state = state.copyWith(

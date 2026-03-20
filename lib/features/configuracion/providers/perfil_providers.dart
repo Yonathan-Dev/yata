@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/app_exports.dart';
 import '../../../shared/shared_exports.dart';
 
+// Estado del perfil
 class PerfilState {
   final int idUsuario;
   final String login;
@@ -201,7 +202,7 @@ final perfilProvider = NotifierProvider<PerfilNotifier, PerfilState>(
 );
 
 final perfilDataSourceProvider = Provider<ConfiguracionDataSource>((ref) {
-  final dio = ref.read(dioYataProvider);
+  final dio = ref.read(dioYataAuthProvider);
   return ConfiguracionDataSource(dio: dio);
 });
 
@@ -212,6 +213,6 @@ final perfilRepositoryProvider = Provider<ConfiguracionRepository>((ref) {
 
 final obtenerPerfilProvider = FutureProvider<PerfilModel>((ref) async {
   final repository = ref.watch(perfilRepositoryProvider);
-  final state = ref.watch(perfilProvider);
-  return await repository.obtenerPerfil(state.idUsuario);
+  final idUsuario = ref.watch(authProvider).user?.idUsuario ?? 0;
+  return await repository.obtenerPerfil(idUsuario);
 });

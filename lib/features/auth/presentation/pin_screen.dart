@@ -249,21 +249,18 @@ class _PinScreenState extends ConsumerState<PinScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      bottom: false,
-      child: Scaffold(
-        backgroundColor: Tema.blanco,
-        body: Stack(
-          children: [
-            Column(
-              children: [
-                SafeArea(bottom: false, child: _buildQRSection(context)),
-                Expanded(child: _buildVioletSection(context)),
-              ],
-            ),
-            _buildLoadingIndicator(context),
-          ],
-        ),
+    return Scaffold(
+      backgroundColor: Tema.blanco,
+      body: Stack(
+        children: [
+          Column(
+            children: [
+              SafeArea(bottom: false, child: _buildQRSection(context)),
+              Expanded(child: _buildVioletSection(context)),
+            ],
+          ),
+          _buildLoadingIndicator(context),
+        ],
       ),
     );
   }

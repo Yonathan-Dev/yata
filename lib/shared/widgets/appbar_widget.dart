@@ -14,7 +14,7 @@ class AppBarWidget extends ConsumerWidget implements PreferredSizeWidget {
       backgroundColor: Theme.of(context).colorScheme.primary,
       title: Text(
         titulo,
-        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+        style: Theme.of(context).textTheme.titleMedium?.copyWith(
           color: Theme.of(context).colorScheme.onPrimary,
         ),
       ),

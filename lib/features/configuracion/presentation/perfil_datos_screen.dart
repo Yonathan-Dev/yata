@@ -62,39 +62,19 @@ class _PerfilDatosScreenState extends ConsumerState<PerfilDatosScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      bottom: false,
-      child: Scaffold(
-        appBar: const AppBarWidget(titulo: 'Modificar datos del perfil'),
-        backgroundColor: Tema.blanco,
-        body: Stack(
-          children: [
-            SingleChildScrollView(
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    SafeArea(bottom: false, child: _buildLogoSection(context)),
-                    _buildVioletSection(context),
-                  ],
-                ),
-              ),
+    return Scaffold(
+      appBar: const AppBarWidget(titulo: 'Modificar datos del perfil'),
+      backgroundColor: Tema.blanco,
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Form(
+              key: _formKey,
+              child: Column(children: [_buildVioletSection(context)]),
             ),
-            _buildLoadingIndicator(context),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLogoSection(BuildContext context) {
-    return ZoomIn(
-      duration: Constantes.standardAnimation,
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 20, bottom: 75),
-          child: const IconoYataWidget(),
-        ),
+          ),
+          _buildLoadingIndicator(context),
+        ],
       ),
     );
   }
@@ -112,7 +92,7 @@ class _PerfilDatosScreenState extends ConsumerState<PerfilDatosScreen> {
     final screenSize = MediaQuery.of(context).size;
     return SizedBox(
       width: double.infinity,
-      height: screenSize.height * 0.7,
+      height: screenSize.height,
       child: Stack(
         clipBehavior: Clip.none,
         children: [
@@ -124,11 +104,11 @@ class _PerfilDatosScreenState extends ConsumerState<PerfilDatosScreen> {
             child: Container(width: double.infinity, color: Tema.primaryColor),
           ),
           Positioned(
-            top: -60,
-            left: 24,
-            right: 24,
+            top: 20,
+            left: 10,
+            right: 10,
             child: SizedBox(
-              height: screenSize.height * 0.7 + 60,
+              height: screenSize.height * 0.85,
               child: _buildFormCard(context),
             ),
           ),
@@ -143,7 +123,7 @@ class _PerfilDatosScreenState extends ConsumerState<PerfilDatosScreen> {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Container(
-          padding: const EdgeInsets.all(32),
+          padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: Tema.blanco,
             borderRadius: BorderRadius.circular(30),
@@ -412,6 +392,9 @@ class _PerfilDatosScreenState extends ConsumerState<PerfilDatosScreen> {
   }
 
   Widget _buildFechaNacimientoField(BuildContext context) {
+    final now = DateTime.now();
+    final lastDate = DateTime(now.year - 18, now.month, now.day);
+
     return TextFormField(
       controller: _fechaNacimientoController,
       focusNode: _fechaNacimientoFocus,
@@ -459,18 +442,17 @@ class _PerfilDatosScreenState extends ConsumerState<PerfilDatosScreen> {
       },
       onTap: () async {
         FocusScope.of(context).requestFocus(FocusNode());
-        final maxDate = DateTime.now().subtract(const Duration(days: 365 * 18));
-        final picked = await showDatePicker(
+        DateTime? pickedDate = await showDatePicker(
           context: context,
-          initialDate: maxDate,
-          firstDate: DateTime(1900),
-          lastDate: maxDate,
-          locale: const Locale('es'),
+          initialDate: lastDate,
+          firstDate: DateTime(now.year - 100, now.month, now.day),
+          lastDate: lastDate,
         );
-        if (picked != null) {
-          final formatted =
-              "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
-          _fechaNacimientoController.text = formatted;
+
+        if (pickedDate != null) {
+          String formattedDate =
+              '${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}';
+          _fechaNacimientoController.text = formattedDate;
         }
       },
     );

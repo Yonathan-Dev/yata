@@ -38,7 +38,7 @@ class Constantes {
   static const double paddingAcceso = 10;
   static const double transparenciaPrimaria = 1.0;
   static const double botonHeight = 50;
-  static const double botonHeightMedium = 40;
+  static const double botonHeightMedium = 52;
   static const double botonHeightSmall = 30;
   static const double imagenHeight = 75;
 

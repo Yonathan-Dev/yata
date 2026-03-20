@@ -33,7 +33,7 @@ class RegisterPinState {
   }
 }
 
-// Notifier para manejar el estado de ubicación
+// Notifier para manejar el estado de registrar PIN
 class RegisterPinNotifier extends Notifier<RegisterPinState> {
   @override
   RegisterPinState build() {

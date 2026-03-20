@@ -32,6 +32,40 @@ class _PerfilDatosScreenState extends ConsumerState<PerfilDatosScreen> {
   final _correoFocus = FocusNode();
 
   @override
+  void initState() {
+    super.initState();
+    Future.microtask(() => _loadPerfilData());
+  }
+
+  Future<void> _loadPerfilData() async {
+    try {
+      ref.read(perfilProvider.notifier).setIsLoading(true);
+      ref.read(perfilProvider.notifier).setMensaje('Cargando datos...');
+      final response = await ref.read(obtenerPerfilProvider.future);
+
+      _loginController.text = response.login;
+      _celularController.text = response.celular;
+      ref.read(perfilProvider.notifier).setSexo(response.sexo);
+      ref.read(perfilProvider.notifier).setIdPersona(response.idPersona);
+      ref
+          .read(perfilProvider.notifier)
+          .setIdTipoDocumento(response.idTipoDocumento);
+      _numeroDocumentoController.text = response.numeroDocumento;
+      _primerApellidoController.text = response.primerApellido;
+      _segundoApellidoController.text = response.segundoApellido;
+      _nombresController.text = response.nombres;
+      _fechaNacimientoController.text = response.fechaNacimiento;
+      _correoController.text = response.correo;
+    } catch (e) {
+      if (!mounted) return;
+      SnackbarUtil.snackbarError(context, message: e.toString());
+    } finally {
+      ref.read(perfilProvider.notifier).setIsLoading(false);
+      ref.read(perfilProvider.notifier).setMensaje('');
+    }
+  }
+
+  @override
   void dispose() {
     _loginController.dispose();
     _loginFocus.dispose();
@@ -80,10 +114,10 @@ class _PerfilDatosScreenState extends ConsumerState<PerfilDatosScreen> {
   }
 
   Widget _buildLoadingIndicator(BuildContext context) {
-    final verifyCodeState = ref.watch(verifyCodeProvider);
+    final state = ref.watch(perfilProvider);
 
-    if (verifyCodeState.isLoading) {
-      return LoadingWidget(mensaje: verifyCodeState.mensaje);
+    if (state.isLoading) {
+      return LoadingWidget(mensaje: state.mensaje);
     }
     return const SizedBox.shrink();
   }
@@ -151,93 +185,9 @@ class _PerfilDatosScreenState extends ConsumerState<PerfilDatosScreen> {
                 const SizedBox(height: Constantes.separacion),
                 _buildSexoField(context),
                 const SizedBox(height: Constantes.separacion),
-                DropdownButtonFormField<String>(
-                  initialValue: null,
-                  decoration: InputDecoration(
-                    hintText: 'Tipo de persona',
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 16,
-                    ),
-                    filled: true,
-                    fillColor: Tema.blanco,
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(
-                        color: Tema.primaryColor.withValues(alpha: 0.4),
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(
-                        color: Tema.primaryColor,
-                        width: 2,
-                      ),
-                    ),
-                  ),
-                  items: const [
-                    DropdownMenuItem(
-                      value: 'Natural',
-                      child: Text('Persona Natural'),
-                    ),
-                    DropdownMenuItem(
-                      value: 'Juridica',
-                      child: Text('Persona Jurídica'),
-                    ),
-                  ],
-                  onChanged: (value) {
-                    // Handle selection
-                  },
-                  validator: (value) {
-                    if (value == null) return 'Seleccione el tipo de persona';
-                    return null;
-                  },
-                ),
+                _buildTipoPersonaField(context),
                 const SizedBox(height: Constantes.separacion),
-                DropdownButtonFormField<int>(
-                  initialValue: null,
-                  decoration: InputDecoration(
-                    hintText: 'Tipo de documento',
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 16,
-                    ),
-                    filled: true,
-                    fillColor: Tema.blanco,
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(
-                        color: Tema.primaryColor.withValues(alpha: 0.4),
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(
-                        color: Tema.primaryColor,
-                        width: 2,
-                      ),
-                    ),
-                  ),
-                  items: const [
-                    DropdownMenuItem(value: 1, child: Text('DNI')),
-                    DropdownMenuItem(
-                      value: 2,
-                      child: Text('Carnet de extranjería'),
-                    ),
-                    DropdownMenuItem(value: 3, child: Text('Pasaporte')),
-                  ],
-                  onChanged: (value) {
-                    if (value != null) {
-                      ref
-                          .read(registerProvider.notifier)
-                          .setTipoDocumento(value);
-                    }
-                  },
-                  validator: (value) {
-                    if (value == null) return 'Seleccione el tipo de documento';
-                    return null;
-                  },
-                ),
+                _buildTipoDocumentoField(context),
                 const SizedBox(height: Constantes.separacion),
                 _buildTextField(
                   hint: 'Número de documento',
@@ -353,11 +303,11 @@ class _PerfilDatosScreenState extends ConsumerState<PerfilDatosScreen> {
   }
 
   Widget _buildSexoField(BuildContext context) {
-    /*final selectedSexo = ref.watch(
-      registerProvider.select((state) => state.sexo),
-    );*/
+    final selectedSexo = ref.watch(
+      perfilProvider.select((state) => state.sexo),
+    );
     return DropdownButtonFormField<String>(
-      initialValue: null,
+      initialValue: selectedSexo ? 'Masculino' : 'Femenino',
       decoration: InputDecoration(
         hintText: 'Sexo',
         contentPadding: const EdgeInsets.symmetric(
@@ -382,10 +332,95 @@ class _PerfilDatosScreenState extends ConsumerState<PerfilDatosScreen> {
         DropdownMenuItem(value: 'Femenino', child: Text('Femenino')),
       ],
       onChanged: (value) {
-        // Handle selection
+        if (value != null) {
+          ref.read(perfilProvider.notifier).setSexo(value == 'Masculino');
+        }
       },
       validator: (value) {
         if (value == null) return 'Seleccione el sexo';
+        return null;
+      },
+    );
+  }
+
+  Widget _buildTipoPersonaField(BuildContext context) {
+    final selectedTipoPersona = ref.watch(
+      perfilProvider.select((state) => state.idPersona),
+    );
+    return DropdownButtonFormField<int>(
+      initialValue: selectedTipoPersona,
+      decoration: InputDecoration(
+        hintText: 'Tipo de persona',
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 24,
+          vertical: 16,
+        ),
+        filled: true,
+        fillColor: Tema.blanco,
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(
+            color: Tema.primaryColor.withValues(alpha: 0.4),
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: Tema.primaryColor, width: 2),
+        ),
+      ),
+      items: const [
+        DropdownMenuItem(value: 1, child: Text('Natural')),
+        DropdownMenuItem(value: 2, child: Text('Jurídica')),
+      ],
+      onChanged: (value) {
+        if (value != null) {
+          ref.read(perfilProvider.notifier).setIdPersona(value);
+        }
+      },
+      validator: (value) {
+        if (value == null) return 'Seleccione el tipo de persona';
+        return null;
+      },
+    );
+  }
+
+  Widget _buildTipoDocumentoField(BuildContext context) {
+    final selectedTipoDocumento = ref.watch(
+      perfilProvider.select((state) => state.idTipoDocumento),
+    );
+    return DropdownButtonFormField<int>(
+      initialValue: selectedTipoDocumento,
+      decoration: InputDecoration(
+        hintText: 'Tipo de documento',
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 24,
+          vertical: 16,
+        ),
+        filled: true,
+        fillColor: Tema.blanco,
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(
+            color: Tema.primaryColor.withValues(alpha: 0.4),
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: Tema.primaryColor, width: 2),
+        ),
+      ),
+      items: const [
+        DropdownMenuItem(value: 1, child: Text('DNI')),
+        DropdownMenuItem(value: 2, child: Text('CE')),
+        DropdownMenuItem(value: 3, child: Text('Pasaporte')),
+      ],
+      onChanged: (value) {
+        if (value != null) {
+          ref.read(perfilProvider.notifier).setIdTipoDocumento(value);
+        }
+      },
+      validator: (value) {
+        if (value == null) return 'Seleccione el tipo de documento';
         return null;
       },
     );
@@ -464,13 +499,15 @@ class _PerfilDatosScreenState extends ConsumerState<PerfilDatosScreen> {
       height: Constantes.botonHeightMedium,
       child: Stack(
         children: [
-          Container(
+          AnimatedContainer(
+            duration: Duration(milliseconds: 300),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [Tema.negro, Tema.primaryColor],
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight,
               ),
+              color: Tema.primaryColor,
               borderRadius: BorderRadius.circular(10),
             ),
           ),
@@ -479,18 +516,26 @@ class _PerfilDatosScreenState extends ConsumerState<PerfilDatosScreen> {
               onPressed: _handleGuardar,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.transparent,
+                disabledBackgroundColor: Colors.transparent,
                 shadowColor: Colors.transparent,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
                 elevation: 0,
               ),
-              child: Text(
-                'Guardar cambios',
-                style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                  color: Tema.blanco,
-                  fontWeight: FontWeight.w600,
-                ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.save_outlined, color: Tema.blanco, size: 20),
+                  SizedBox(width: 8),
+                  Text(
+                    'Guardar cambios',
+                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                      color: Tema.blanco,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

@@ -2,6 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/app_exports.dart' hide AppBarWidget;
 import '../../../shared/shared_exports.dart';
 
@@ -43,6 +44,23 @@ class _PerfilDatosScreenState extends ConsumerState<PerfilDatosScreen> {
       ref.read(perfilProvider.notifier).setMensaje('Cargando datos...');
       ref.invalidate(obtenerPerfilProvider);
       final response = await ref.read(obtenerPerfilProvider.future);
+
+      ref.read(perfilProvider.notifier).setLogin(response.login);
+      ref.read(perfilProvider.notifier).setCelular(response.celular);
+      ref
+          .read(perfilProvider.notifier)
+          .setNumeroDocumento(response.numeroDocumento);
+      ref
+          .read(perfilProvider.notifier)
+          .setPrimerApellido(response.primerApellido);
+      ref
+          .read(perfilProvider.notifier)
+          .setSegundoApellido(response.segundoApellido);
+      ref.read(perfilProvider.notifier).setNombres(response.nombres);
+      ref
+          .read(perfilProvider.notifier)
+          .setFechaNacimiento(response.fechaNacimiento);
+      ref.read(perfilProvider.notifier).setCorreo(response.correo);
 
       _loginController.text = response.login;
       _celularController.text = response.celular;
@@ -87,11 +105,52 @@ class _PerfilDatosScreenState extends ConsumerState<PerfilDatosScreen> {
     super.dispose();
   }
 
-  void _handleGuardar() {
+  Future<void> _handleGuardar() async {
     if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Cambios guardados exitosamente')),
-      );
+      ref.read(perfilProvider.notifier).setIsLoading(true);
+      ref.read(perfilProvider.notifier).setMensaje('Guardando cambios...');
+      ref
+          .read(perfilProvider.notifier)
+          .capturarDatosPerfil(
+            idUsuario: ref.watch(
+              perfilProvider.select((state) => state.idUsuario),
+            ),
+            idPersona: ref.watch(
+              perfilProvider.select((state) => state.idPersona),
+            ),
+            login: _loginController.text.trim(),
+            celular: _celularController.text.trim(),
+            sexo: ref.watch(perfilProvider.select((state) => state.sexo)),
+            genero: ref.watch(perfilProvider.select((state) => state.genero)),
+            tienePinConfigurado: ref.watch(
+              perfilProvider.select((state) => state.tienePinConfigurado),
+            ),
+            idTipoDocumento: ref.watch(
+              perfilProvider.select((state) => state.idTipoDocumento),
+            ),
+            numeroDocumento: _numeroDocumentoController.text.trim(),
+            primerApellido: _primerApellidoController.text.trim(),
+            segundoApellido: _segundoApellidoController.text.trim(),
+            nombres: _nombresController.text.trim(),
+            fechaNacimiento: _fechaNacimientoController.text.trim(),
+            correo: _correoController.text.trim(),
+          );
+      try {
+        ref.invalidate(modificarPerfilProvider);
+        final response = await ref.read(modificarPerfilProvider.future);
+        if (!mounted) return;
+        SnackbarUtil.snackbarNotificationPush(
+          context,
+          message: response.toString(),
+        );
+        context.go('/home');
+      } catch (e) {
+        if (!mounted) return;
+        SnackbarUtil.snackbarError(context, message: e.toString());
+      } finally {
+        ref.read(perfilProvider.notifier).setIsLoading(false);
+        ref.read(perfilProvider.notifier).setMensaje('');
+      }
     }
   }
 

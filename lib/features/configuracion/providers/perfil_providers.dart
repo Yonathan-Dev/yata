@@ -165,12 +165,13 @@ class PerfilNotifier extends Notifier<PerfilState> {
   }
 
   void capturarDatosPerfil({
-    required int idPersona,
+    required int idUsuario,
     required String login,
     required String celular,
     required bool sexo,
     required String genero,
     required bool tienePinConfigurado,
+    required int idPersona,
     required int idTipoDocumento,
     required String numeroDocumento,
     required String primerApellido,
@@ -180,12 +181,13 @@ class PerfilNotifier extends Notifier<PerfilState> {
     required String correo,
   }) {
     state = state.copyWith(
-      idPersona: idPersona,
+      idUsuario: idUsuario,
       login: login,
       celular: celular,
       sexo: sexo,
       genero: genero,
       tienePinConfigurado: tienePinConfigurado,
+      idPersona: idPersona,
       idTipoDocumento: idTipoDocumento,
       numeroDocumento: numeroDocumento,
       primerApellido: primerApellido,
@@ -215,4 +217,22 @@ final obtenerPerfilProvider = FutureProvider<PerfilModel>((ref) async {
   final repository = ref.watch(perfilRepositoryProvider);
   final idUsuario = ref.watch(authProvider).user?.idUsuario ?? 0;
   return await repository.obtenerPerfil(idUsuario);
+});
+
+final modificarPerfilProvider = FutureProvider<String>((ref) async {
+  final repository = ref.watch(perfilRepositoryProvider);
+  final perfilState = ref.watch(perfilProvider);
+  return await repository.modificarPerfil(
+    perfilState.idUsuario,
+    perfilState.idPersona,
+    perfilState.idTipoDocumento,
+    perfilState.numeroDocumento,
+    perfilState.primerApellido,
+    perfilState.segundoApellido,
+    perfilState.nombres,
+    perfilState.fechaNacimiento,
+    perfilState.sexo,
+    perfilState.correo,
+    perfilState.celular,
+  );
 });

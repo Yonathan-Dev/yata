@@ -48,160 +48,34 @@ class ConfiguracionDataSource {
     }
   }
 
-  Future<AuthModel> loginConCorreo(
-    String correo,
-    String password,
-    String fingerprint,
-    String nombreDispositivo,
-    String ipAddress,
-    String userAgent,
-  ) async {
-    try {
-      final response = await dio.post(
-        '/api/Usuario/validarUsuario',
-        data: {
-          'correo': correo,
-          'password': password,
-          'fingerprint': fingerprint,
-          'nombreDispositivo': nombreDispositivo,
-          'ipAddress': ipAddress,
-          'userAgent': userAgent,
-        },
-        options: Options(
-          contentType: Headers.jsonContentType,
-          sendTimeout: Duration(milliseconds: 30000),
-          receiveTimeout: Duration(milliseconds: 30000),
-        ),
-      );
-
-      if (response.statusCode == 200) {
-        final data = response.data;
-
-        if (data == null) {
-          throw Exception('Respuesta vacía del servidor');
-        }
-
-        // Validar código de respuesta
-        final errorCodigo = data['errorCodigo'];
-        if (errorCodigo != 'OK') {
-          throw Exception(data['errorMensaje'] ?? 'Error desconocido');
-        }
-
-        // Obtener datos del usuario (value)
-        final value = data['value'];
-        if (value == null) {
-          throw Exception('No se encontraron datos del usuario');
-        }
-
-        return AuthModel.fromJson(value);
-      } else {
-        throw Exception('Error: ${response.statusCode}');
-      }
-    } on DioException {
-      rethrow;
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  Future<AuthModel> verificarCodigoOTP(
-    String verificationToken,
-    String codigoOtp,
-    String fingerprint,
-  ) async {
-    try {
-      final response = await dio.post(
-        '/api/Usuario/verificar-dispositivo',
-        data: {
-          'verificationToken': verificationToken,
-          'codigo': codigoOtp,
-          'fingerprint': fingerprint,
-        },
-        options: Options(
-          contentType: Headers.jsonContentType,
-          sendTimeout: Duration(milliseconds: 30000),
-          receiveTimeout: Duration(milliseconds: 30000),
-        ),
-      );
-
-      if (response.statusCode == 200) {
-        final data = response.data;
-
-        if (data == null) {
-          throw Exception('Respuesta vacía del servidor');
-        }
-
-        // Validar código de respuesta
-        final errorCodigo = data['errorCodigo'];
-        if (errorCodigo != 'OK') {
-          throw Exception(data['errorMensaje'] ?? 'Error desconocido');
-        }
-
-        // Obtener datos del usuario (value)
-        final value = data['value'];
-        if (value == null) {
-          throw Exception('No se encontraron datos del usuario');
-        }
-
-        return AuthModel.fromJson(value);
-      } else {
-        throw Exception('Error: ${response.statusCode}');
-      }
-    } on DioException {
-      rethrow;
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  Future<bool> logout(String refreshToken, String fingerprint) async {
-    try {
-      final response = await dio.post(
-        '/api/Usuario/logout',
-        data: {'refreshToken': refreshToken, 'fingerprint': fingerprint},
-        options: Options(
-          contentType: Headers.jsonContentType,
-          sendTimeout: Duration(milliseconds: 30000),
-          receiveTimeout: Duration(milliseconds: 30000),
-        ),
-      );
-
-      if (response.statusCode == 200) {
-        final data = response.data;
-
-        if (data == null) {
-          throw Exception('Respuesta vacía del servidor');
-        }
-
-        final errorCodigo = data['errorCodigo'];
-        if (errorCodigo != 'OK') {
-          throw Exception(data['errorMensaje'] ?? 'Error desconocido');
-        }
-
-        final value = data['value'];
-        return value == true;
-      } else {
-        throw Exception('Error al cerrar sesión: ${response.statusCode}');
-      }
-    } on DioException {
-      rethrow;
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  Future<String> restaurarClave(
-    String login,
+  Future<String> modificarPerfil(
+    int idUsuario,
+    int idTipoPersona,
+    int idTipoDocumento,
     String numeroDocumento,
-    String correoInstitucional,
+    String primerApellido,
+    String segundoApellido,
+    String nombres,
+    String fechaNacimiento,
+    bool sexo,
+    String correo,
+    String celular,
   ) async {
     try {
       final response = await dio.put(
-        '/api/Usuario/restaurarClave',
+        '/api/Usuario/modificaPerfilCli',
         data: {
-          'login': login,
+          'idPersona': idUsuario,
+          'idTipoPersona': idTipoPersona,
+          'idTipoDocumento': idTipoDocumento,
           'numeroDocumento': numeroDocumento,
-          'correoInstitucional': correoInstitucional,
+          'primerApellido': primerApellido,
+          'segundoApellido': segundoApellido,
+          'nombres': nombres,
+          'fechaNacimiento': fechaNacimiento,
+          'sexo': sexo,
+          'correo': correo,
+          'celular': celular,
         },
         options: Options(
           contentType: Headers.jsonContentType,
@@ -222,13 +96,13 @@ class ConfiguracionDataSource {
         if (errorCodigo != 'OK') {
           return errorMensaje;
         }
-        return errorMensaje;
+        return 'Perfil modificado exitosamente';
       } else {
         final data = response.data;
         if (data != null && data['errorMensaje'] != null) {
           return data['errorMensaje'];
         } else {
-          return 'Error al solicitar código de recuperación: ${response.statusCode}';
+          return 'Error al modificar el perfil: ${response.statusCode}';
         }
       }
     } on DioException catch (e) {

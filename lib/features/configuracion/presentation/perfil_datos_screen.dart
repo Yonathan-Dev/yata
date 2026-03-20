@@ -234,7 +234,12 @@ class _PerfilDatosScreenState extends ConsumerState<PerfilDatosScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                _buildTextField(hint: 'Login', _loginController, _loginFocus),
+                _buildTextField(
+                  hint: 'Login',
+                  _loginController,
+                  _loginFocus,
+                  isCorreo: true,
+                ),
                 const SizedBox(height: Constantes.separacion),
                 _buildTextField(
                   hint: 'Celular',
@@ -255,7 +260,7 @@ class _PerfilDatosScreenState extends ConsumerState<PerfilDatosScreen> {
                   _numeroDocumentoFocus,
                   isDNI:
                       ref.watch(
-                        registerProvider.select((state) => state.tipoDocumento),
+                        perfilProvider.select((state) => state.idTipoDocumento),
                       ) ==
                       1,
                 ),

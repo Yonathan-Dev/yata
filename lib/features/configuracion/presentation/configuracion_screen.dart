@@ -190,7 +190,9 @@ class ConfiguracionScreen extends ConsumerWidget {
       iconColor: Colors.orange[800]!,
       title: 'Contraseña',
       subtitle: 'Actualiza tu contraseña de acceso',
-      onTap: () {},
+      onTap: () {
+        context.push('/configuracion/solicitar-otp');
+      },
     );
   }
 

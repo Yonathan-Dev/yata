@@ -215,7 +215,7 @@ class _Step3DatosIngresoWidgetState
               ),
               TextButton(
                 onPressed: () {
-                  context.go('/login');
+                  context.go('/auth');
                 },
                 child: Text(
                   'Ya tienes una cuenta',

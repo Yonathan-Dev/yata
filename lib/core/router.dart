@@ -81,6 +81,21 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: 'perfilDatos',
         builder: (context, state) => const PerfilDatosScreen(),
       ),
+      GoRoute(
+        path: '/configuracion/cambiar-contrasena',
+        name: 'cambiarContrasena',
+        builder: (context, state) => const CambiarContrasenaScreen(),
+      ),
+      GoRoute(
+        path: '/configuracion/verify-code',
+        name: 'verifyCodeConfiguracion',
+        builder: (context, state) => const VerifyCodeConfiguracionScreen(),
+      ),
+      GoRoute(
+        path: '/configuracion/solicitar-otp',
+        name: 'solicitarOtp',
+        builder: (context, state) => const SolicitarOtpScreen(),
+      ),
     ],
   );
 });

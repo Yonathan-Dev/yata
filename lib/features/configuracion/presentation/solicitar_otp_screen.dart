@@ -32,7 +32,31 @@ class _SolicitarOtpScreenState extends ConsumerState<SolicitarOtpScreen> {
 
   Future<void> _handleEnviarCodigo() async {
     if (_formKey.currentState!.validate()) {
-      context.push('/configuracion/verify-code');
+      try {
+        ref.read(cambiarContrasenaProvider.notifier).setIsLoading(true);
+        ref
+            .read(cambiarContrasenaProvider.notifier)
+            .setMensaje('Enviando código OTP...');
+        //ref.invalidate(solicitarCambioContrasenaProvider);
+        final response = await ref.read(solicitarCodigoOtpProvider.future);
+
+        ref
+            .read(cambiarContrasenaProvider.notifier)
+            .setCorreo(_correoController.text.trim());
+
+        if (!mounted) return;
+        SnackbarUtil.snackbarNotificationPush(context, message: response);
+        context.push('/configuracion/verify-code');
+      } catch (e) {
+        if (!mounted) return;
+        SnackbarUtil.snackbarError(
+          context,
+          message: 'Inténtalo de nuevo más tarde.',
+        );
+      } finally {
+        ref.read(cambiarContrasenaProvider.notifier).setIsLoading(false);
+        ref.read(cambiarContrasenaProvider.notifier).setMensaje('');
+      }
     }
   }
 
@@ -313,7 +337,7 @@ class _SolicitarOtpScreenState extends ConsumerState<SolicitarOtpScreen> {
   }
 
   Widget _buildLoadingIndicator(BuildContext context) {
-    final state = ref.watch(perfilProvider);
+    final state = ref.watch(cambiarContrasenaProvider);
     if (state.isLoading) {
       return LoadingWidget(mensaje: state.mensaje);
     }

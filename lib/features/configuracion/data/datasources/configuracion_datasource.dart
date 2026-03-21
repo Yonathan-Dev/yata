@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 
 import '../../../../core/app_exports.dart';
@@ -119,7 +121,93 @@ class ConfiguracionDataSource {
     }
   }
 
-  Future<String> cambiarClave(
+  Future<String> solicitarCodigoOtp(int idUsuario, String login) async {
+    try {
+      final response = await dio.post(
+        '/api/Usuario/solicitarCodigoCambioClave',
+        data: {'idUsuario': idUsuario, 'login': login},
+        options: Options(
+          contentType: Headers.jsonContentType,
+          sendTimeout: Duration(milliseconds: 30000),
+          receiveTimeout: Duration(milliseconds: 30000),
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        if (data == null) {
+          throw Exception('Respuesta vacía del servidor');
+        }
+
+        final errorCodigo = data['errorCodigo'];
+        final errorMensaje = data['errorMensaje'] ?? 'Error desconocido';
+        if (errorCodigo != 'OK') {
+          throw Exception(errorMensaje);
+        }
+        return data['value'];
+      } else {
+        throw Exception(
+          'Error al solicitar código de cambio de contraseña: ${response.statusCode}',
+        );
+      }
+    } on DioException catch (e) {
+      final responseData = e.response?.data;
+      if (responseData != null && responseData is Map<String, dynamic>) {
+        final errorMensaje = responseData['errorMensaje'];
+        if (errorMensaje != null) {
+          throw Exception(errorMensaje);
+        }
+      }
+      throw Exception('Error en la solicitud: ${e.message}');
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<String> enviarVerificacionCodigoOTP(
+    String correo,
+    String codigoOtp,
+  ) async {
+    try {
+      final response = await dio.post(
+        '/api/Usuario/verificarOTPRegistro',
+        data: {'correo': correo, 'codigo': codigoOtp},
+        options: Options(
+          headers: {'Content-Type': 'application/json'},
+          receiveTimeout: const Duration(minutes: 5),
+          sendTimeout: const Duration(minutes: 2),
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        final data = response.data is String
+            ? jsonDecode(response.data as String)
+            : response.data as Map<String, dynamic>;
+
+        if (data == null) {
+          throw Exception('Respuesta vacía del servidor');
+        }
+
+        final errorCodigo = data['errorCodigo'];
+        final errorMensaje = data['errorMensaje'] ?? 'Error desconocido';
+        if (errorCodigo != 'OK') {
+          throw Exception(errorMensaje);
+        }
+        return errorMensaje;
+      } else {
+        throw Exception(
+          'Error al verificar el código OTP: ${response.statusCode}',
+        );
+      }
+    } on DioException catch (e, stackTrace) {
+      throw Exception('Error en la solicitud: ${e.message}\n$stackTrace');
+    } catch (e) {
+      throw Exception('Error al procesar la respuesta del servidor: $e');
+    }
+  }
+
+  Future<String> solicitarCambioConstrasena(
     int idUsuario,
     String login,
     String passwordAnterior,
@@ -162,50 +250,6 @@ class ConfiguracionDataSource {
       }
     } on DioException catch (e) {
       return e.message ?? 'Error en la solicitud';
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  Future<String> solicitarCambioClave(int idUsuario, String login) async {
-    try {
-      final response = await dio.post(
-        '/api/Usuario/solicitarCodigoCambioClave',
-        data: {'idUsuario': idUsuario, 'login': login},
-        options: Options(
-          contentType: Headers.jsonContentType,
-          sendTimeout: Duration(milliseconds: 30000),
-          receiveTimeout: Duration(milliseconds: 30000),
-        ),
-      );
-
-      if (response.statusCode == 200) {
-        final data = response.data;
-
-        if (data == null) {
-          throw Exception('Respuesta vacía del servidor');
-        }
-
-        final errorCodigo = data['errorCodigo'];
-        final errorMensaje = data['errorMensaje'] ?? 'Error desconocido';
-        if (errorCodigo != 'OK') {
-          throw Exception(errorMensaje);
-        }
-        return data['value'];
-      } else {
-        throw Exception(
-          'Error al solicitar código de cambio de contraseña: ${response.statusCode}',
-        );
-      }
-    } on DioException catch (e) {
-      final responseData = e.response?.data;
-      if (responseData != null && responseData is Map<String, dynamic>) {
-        final errorMensaje = responseData['errorMensaje'];
-        if (errorMensaje != null) {
-          throw Exception(errorMensaje);
-        }
-      }
-      throw Exception('Error en la solicitud: ${e.message}');
     } catch (e) {
       rethrow;
     }

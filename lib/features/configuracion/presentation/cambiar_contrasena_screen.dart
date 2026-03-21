@@ -2,6 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/app_exports.dart' hide AppBarWidget;
 import '../../../shared/shared_exports.dart';
 
@@ -41,7 +42,42 @@ class _CambiarContrasenaScreenState
   }
 
   Future<void> _handleGuardar() async {
-    if (_formKey.currentState!.validate()) {}
+    if (_formKey.currentState!.validate()) {
+      if (_nuevaContrasenaController.text.trim() !=
+          _confirmarContrasenaController.text.trim()) {
+        SnackbarUtil.snackbarNotificationPush(
+          context,
+          message: 'Las nuevas contraseñas no coinciden',
+        );
+        return;
+      }
+
+      try {
+        ref
+            .read(cambiarContrasenaProvider.notifier)
+            .setContrasenaActual(_contrasenaActualController.text.trim());
+        ref
+            .read(cambiarContrasenaProvider.notifier)
+            .setNuevaContrasena(_nuevaContrasenaController.text.trim());
+        ref.read(cambiarContrasenaProvider.notifier).setIsLoading(true);
+        ref
+            .read(cambiarContrasenaProvider.notifier)
+            .setMensaje('Actualizando contraseña...');
+        ref.invalidate(solicitarCambioContrasenaProvider);
+        await ref.read(solicitarCambioContrasenaProvider.future);
+        if (!mounted) return;
+        SnackbarUtil.snackbarNotificationPush(
+          context,
+          message: 'Contraseña actualizada exitosamente',
+        );
+        context.go('/auth');
+      } catch (e) {
+        SnackbarUtil.snackbarError(context, message: e.toString());
+      } finally {
+        ref.read(cambiarContrasenaProvider.notifier).setIsLoading(false);
+        ref.read(cambiarContrasenaProvider.notifier).setMensaje('');
+      }
+    }
   }
 
   @override
@@ -296,7 +332,6 @@ class _CambiarContrasenaScreenState
     required String focusKey,
     required IconData icon,
     bool isPassword = false,
-    bool isCorreo = false,
     bool showPassword = false,
     VoidCallback? onTogglePassword,
   }) {
@@ -376,22 +411,15 @@ class _CambiarContrasenaScreenState
               counterText: '',
             ),
             validator: (value) {
-              if (isCorreo) {
-                return ref
-                    .read(registerProvider.notifier)
-                    .validarCorreo(value!);
-              }
               return ref
-                  .read(registerProvider.notifier)
+                  .read(cambiarContrasenaProvider.notifier)
                   .validarCampo(value!, label);
             },
             maxLength: 50,
             keyboardType: isPassword
                 ? TextInputType.visiblePassword
-                : isCorreo
-                ? TextInputType.emailAddress
                 : TextInputType.text,
-            inputFormatters: (isPassword || isCorreo)
+            inputFormatters: isPassword
                 ? [FilteringTextInputFormatter.deny(RegExp(r'\s'))]
                 : null,
           ),
@@ -459,7 +487,7 @@ class _CambiarContrasenaScreenState
   }
 
   Widget _buildLoadingIndicator(BuildContext context) {
-    final state = ref.watch(perfilProvider);
+    final state = ref.watch(cambiarContrasenaProvider);
     if (state.isLoading) {
       return LoadingWidget(mensaje: state.mensaje);
     }

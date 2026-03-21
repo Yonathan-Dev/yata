@@ -36,4 +36,31 @@ class ConfiguracionRepository {
       celular,
     );
   }
+
+  Future<String> solicitarCodigoOtp(int idUsuario, String login) async {
+    return await dataSource.solicitarCodigoOtp(idUsuario, login);
+  }
+
+  Future<String> enviarVerificacionCodigoOTP(
+    String correo,
+    String codigoOtp,
+  ) async {
+    return await dataSource.enviarVerificacionCodigoOTP(correo, codigoOtp);
+  }
+
+  Future<String> solicitarCambioConstrasena(
+    int idUsuario,
+    String login,
+    String contrasenaActual,
+    String nuevaContrasena,
+    String codigoOtp,
+  ) async {
+    return await dataSource.solicitarCambioConstrasena(
+      idUsuario,
+      login,
+      contrasenaActual,
+      nuevaContrasena,
+      codigoOtp,
+    );
+  }
 }

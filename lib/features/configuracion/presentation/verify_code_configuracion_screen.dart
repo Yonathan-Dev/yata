@@ -67,7 +67,7 @@ class _VerifyCodeConfiguracionScreenState
   int get _filledCount =>
       ref.watch(filledFieldsProvider).where((f) => f).length;
 
-  void _handleContinuar() {
+  Future<void> _handleContinuar() async {
     final code = _fullCode;
     if (code.length != 6) {
       SnackbarUtil.snackbarNotificationPush(
@@ -76,7 +76,29 @@ class _VerifyCodeConfiguracionScreenState
       );
       return;
     }
-    context.push('/configuracion/cambiar-contrasena');
+
+    ref.read(cambiarContrasenaProvider.notifier).setCodigoOtp(code);
+    try {
+      ref.read(cambiarContrasenaProvider.notifier).setIsLoading(true);
+
+      ref
+          .read(cambiarContrasenaProvider.notifier)
+          .setMensaje('Verificando código...');
+      final response = await ref.read(
+        enviarVerificacionCodigoOTPProvider.future,
+      );
+      if (!mounted) return;
+      SnackbarUtil.snackbarNotificationPush(context, message: response);
+      context.push('/configuracion/cambiar-contrasena');
+    } catch (e) {
+      SnackbarUtil.snackbarError(
+        context,
+        message: 'Error al verificar el código:',
+      );
+    } finally {
+      ref.read(cambiarContrasenaProvider.notifier).setIsLoading(false);
+      ref.read(cambiarContrasenaProvider.notifier).setMensaje('');
+    }
   }
 
   @override
@@ -468,7 +490,7 @@ class _VerifyCodeConfiguracionScreenState
   }
 
   Widget _buildLoadingIndicator(BuildContext context) {
-    final state = ref.watch(verifyCodeProvider);
+    final state = ref.watch(cambiarContrasenaProvider);
     if (state.isLoading) {
       return LoadingWidget(mensaje: state.mensaje);
     }

@@ -164,26 +164,6 @@ class _ForgotPinScreenState extends ConsumerState<ForgotPinScreen> {
     }
   }
 
-  /*Future<void> _solicitarRecuperacion() async {
-    try {
-      ref.invalidate(solicitoCambioPinProvider);
-      final response = await ref.read(solicitoCambioPinProvider.future);
-
-      await secureStorage.write(key: 'pinTemporary', value: 'true');
-
-      if (!mounted) return;
-      SnackbarUtil.snackbarNotificationPush(context, message: response);
-      //context.go('/auth');
-    } catch (error) {
-      SnackbarUtil.snackbarNotificationPush(
-        context,
-        message: error.toString().replaceAll('Exception: ', ''),
-      );
-    } finally {
-      ref.read(authProvider.notifier).setLoading(isLoading: false, mensaje: '');
-    }
-  }*/
-
   Widget _buildContinuarButton(
     BuildContext context, {
     required VoidCallback onPressed,

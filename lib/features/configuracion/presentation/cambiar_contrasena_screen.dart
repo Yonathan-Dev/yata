@@ -2,7 +2,6 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import '../../../core/app_exports.dart' hide AppBarWidget;
 import '../../../shared/shared_exports.dart';
 
@@ -70,8 +69,9 @@ class _CambiarContrasenaScreenState
           context,
           message: 'Contraseña actualizada exitosamente',
         );
-        context.go('/auth');
+        await ref.read(cambiarContrasenaProvider.notifier).logout();
       } catch (e) {
+        if (!mounted) return;
         SnackbarUtil.snackbarError(context, message: e.toString());
       } finally {
         ref.read(cambiarContrasenaProvider.notifier).setIsLoading(false);

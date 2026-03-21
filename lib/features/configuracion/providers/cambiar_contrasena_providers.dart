@@ -109,6 +109,8 @@ class CambiarContrasenaNotifier extends StateNotifier<CambiarContrasenaState> {
       await secureStorage.delete(key: 'tokenType');
       await secureStorage.delete(key: 'userName');
       await secureStorage.delete(key: 'passwordTemporary');
+      await secureStorage.delete(key: 'flagRegistrado');
+
       navigatorKey.currentContext?.go('/auth');
       state = CambiarContrasenaState();
     } catch (e) {

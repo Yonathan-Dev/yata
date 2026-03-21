@@ -275,8 +275,6 @@ class ConfiguracionScreen extends ConsumerWidget {
         colorConfirmar: Colors.amber[700]!,
         onConfirmar: () async {
           await secureStorage.deleteAll();
-          await secureStorage.delete(key: 'uuid');
-          await secureStorage.delete(key: 'fingerprint');
           ref.invalidate(fingerPrintProvider);
           ref.invalidate(fingerprintCryptoProvider);
           ref.invalidate(verificationTokenProvider);

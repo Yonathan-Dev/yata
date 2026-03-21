@@ -274,7 +274,17 @@ class ConfiguracionScreen extends ConsumerWidget {
         labelConfirmar: 'Desvincular',
         colorConfirmar: Colors.amber[700]!,
         onConfirmar: () async {
+          await secureStorage.deleteAll();
+          await secureStorage.delete(key: 'uuid');
+          await secureStorage.delete(key: 'fingerprint');
+          ref.invalidate(fingerPrintProvider);
+          ref.invalidate(fingerprintCryptoProvider);
+          ref.invalidate(verificationTokenProvider);
+          ref.invalidate(refreshTokenProvider);
+          ref.invalidate(accessTokenProvider);
+          if (!context.mounted) return;
           Navigator.pop(context);
+          context.go('/auth');
         },
       ),
     );
@@ -457,7 +467,7 @@ class ConfiguracionScreen extends ConsumerWidget {
       child: Column(
         children: [
           Text(
-            'yate',
+            'yata',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               color: Colors.grey[600],
               fontWeight: FontWeight.w500,

@@ -6,11 +6,11 @@ import '../../core/app_exports.dart';
 import '../shared_exports.dart';
 
 final dioYataProvider = Provider<Dio>((ref) {
-  final apiYate = dotenv.env['BASE_URL'] ?? '';
+  final apiYata = dotenv.env['BASE_URL'] ?? '';
 
   final dio = Dio(
     BaseOptions(
-      baseUrl: apiYate,
+      baseUrl: apiYata,
       connectTimeout: const Duration(seconds: 30),
       receiveTimeout: const Duration(seconds: 30),
       sendTimeout: const Duration(seconds: 30),
@@ -23,12 +23,12 @@ final dioYataProvider = Provider<Dio>((ref) {
 });
 
 final dioYataAuthProvider = Provider<Dio>((ref) {
-  final apiYate = dotenv.env['BASE_URL'] ?? '';
+  final apiYata = dotenv.env['BASE_URL'] ?? '';
   final publicDio = ref.read(dioYataProvider);
 
   final dio = Dio(
     BaseOptions(
-      baseUrl: apiYate,
+      baseUrl: apiYata,
       connectTimeout: const Duration(seconds: 30),
       receiveTimeout: const Duration(seconds: 30),
       sendTimeout: const Duration(seconds: 30),

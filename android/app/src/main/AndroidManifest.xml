@@ -9,7 +9,7 @@
         android:required="false" />
 
     <application
-        android:label="yate"
+        android:label="yata"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
 

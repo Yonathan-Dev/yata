@@ -21,6 +21,9 @@ class _PinScreenState extends ConsumerState<PinScreen> {
   void initState() {
     super.initState();
     _shuffleNumbers();
+    Future.microtask(
+      () => ref.read(dispositivoProvider.notifier).obtenerInfoDispositivo(),
+    );
   }
 
   void _shuffleNumbers() {

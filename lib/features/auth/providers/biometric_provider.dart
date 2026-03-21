@@ -2,7 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:flutter/services.dart';
-import 'package:yate/core/secure.dart';
+
+import '../../../core/app_exports.dart';
 
 class BiometricState {
   final bool isAuthenticating;

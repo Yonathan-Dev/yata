@@ -7,7 +7,8 @@ import '../../../core/app_exports.dart' hide AppBarWidget;
 import '../../../shared/shared_exports.dart';
 
 class SolicitarOtpScreen extends ConsumerStatefulWidget {
-  const SolicitarOtpScreen({super.key});
+  final bool isPin;
+  const SolicitarOtpScreen({super.key, this.isPin = false});
 
   @override
   ConsumerState<SolicitarOtpScreen> createState() => _SolicitarOtpScreenState();
@@ -37,7 +38,6 @@ class _SolicitarOtpScreenState extends ConsumerState<SolicitarOtpScreen> {
         ref
             .read(cambiarContrasenaProvider.notifier)
             .setMensaje('Enviando código OTP...');
-        //ref.invalidate(solicitarCambioContrasenaProvider);
         final response = await ref.read(solicitarCodigoOtpProvider.future);
 
         ref
@@ -46,7 +46,10 @@ class _SolicitarOtpScreenState extends ConsumerState<SolicitarOtpScreen> {
 
         if (!mounted) return;
         SnackbarUtil.snackbarNotificationPush(context, message: response);
-        context.push('/configuracion/verify-code');
+        context.push(
+          '/configuracion/verify-code',
+          extra: {'isPin': widget.isPin},
+        );
       } catch (e) {
         if (!mounted) return;
         SnackbarUtil.snackbarError(

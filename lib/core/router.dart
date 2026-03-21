@@ -87,14 +87,33 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const CambiarContrasenaScreen(),
       ),
       GoRoute(
+        path: '/configuracion/cambiar-pin',
+        name: 'cambiarPin',
+        builder: (context, state) => const CambiarPinScreen(),
+      ),
+      GoRoute(
         path: '/configuracion/verify-code',
         name: 'verifyCodeConfiguracion',
-        builder: (context, state) => const VerifyCodeConfiguracionScreen(),
+        builder: (context, state) {
+          final extra = state.extra;
+          bool isPin = false;
+          if (extra is Map && extra['isPin'] is bool) {
+            isPin = extra['isPin'] as bool;
+          }
+          return VerifyCodeConfiguracionScreen(isPin: isPin);
+        },
       ),
       GoRoute(
         path: '/configuracion/solicitar-otp',
         name: 'solicitarOtp',
-        builder: (context, state) => const SolicitarOtpScreen(),
+        builder: (context, state) {
+          final extra = state.extra;
+          bool isPin = false;
+          if (extra is Map && extra['isPin'] is bool) {
+            isPin = extra['isPin'] as bool;
+          }
+          return SolicitarOtpScreen(isPin: isPin);
+        },
       ),
     ],
   );

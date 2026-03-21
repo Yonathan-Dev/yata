@@ -7,7 +7,8 @@ import '../../../core/app_exports.dart';
 import '../../../shared/shared_exports.dart';
 
 class VerifyCodeConfiguracionScreen extends ConsumerStatefulWidget {
-  const VerifyCodeConfiguracionScreen({super.key});
+  final bool isPin;
+  const VerifyCodeConfiguracionScreen({super.key, required this.isPin});
 
   @override
   ConsumerState<VerifyCodeConfiguracionScreen> createState() =>
@@ -89,7 +90,11 @@ class _VerifyCodeConfiguracionScreenState
       );
       if (!mounted) return;
       SnackbarUtil.snackbarNotificationPush(context, message: response);
-      context.push('/configuracion/cambiar-contrasena');
+      if (widget.isPin) {
+        context.push('/configuracion/cambiar-pin');
+      } else {
+        context.push('/configuracion/cambiar-contrasena');
+      }
     } catch (e) {
       SnackbarUtil.snackbarError(
         context,

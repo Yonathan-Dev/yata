@@ -191,7 +191,7 @@ class ConfiguracionScreen extends ConsumerWidget {
       title: 'Contraseña',
       subtitle: 'Actualiza tu contraseña de acceso',
       onTap: () {
-        context.push('/configuracion/solicitar-otp');
+        context.push('/configuracion/solicitar-otp', extra: {'isPin': false});
       },
     );
   }
@@ -204,7 +204,9 @@ class ConfiguracionScreen extends ConsumerWidget {
       iconColor: Tema.primaryColor,
       title: 'Cambiar PIN',
       subtitle: 'PIN de 6 dígitos de acceso rápido',
-      onTap: () {},
+      onTap: () {
+        context.push('/configuracion/solicitar-otp', extra: {'isPin': true});
+      },
     );
   }
 

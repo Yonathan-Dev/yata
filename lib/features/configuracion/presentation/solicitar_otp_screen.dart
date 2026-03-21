@@ -34,15 +34,28 @@ class _SolicitarOtpScreenState extends ConsumerState<SolicitarOtpScreen> {
   Future<void> _handleEnviarCodigo() async {
     if (_formKey.currentState!.validate()) {
       try {
-        ref.read(cambiarContrasenaProvider.notifier).setIsLoading(true);
-        ref
-            .read(cambiarContrasenaProvider.notifier)
-            .setMensaje('Enviando código OTP...');
-        final response = await ref.read(solicitarCodigoOtpProvider.future);
-
-        ref
-            .read(cambiarContrasenaProvider.notifier)
-            .setCorreo(_correoController.text.trim());
+        String response;
+        if (widget.isPin) {
+          ref.read(cambiarPinProvider.notifier).setIsLoading(true);
+          ref
+              .read(cambiarPinProvider.notifier)
+              .setMensaje('Enviando código OTP...');
+          ref.invalidate(solicitarCodigoOtpPinProvider);
+          response = await ref.read(solicitarCodigoOtpPinProvider.future);
+          ref
+              .read(cambiarPinProvider.notifier)
+              .setCorreo(_correoController.text.trim());
+        } else {
+          ref.read(cambiarContrasenaProvider.notifier).setIsLoading(true);
+          ref
+              .read(cambiarContrasenaProvider.notifier)
+              .setMensaje('Enviando código OTP...');
+          ref.invalidate(solicitarCodigoOtpProvider);
+          response = await ref.read(solicitarCodigoOtpProvider.future);
+          ref
+              .read(cambiarContrasenaProvider.notifier)
+              .setCorreo(_correoController.text.trim());
+        }
 
         if (!mounted) return;
         SnackbarUtil.snackbarNotificationPush(context, message: response);
@@ -57,8 +70,13 @@ class _SolicitarOtpScreenState extends ConsumerState<SolicitarOtpScreen> {
           message: 'Inténtalo de nuevo más tarde.',
         );
       } finally {
-        ref.read(cambiarContrasenaProvider.notifier).setIsLoading(false);
-        ref.read(cambiarContrasenaProvider.notifier).setMensaje('');
+        if (widget.isPin) {
+          ref.read(cambiarPinProvider.notifier).setIsLoading(false);
+          ref.read(cambiarPinProvider.notifier).setMensaje('');
+        } else {
+          ref.read(cambiarContrasenaProvider.notifier).setIsLoading(false);
+          ref.read(cambiarContrasenaProvider.notifier).setMensaje('');
+        }
       }
     }
   }
@@ -340,6 +358,13 @@ class _SolicitarOtpScreenState extends ConsumerState<SolicitarOtpScreen> {
   }
 
   Widget _buildLoadingIndicator(BuildContext context) {
+    if (widget.isPin) {
+      final state = ref.watch(cambiarPinProvider);
+      if (state.isLoading) {
+        return LoadingWidget(mensaje: state.mensaje);
+      }
+      return const SizedBox.shrink();
+    }
     final state = ref.watch(cambiarContrasenaProvider);
     if (state.isLoading) {
       return LoadingWidget(mensaje: state.mensaje);

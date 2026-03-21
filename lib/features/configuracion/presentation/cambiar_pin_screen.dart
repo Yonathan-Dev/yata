@@ -132,9 +132,7 @@ class _CambiarPinScreenState extends ConsumerState<CambiarPinScreen> {
       ref
           .read(cambiarPinProvider.notifier)
           .setPinActual(_getPinForStep(0).trim());
-      ref
-          .read(cambiarContrasenaProvider.notifier)
-          .setNuevaContrasena(pinConfirmar.trim());
+      ref.read(cambiarPinProvider.notifier).setPinNuevo(pinConfirmar.trim());
       ref.read(cambiarPinProvider.notifier).setIsLoading(true);
       ref.read(cambiarPinProvider.notifier).setMensaje('Actualizando PIN...');
       ref.invalidate(solicitarCambioPinProvider);

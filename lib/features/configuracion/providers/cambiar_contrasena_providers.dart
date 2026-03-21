@@ -180,6 +180,15 @@ final enviarVerificacionCodigoOTPProvider = FutureProvider<String>((ref) async {
   return await repository.enviarVerificacionCodigoOTP(correo, codigoOtp);
 });
 
+final enviarVerificacionCodigoOTPPinProvider = FutureProvider<String>((
+  ref,
+) async {
+  final repository = ref.watch(cambiarContrasenaRepositoryProvider);
+  final correo = ref.watch(cambiarPinProvider).correo;
+  final codigoOtp = ref.watch(cambiarPinProvider).codigoOtp;
+  return await repository.enviarVerificacionCodigoOTP(correo, codigoOtp);
+});
+
 final solicitarCambioContrasenaProvider = FutureProvider<String>((ref) async {
   final repository = ref.watch(cambiarContrasenaRepositoryProvider);
   final idUsuario = ref.watch(authProvider).user?.idUsuario ?? 0;

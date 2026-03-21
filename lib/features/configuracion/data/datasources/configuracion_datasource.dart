@@ -165,6 +165,50 @@ class ConfiguracionDataSource {
     }
   }
 
+  Future<String> solicitarCodigoOtpPin(int idUsuario, String login) async {
+    try {
+      final response = await dio.post(
+        '/api/Usuario/solicitarCodigoCambioPin',
+        data: {'idUsuario': idUsuario, 'login': login},
+        options: Options(
+          contentType: Headers.jsonContentType,
+          sendTimeout: Duration(milliseconds: 30000),
+          receiveTimeout: Duration(milliseconds: 30000),
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        if (data == null) {
+          throw Exception('Respuesta vacía del servidor');
+        }
+
+        final errorCodigo = data['errorCodigo'];
+        final errorMensaje = data['errorMensaje'] ?? 'Error desconocido';
+        if (errorCodigo != 'OK') {
+          throw Exception(errorMensaje);
+        }
+        return data['value'];
+      } else {
+        throw Exception(
+          'Error al solicitar código de cambio de contraseña: ${response.statusCode}',
+        );
+      }
+    } on DioException catch (e) {
+      final responseData = e.response?.data;
+      if (responseData != null && responseData is Map<String, dynamic>) {
+        final errorMensaje = responseData['errorMensaje'];
+        if (errorMensaje != null) {
+          throw Exception(errorMensaje);
+        }
+      }
+      throw Exception('Error en la solicitud: ${e.message}');
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<String> enviarVerificacionCodigoOTP(
     String correo,
     String codigoOtp,
@@ -255,11 +299,26 @@ class ConfiguracionDataSource {
     }
   }
 
-  Future<String> solicitarCambioPin(int idUsuario, String correo) async {
+  Future<String> solicitarCambioPin(
+    int idUsuario,
+    String login,
+    String pinActual,
+    String pinNuevo,
+    String codigoOtp,
+  ) async {
     try {
       final response = await dio.post(
-        '/api/Usuario/solicitarCodigoCambioPin',
-        data: {'idUsuario': idUsuario, 'correo': correo},
+        '/api/Usuario/cambiarPin',
+        data: {
+          'idUsuario': idUsuario,
+          'login': login,
+          'pinActual': pinActual,
+          'pinNuevo': pinNuevo,
+          'codigoOTP': codigoOtp,
+          'idUsuarioLogin': idUsuario,
+          'pcIp': '0.0.0.0',
+          'pcHost': 'mobile',
+        },
         options: Options(
           contentType: Headers.jsonContentType,
           sendTimeout: Duration(milliseconds: 30000),
@@ -267,33 +326,22 @@ class ConfiguracionDataSource {
         ),
       );
 
+      final data = response.data;
       if (response.statusCode == 200) {
-        final data = response.data;
-
         if (data == null) {
-          throw Exception('Respuesta vacía del servidor');
+          return 'Respuesta vacía del servidor';
         }
-
         final errorCodigo = data['errorCodigo'];
         final errorMensaje = data['errorMensaje'] ?? 'Error desconocido';
         if (errorCodigo != 'OK') {
-          throw Exception(errorMensaje);
+          return errorMensaje;
         }
-        return data['value'];
+        return 'Contraseña cambiada exitosamente';
       } else {
-        throw Exception(
-          'Error al solicitar cambio de PIN: ${response.statusCode}',
-        );
+        return 'Error al cambiar la contraseña: ${response.statusCode}';
       }
     } on DioException catch (e) {
-      final responseData = e.response?.data;
-      if (responseData != null && responseData is Map<String, dynamic>) {
-        final errorMensaje = responseData['errorMensaje'];
-        if (errorMensaje != null) {
-          throw Exception(errorMensaje);
-        }
-      }
-      throw Exception('Error en la solicitud: ${e.message}');
+      return e.message ?? 'Error en la solicitud';
     } catch (e) {
       rethrow;
     }

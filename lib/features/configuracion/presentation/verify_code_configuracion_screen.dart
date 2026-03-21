@@ -78,16 +78,32 @@ class _VerifyCodeConfiguracionScreenState
       return;
     }
 
-    ref.read(cambiarContrasenaProvider.notifier).setCodigoOtp(code);
-    try {
-      ref.read(cambiarContrasenaProvider.notifier).setIsLoading(true);
+    if (widget.isPin) {
+      ref.read(cambiarPinProvider.notifier).setCodigoOtp(code);
+    } else {
+      ref.read(cambiarContrasenaProvider.notifier).setCodigoOtp(code);
+    }
 
-      ref
-          .read(cambiarContrasenaProvider.notifier)
-          .setMensaje('Verificando código...');
-      final response = await ref.read(
-        enviarVerificacionCodigoOTPProvider.future,
-      );
+    try {
+      String response;
+      if (widget.isPin) {
+        ref.read(cambiarPinProvider.notifier).setIsLoading(true);
+        ref
+            .read(cambiarPinProvider.notifier)
+            .setMensaje('Verificando código...');
+        ref.invalidate(enviarVerificacionCodigoOTPPinProvider);
+        response = await ref.read(
+          enviarVerificacionCodigoOTPPinProvider.future,
+        );
+      } else {
+        ref.read(cambiarContrasenaProvider.notifier).setIsLoading(true);
+        ref
+            .read(cambiarContrasenaProvider.notifier)
+            .setMensaje('Verificando código...');
+        ref.invalidate(enviarVerificacionCodigoOTPProvider);
+        response = await ref.read(enviarVerificacionCodigoOTPProvider.future);
+      }
+
       if (!mounted) return;
       SnackbarUtil.snackbarNotificationPush(context, message: response);
       if (widget.isPin) {
@@ -101,8 +117,13 @@ class _VerifyCodeConfiguracionScreenState
         message: 'Error al verificar el código:',
       );
     } finally {
-      ref.read(cambiarContrasenaProvider.notifier).setIsLoading(false);
-      ref.read(cambiarContrasenaProvider.notifier).setMensaje('');
+      if (widget.isPin) {
+        ref.read(cambiarPinProvider.notifier).setIsLoading(false);
+        ref.read(cambiarPinProvider.notifier).setMensaje('');
+      } else {
+        ref.read(cambiarContrasenaProvider.notifier).setIsLoading(false);
+        ref.read(cambiarContrasenaProvider.notifier).setMensaje('');
+      }
     }
   }
 
@@ -495,6 +516,13 @@ class _VerifyCodeConfiguracionScreenState
   }
 
   Widget _buildLoadingIndicator(BuildContext context) {
+    if (widget.isPin) {
+      final state = ref.watch(cambiarPinProvider);
+      if (state.isLoading) {
+        return LoadingWidget(mensaje: state.mensaje);
+      }
+      return const SizedBox.shrink();
+    }
     final state = ref.watch(cambiarContrasenaProvider);
     if (state.isLoading) {
       return LoadingWidget(mensaje: state.mensaje);

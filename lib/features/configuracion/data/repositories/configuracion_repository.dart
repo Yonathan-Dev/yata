@@ -41,6 +41,10 @@ class ConfiguracionRepository {
     return await dataSource.solicitarCodigoOtp(idUsuario, login);
   }
 
+  Future<String> solicitarCodigoOtpPin(int idUsuario, String login) async {
+    return await dataSource.solicitarCodigoOtpPin(idUsuario, login);
+  }
+
   Future<String> enviarVerificacionCodigoOTP(
     String correo,
     String codigoOtp,
@@ -60,6 +64,22 @@ class ConfiguracionRepository {
       login,
       contrasenaActual,
       nuevaContrasena,
+      codigoOtp,
+    );
+  }
+
+  Future<String> solicitarCambioPin(
+    int idUsuario,
+    String login,
+    String pinActual,
+    String pinNuevo,
+    String codigoOtp,
+  ) async {
+    return await dataSource.solicitarCambioPin(
+      idUsuario,
+      login,
+      pinActual,
+      pinNuevo,
       codigoOtp,
     );
   }

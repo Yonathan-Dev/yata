@@ -138,10 +138,6 @@ class CambiarPinNotifier extends StateNotifier<CambiarPinState> {
   }
 }
 
-final filledFieldsPinProvider = StateProvider<List<bool>>((ref) {
-  return List.generate(6, (_) => false);
-});
-
 final cambiarPinProvider =
     StateNotifierProvider<CambiarPinNotifier, CambiarPinState>(
       (ref) => CambiarPinNotifier(),
@@ -161,32 +157,21 @@ final solicitarCodigoOtpPinProvider = FutureProvider<String>((ref) async {
   final repository = ref.watch(cambiarPinRepositoryProvider);
   final idUsuario = ref.watch(authProvider).user?.idUsuario ?? 0;
   final login = ref.watch(authProvider).user?.login ?? '';
-  return await repository.solicitarCodigoOtp(idUsuario, login);
-});
-
-final enviarVerificacionCodigoOTPPinProvider = FutureProvider<String>((
-  ref,
-) async {
-  final repository = ref.watch(cambiarContrasenaRepositoryProvider);
-  final correo = ref.watch(cambiarContrasenaProvider).correo;
-  final codigoOtp = ref.watch(cambiarContrasenaProvider).codigoOtp;
-  return await repository.enviarVerificacionCodigoOTP(correo, codigoOtp);
+  return await repository.solicitarCodigoOtpPin(idUsuario, login);
 });
 
 final solicitarCambioPinProvider = FutureProvider<String>((ref) async {
   final repository = ref.watch(cambiarPinRepositoryProvider);
   final idUsuario = ref.watch(authProvider).user?.idUsuario ?? 0;
-  final login = ref.watch(cambiarContrasenaProvider).correo;
-  final contrasenaActual = ref
-      .watch(cambiarContrasenaProvider)
-      .contrasenaActual;
-  final nuevaContrasena = ref.watch(cambiarContrasenaProvider).nuevaContrasena;
-  final codigoOtp = ref.watch(cambiarContrasenaProvider).codigoOtp;
-  return await repository.solicitarCambioConstrasena(
+  final login = ref.watch(cambiarPinProvider).correo;
+  final pinActual = ref.watch(cambiarPinProvider).pinActual;
+  final pinNuevo = ref.watch(cambiarPinProvider).pinNuevo;
+  final codigoOtp = ref.watch(cambiarPinProvider).codigoOtp;
+  return await repository.solicitarCambioPin(
     idUsuario,
     login,
-    contrasenaActual,
-    nuevaContrasena,
+    pinActual,
+    pinNuevo,
     codigoOtp,
   );
 });

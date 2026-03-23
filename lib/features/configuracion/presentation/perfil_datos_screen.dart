@@ -492,12 +492,14 @@ class _PerfilDatosScreenState extends ConsumerState<PerfilDatosScreen> {
                         color: Colors.grey[400],
                       ),
                       const SizedBox(width: 5),
-                      Text(
-                        'El correo se usará para notificaciones y recuperación',
-                        style: TextStyle(
-                          fontSize: 11.5,
-                          color: Colors.grey,
-                          letterSpacing: 0.1,
+                      Expanded(
+                        child: Text(
+                          'El correo se usará para notificaciones y recuperación',
+                          style: TextStyle(
+                            fontSize: 11.5,
+                            color: Colors.grey,
+                            letterSpacing: 0.1,
+                          ),
                         ),
                       ),
                     ],

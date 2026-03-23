@@ -1,6 +1,5 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/app_exports.dart';
@@ -19,41 +18,34 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
   final _passwordTemporalController = TextEditingController();
   final _newPasswordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  final List<TextEditingController> otpControllers = List.generate(
-    6,
-    (_) => TextEditingController(),
-  );
-  final List<FocusNode> otpFocusNodes = List.generate(6, (_) => FocusNode());
+
+  final _passwordTemporalFocus = FocusNode();
+  final _newPasswordFocus = FocusNode();
+  final _confirmPasswordFocus = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   void dispose() {
     _passwordTemporalController.dispose();
     _newPasswordController.dispose();
     _confirmPasswordController.dispose();
-    for (final c in otpControllers) {
-      c.dispose();
-    }
-    for (final n in otpFocusNodes) {
-      n.dispose();
-    }
+    _passwordTemporalFocus.dispose();
+    _newPasswordFocus.dispose();
+    _confirmPasswordFocus.dispose();
     super.dispose();
   }
 
   void _handleChangePassword() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final code = _fullCode;
       if (_formKey.currentState!.validate()) {
         if (_newPasswordController.text != _confirmPasswordController.text) {
           SnackbarUtil.snackbarNotificationPush(
             context,
             message: 'Las contraseñas no coinciden',
-          );
-          return;
-        }
-        if (code.length < 6) {
-          SnackbarUtil.snackbarNotificationPush(
-            context,
-            message: 'Por favor ingresa el código OTP completo',
           );
           return;
         }
@@ -63,7 +55,6 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
         ref
             .read(forgotProvider.notifier)
             .setPasswordNueva(_newPasswordController.text);
-        ref.read(forgotProvider.notifier).setCodigoOtp(code);
         ref
             .read(forgotProvider.notifier)
             .setLoading(isLoading: true, mensaje: 'Verificando...');
@@ -87,100 +78,425 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
     });
   }
 
-  void _handleSendCode() {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (_formKey.currentState!.validate()) {
-        try {
-          ref
-              .read(forgotProvider.notifier)
-              .setLoading(isLoading: true, mensaje: 'Enviando código...');
-
-          ref.invalidate(solicitoCambioClaveProvider);
-          final response = await ref.read(solicitoCambioClaveProvider.future);
-
-          if (!mounted) return;
-          SnackbarUtil.snackbarNotificationPush(
-            context,
-            message: response.toString(),
-          );
-        } catch (e) {
-          if (!mounted) return;
-          SnackbarUtil.snackbarError(context, message: e.toString());
-        } finally {
-          ref.read(forgotProvider.notifier).setLoading(isLoading: false);
-        }
-      }
-    });
-  }
-
-  String get _fullCode {
-    return otpControllers.map((c) => c.text).join();
-  }
-
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      bottom: false,
-      child: Scaffold(
-        backgroundColor: Tema.blanco,
-        resizeToAvoidBottomInset: true,
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              SafeArea(bottom: false, child: _buildLogoSection(context)),
-              _buildVioletSection(context),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLogoSection(BuildContext context) {
-    return ZoomIn(
-      duration: Constantes.standardAnimation,
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 40, bottom: 100),
-          child: const IconoYataWidget(),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildVioletSection(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
-    return ConstrainedBox(
-      constraints: BoxConstraints(minHeight: screenSize.height * 0.75),
-      child: Stack(
-        clipBehavior: Clip.none,
+    return Scaffold(
+      backgroundColor: Tema.blanco,
+      resizeToAvoidBottomInset: true,
+      body: Stack(
         children: [
-          Positioned.fill(
-            child: ClipPath(
-              clipper: ConvexCurveClipper(
-                screenHeight: screenSize.height,
-                screenWidth: screenSize.width,
-              ),
-              child: Container(color: Tema.primaryColor),
-            ),
-          ),
-          Transform.translate(
-            offset: const Offset(0, -50), // ← sube el card, ajusta este valor
-            child: Padding(
-              padding: const EdgeInsets.only(
-                left: 24,
-                right: 24,
-              ), // solo positivos
-              child: Column(
-                children: [
-                  _buildChangePasswordCard(context),
-                  const SizedBox(height: 24),
-                ],
-              ),
+          _buildBackground(context),
+          SafeArea(
+            child: Column(
+              children: [
+                _buildCustomAppBar(context),
+                Expanded(
+                  child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    child: Form(key: _formKey, child: _buildContent(context)),
+                  ),
+                ),
+              ],
             ),
           ),
           _buildLoadingIndicator(context),
         ],
+      ),
+    );
+  }
+
+  Widget _buildBackground(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    return Stack(
+      children: [
+        ClipPath(
+          clipper: ConvexCurveClipper(
+            screenHeight: screenSize.height,
+            screenWidth: screenSize.width,
+          ),
+          child: Container(width: double.infinity, color: Tema.primaryColor),
+        ),
+        Positioned(
+          top: -40,
+          right: -40,
+          child: Container(
+            width: 160,
+            height: 160,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Tema.blanco.withValues(alpha: 0.06),
+            ),
+          ),
+        ),
+        Positioned(
+          top: 60,
+          left: -30,
+          child: Container(
+            width: 100,
+            height: 100,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Tema.blanco.withValues(alpha: 0.05),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCustomAppBar(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      child: Row(
+        children: [
+          IconButton(
+            onPressed: () => Navigator.of(context).pop(),
+            icon: const Icon(
+              Icons.arrow_back_ios_new_rounded,
+              color: Tema.primaryColor,
+              size: 20,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildContent(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Column(
+        children: [
+          SizedBox(height: screenSize.height * 0.03),
+          FadeInDown(
+            duration: const Duration(milliseconds: 500),
+            child: Container(
+              width: 72,
+              height: 72,
+              decoration: BoxDecoration(
+                color: Tema.blanco.withValues(alpha: 0.18),
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: Tema.blanco.withValues(alpha: 0.35),
+                  width: 1.5,
+                ),
+              ),
+              child: const Icon(
+                Icons.password_rounded,
+                color: Tema.blanco,
+                size: 32,
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          FadeInDown(
+            duration: const Duration(milliseconds: 550),
+            delay: const Duration(milliseconds: 80),
+            child: Column(
+              children: [
+                Text(
+                  'Cambiar contraseña',
+                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                    color: Tema.blanco,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.2,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  'Ingresa tu contraseña temporal y define\nuna nueva para continuar',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                    color: Tema.blanco.withValues(alpha: 0.75),
+                    height: 1.5,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: screenSize.height * 0.045),
+          FadeInUp(
+            duration: const Duration(milliseconds: 500),
+            delay: const Duration(milliseconds: 150),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(28),
+              decoration: BoxDecoration(
+                color: Tema.blanco,
+                borderRadius: BorderRadius.circular(28),
+                boxShadow: [
+                  BoxShadow(
+                    color: Tema.primaryColor.withValues(alpha: 0.15),
+                    blurRadius: 32,
+                    spreadRadius: 0,
+                    offset: const Offset(0, 12),
+                  ),
+                  BoxShadow(
+                    color: Tema.negro.withValues(alpha: 0.06),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildPasswordField(
+                    label: 'Contraseña temporal',
+                    hint: '••••••••',
+                    controller: _passwordTemporalController,
+                    focusNode: _passwordTemporalFocus,
+                    focusKey: 'temporal',
+                    icon: Icons.lock_clock_outlined,
+                    showPassword: ref.watch(obscureCurrentPasswordProvider),
+                    onToggle: () =>
+                        ref
+                            .read(obscureCurrentPasswordProvider.notifier)
+                            .state = !ref.watch(
+                          obscureCurrentPasswordProvider,
+                        ),
+                  ),
+                  const SizedBox(height: 20),
+                  _buildDivider(),
+                  const SizedBox(height: 10),
+                  _buildPasswordField(
+                    label: 'Nueva contraseña',
+                    hint: '••••••••',
+                    controller: _newPasswordController,
+                    focusNode: _newPasswordFocus,
+                    focusKey: 'nueva',
+                    icon: Icons.lock_open_rounded,
+                    showPassword: ref.watch(obscureNewPasswordProvider),
+                    onToggle: () =>
+                        ref.read(obscureNewPasswordProvider.notifier).state =
+                            !ref.watch(obscureNewPasswordProvider),
+                  ),
+                  const SizedBox(height: Constantes.separacion),
+                  _buildPasswordField(
+                    label: 'Confirmar contraseña',
+                    hint: '••••••••',
+                    controller: _confirmPasswordController,
+                    focusNode: _confirmPasswordFocus,
+                    focusKey: 'confirmar',
+                    icon: Icons.lock_person_outlined,
+                    showPassword: ref.watch(obscureConfirmPasswordProvider),
+                    onToggle: () =>
+                        ref
+                            .read(obscureConfirmPasswordProvider.notifier)
+                            .state = !ref.watch(
+                          obscureConfirmPasswordProvider,
+                        ),
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.info_outline_rounded,
+                        size: 13,
+                        color: Colors.grey[400],
+                      ),
+                      const SizedBox(width: 5),
+                      Text(
+                        'Mínimo 8 caracteres con letras y números',
+                        style: TextStyle(
+                          fontSize: 11.5,
+                          color: Colors.grey[400],
+                          letterSpacing: 0.1,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  _buildGuardarButton(context),
+                ],
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 36),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDivider() {
+    return Row(
+      children: [
+        Expanded(child: Divider(color: Colors.grey[200], thickness: 1)),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Icon(
+            Icons.more_horiz_rounded,
+            size: 16,
+            color: Colors.grey[300],
+          ),
+        ),
+        Expanded(child: Divider(color: Colors.grey[200], thickness: 1)),
+      ],
+    );
+  }
+
+  Widget _buildPasswordField({
+    required String label,
+    required String hint,
+    required TextEditingController controller,
+    required FocusNode focusNode,
+    required String focusKey,
+    required IconData icon,
+    required bool showPassword,
+    required VoidCallback onToggle,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 11.5,
+            color: Colors.grey[500],
+            fontWeight: FontWeight.w500,
+            letterSpacing: 0.2,
+          ),
+        ),
+        const SizedBox(height: 6),
+        AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(14)),
+          child: TextFormField(
+            controller: controller,
+            focusNode: focusNode,
+            obscureText: !showPassword,
+            cursorColor: Tema.primaryColor,
+            style: const TextStyle(
+              color: Colors.black87,
+              fontSize: 15,
+              letterSpacing: 0.2,
+            ),
+            decoration: InputDecoration(
+              hintText: hint,
+              hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
+              prefixIcon: Icon(icon, color: Colors.grey[400], size: 20),
+              suffixIcon: IconButton(
+                icon: Icon(
+                  showPassword
+                      ? Icons.visibility_rounded
+                      : Icons.visibility_off_rounded,
+                  color: Colors.grey[400],
+                  size: 20,
+                ),
+                onPressed: onToggle,
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 16,
+              ),
+              filled: true,
+              fillColor: Colors.grey[50],
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: BorderSide(color: Colors.grey[200]!, width: 1.5),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: BorderSide(color: Tema.primaryColor, width: 2),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: const BorderSide(
+                  color: Tema.primaryColor,
+                  width: 1.5,
+                ),
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: const BorderSide(
+                  color: Tema.primaryColor,
+                  width: 2,
+                ),
+              ),
+              errorStyle: Theme.of(
+                context,
+              ).textTheme.bodySmall!.copyWith(color: Tema.primaryColor),
+              counterText: '',
+            ),
+            maxLength: 20,
+            validator: (value) => value == null || value.isEmpty
+                ? 'Este campo es obligatorio'
+                : value.length < 8
+                ? 'Contraseña mínimo 8 caracteres'
+                : null,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGuardarButton(BuildContext context) {
+    final isLoading = ref.watch(authProvider).isLoading;
+    return SizedBox(
+      width: double.infinity,
+      height: Constantes.botonHeightMedium,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Tema.primaryColor,
+              Tema.primaryColor.withValues(alpha: 0.82),
+            ],
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+          ),
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: [
+            BoxShadow(
+              color: Tema.primaryColor.withValues(alpha: 0.4),
+              blurRadius: 16,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: ElevatedButton(
+          onPressed: isLoading ? null : _handleChangePassword,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.transparent,
+            disabledBackgroundColor: Colors.transparent,
+            shadowColor: Colors.transparent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(14),
+            ),
+            elevation: 0,
+          ),
+          child: isLoading
+              ? const SizedBox(
+                  height: 20,
+                  width: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Tema.blanco,
+                  ),
+                )
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.check_circle_outline_rounded,
+                      color: Tema.blanco,
+                      size: 18,
+                    ),
+                    const SizedBox(width: 10),
+                    Text(
+                      'Cambiar contraseña',
+                      style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                        color: Tema.blanco,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.4,
+                      ),
+                    ),
+                  ],
+                ),
+        ),
       ),
     );
   }
@@ -191,303 +507,5 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
       return const LoadingWidget(mensaje: 'Procesando...');
     }
     return const SizedBox.shrink();
-  }
-
-  Widget _buildChangePasswordCard(BuildContext context) {
-    return FadeInUp(
-      duration: Constantes.standardAnimation,
-      child: Container(
-        padding: const EdgeInsets.all(28),
-        decoration: BoxDecoration(
-          color: Tema.blanco,
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: [
-            BoxShadow(
-              color: Tema.negro.withValues(alpha: 0.1),
-              blurRadius: 20,
-              offset: const Offset(0, 10),
-            ),
-          ],
-        ),
-        child: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Tema.negro),
-                    onPressed: () => Navigator.of(context).pop(),
-                    splashRadius: 24,
-                    tooltip: 'Volver',
-                  ),
-                ),
-                Text(
-                  'Cambiar Contraseña',
-                  style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                    color: Tema.primaryColor,
-                    fontWeight: FontWeight.bold,
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
-                const SizedBox(height: Constantes.separacionFormulario),
-                Text(
-                  'Ingresa tu contraseña actual (temporal), la nueva contraseña y el código OTP para confirmar el cambio.',
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                    color: Tema.negro,
-                    height: 1.4,
-                    fontSize: 10.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: Constantes.separacionFormulario),
-                _buildPasswordField(
-                  context,
-                  label: 'Contraseña actual (temporal)',
-                  controller: _passwordTemporalController,
-                  obscureText: ref.watch(obscureCurrentPasswordProvider),
-                  onToggleVisibility: () {
-                    ref
-                        .read(obscureCurrentPasswordProvider.notifier)
-                        .state = !ref
-                        .read(obscureCurrentPasswordProvider.notifier)
-                        .state;
-                  },
-                ),
-                const SizedBox(height: Constantes.separacionFormulario),
-                _buildPasswordField(
-                  context,
-                  label: 'Nueva contraseña',
-                  controller: _newPasswordController,
-                  obscureText: ref.watch(obscureNewPasswordProvider),
-                  onToggleVisibility: () {
-                    ref.read(obscureNewPasswordProvider.notifier).state = !ref
-                        .read(obscureNewPasswordProvider.notifier)
-                        .state;
-                  },
-                ),
-                const SizedBox(height: Constantes.separacionFormulario),
-                _buildPasswordField(
-                  context,
-                  label: 'Confirmar contraseña',
-                  controller: _confirmPasswordController,
-                  obscureText: ref.watch(obscureConfirmPasswordProvider),
-                  onToggleVisibility: () {
-                    ref
-                        .read(obscureConfirmPasswordProvider.notifier)
-                        .state = !ref
-                        .read(obscureConfirmPasswordProvider.notifier)
-                        .state;
-                  },
-                ),
-                const SizedBox(height: Constantes.separacionFormulario),
-                _buildOtpSection(context),
-                const SizedBox(height: Constantes.separacionFormulario),
-                _buildButtons(context),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPasswordField(
-    BuildContext context, {
-    required String label,
-    required TextEditingController controller,
-    required bool obscureText,
-    required VoidCallback onToggleVisibility,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        TextFormField(
-          controller: controller,
-          obscureText: obscureText,
-          style: Theme.of(
-            context,
-          ).textTheme.bodyLarge!.copyWith(color: Tema.negro),
-          decoration: InputDecoration(
-            hintText: label,
-            filled: true,
-            fillColor: Colors.grey.shade100,
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 14,
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Tema.primaryColor, width: 2),
-            ),
-            suffixIcon: IconButton(
-              icon: Icon(
-                obscureText ? Icons.visibility : Icons.visibility_off,
-                color: Colors.grey,
-              ),
-              onPressed: onToggleVisibility,
-            ),
-            counterText: '',
-          ),
-          maxLength: 20,
-          validator: (value) => value == null || value.isEmpty
-              ? 'Este campo es obligatorio'
-              : value.length < 8
-              ? 'Contraseña minimo 8 caracteres'
-              : null,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildOtpSection(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Código OTP',
-          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-            color: Tema.negro,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: 8),
-        LayoutBuilder(
-          builder: (context, constraints) {
-            const spacing = 8.0;
-            const totalSpacing = spacing * 5;
-            final fieldWidth = (constraints.maxWidth - totalSpacing) / 6;
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: List.generate(6, (index) {
-                return Container(
-                  width: fieldWidth,
-                  height: 55,
-                  margin: EdgeInsets.only(right: index < 5 ? spacing : 0),
-                  child: TextField(
-                    controller: otpControllers[index],
-                    focusNode: otpFocusNodes[index],
-                    textAlign: TextAlign.center,
-                    keyboardType: TextInputType.number,
-                    maxLength: 1,
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Tema.blanco,
-                    ),
-                    decoration: InputDecoration(
-                      counterText: '',
-                      filled: true,
-                      fillColor: Tema.negro,
-                      contentPadding: EdgeInsets.zero,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none,
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none,
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(
-                          color: Tema.primaryColor,
-                          width: 2,
-                        ),
-                      ),
-                    ),
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    onChanged: (value) {
-                      if (value.length == 1 && index < 5) {
-                        otpFocusNodes[index + 1].requestFocus();
-                      } else if (value.length == 1 && index == 5) {
-                        FocusScope.of(context).unfocus();
-                      }
-                      if (value.isEmpty && index > 0) {
-                        otpFocusNodes[index - 1].requestFocus();
-                      }
-                    },
-                  ),
-                );
-              }),
-            );
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _buildButtons(BuildContext context) {
-    return Column(
-      children: [
-        SizedBox(
-          width: double.infinity,
-          height: 50,
-          child: OutlinedButton(
-            onPressed: ref.watch(authProvider).isLoading
-                ? null
-                : _handleSendCode,
-            style: OutlinedButton.styleFrom(
-              foregroundColor: Tema.primaryColor,
-              side: const BorderSide(color: Tema.primaryColor, width: 2),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            child: ref.watch(authProvider).isLoading
-                ? const SizedBox(
-                    height: 20,
-                    width: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Text(
-                    'Enviar código',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-          ),
-        ),
-        const SizedBox(height: Constantes.separacion),
-        SizedBox(
-          width: double.infinity,
-          height: 50,
-          child: ElevatedButton(
-            onPressed: ref.watch(authProvider).isLoading
-                ? null
-                : _handleChangePassword,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Tema.primaryColor,
-              foregroundColor: Tema.blanco,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            child: ref.watch(authProvider).isLoading
-                ? const SizedBox(
-                    height: 20,
-                    width: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Tema.blanco,
-                    ),
-                  )
-                : const Text(
-                    'Cambiar contraseña',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-          ),
-        ),
-      ],
-    );
   }
 }

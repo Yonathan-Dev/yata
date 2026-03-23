@@ -29,6 +29,7 @@ class _FormularioWidgetState extends ConsumerState<FormularioWidget> {
     _passwordController.dispose();
     _usuarioFocusNode.dispose();
     _passwordFocusNode.dispose();
+    _formLoginKey.currentState?.dispose();
     super.dispose();
   }
 
@@ -291,6 +292,7 @@ class _FormularioWidgetState extends ConsumerState<FormularioWidget> {
     return Center(
       child: TextButton(
         onPressed: () {
+          _formLoginKey.currentState?.reset();
           context.push('/forgot-password');
         },
         child: Text(
@@ -338,6 +340,9 @@ class _FormularioWidgetState extends ConsumerState<FormularioWidget> {
           ),
           GestureDetector(
             onTap: () {
+              _formLoginKey.currentState?.reset();
+              ref.invalidate(currentStepProvider);
+              ref.invalidate(registerProvider);
               context.push('/register');
             },
             child: Text(

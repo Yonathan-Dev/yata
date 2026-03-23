@@ -93,7 +93,7 @@ class _PinScreenState extends ConsumerState<PinScreen> {
                     numeroDocumento: response.numeroDocumento,
                   ),
                 );
-
+            ref.invalidate(navigationIndexProvider);
             if (!mounted) return;
             context.go('/home');
             SnackbarUtil.snackbarNotificationPush(
@@ -231,8 +231,11 @@ class _PinScreenState extends ConsumerState<PinScreen> {
           value: response.apellidosyNombres,
         );
 
+        ref.invalidate(navigationIndexProvider);
+
         if (!mounted) return;
         context.go('/home');
+
         SnackbarUtil.snackbarSuccess(
           context,
           message: '¡Bienvenido, ${response.apellidosyNombres}!',

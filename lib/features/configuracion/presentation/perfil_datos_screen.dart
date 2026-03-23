@@ -613,6 +613,7 @@ class _PerfilDatosScreenState extends ConsumerState<PerfilDatosScreen> {
               fontSize: 15,
               letterSpacing: 0.2,
             ),
+            decoration: InputDecoration(counterText: ''),
             validator: (value) {
               if (isCorreo) {
                 return ref

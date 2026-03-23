@@ -100,8 +100,8 @@ class AuthNotifier extends Notifier<AuthState> {
       await secureStorage.delete(key: 'tokenType');
       await secureStorage.delete(key: 'userName');
       await secureStorage.delete(key: 'passwordTemporary');
-      ref.read(navigationIndexProvider.notifier).state = 0;
       //envia a la pantalla de pin
+      ref.invalidate(navigationIndexProvider);
       navigatorKey.currentContext?.go('/pin');
       state = const AuthState();
     } catch (e) {

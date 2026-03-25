@@ -9,45 +9,37 @@ class InicioDataSource {
   final Dio dio;
 
   InicioDataSource({required this.dio});
-
-  Future<InicioModel?> listaryata(int codigo) async {
+  Future<SaldoModel> consultarSaldo(int idUsuario) async {
     try {
-      final response = await dio.post(
-        '/api/wsyata/listar-yata',
-        data: jsonEncode({'iCodigoyata': codigo}),
+      final response = await dio.get(
+        '/api/Payin/saldo/$idUsuario',
         options: Options(
-          headers: {'Content-Type': 'application/json'},
-          receiveTimeout: const Duration(seconds: 30),
-          sendTimeout: const Duration(seconds: 30),
+          contentType: Headers.jsonContentType,
+          sendTimeout: Duration(milliseconds: 30000),
+          receiveTimeout: Duration(milliseconds: 30000),
         ),
       );
 
-      final Map<String, dynamic> jsonResponse = response.data is String
-          ? jsonDecode(response.data as String)
-          : response.data as Map<String, dynamic>;
+      if (response.statusCode == 200) {
+        final data = response.data;
 
-      final data = jsonResponse["data"];
-      final error = data?["error"];
-
-      if (error != null && error["xidError"] == 200) {
-        final objects = data["objects"];
-        final table1 = objects?["table1"];
-        final length = table1?["length"] ?? 0;
-
-        if (length > 0) {
-          final yataData = table1["data"];
-          return InicioModel.fromJson(yataData);
-        } else {
-          return null;
+        if (data == null) {
+          throw Exception('Respuesta vacía del servidor');
         }
+
+        final success = data['success'] as bool? ?? false;
+        if (!success) {
+          throw Exception('Error en la respuesta del servidor');
+        }
+
+        return SaldoModel.fromJson(data);
       } else {
-        final mensajeError = error?["msjError"] ?? "Error desconocido";
-        throw Exception(mensajeError);
+        throw Exception('Error: ${response.statusCode}');
       }
-    } on DioException catch (e, stackTrace) {
-      throw Exception('Error en la solicitud: ${e.message}\n$stackTrace');
+    } on DioException {
+      rethrow;
     } catch (e) {
-      throw Exception('Error al procesar la respuesta del servidor: $e');
+      rethrow;
     }
   }
 

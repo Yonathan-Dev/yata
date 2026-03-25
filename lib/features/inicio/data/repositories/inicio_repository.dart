@@ -7,9 +7,9 @@ class InicioRepository {
 
   InicioRepository({required this.dataSource});
 
-  Future<InicioModel?> listaryata(int codigo) async {
-    final yata = await dataSource.listaryata(codigo);
-    return yata;
+  Future<SaldoModel?> consultarSaldo(int idUsuario) async {
+    final saldo = await dataSource.consultarSaldo(idUsuario);
+    return saldo;
   }
 
   Future<List<InicioModel>> listarTodosyatas() async {

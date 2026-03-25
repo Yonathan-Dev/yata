@@ -2,6 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/app_exports.dart';
+import '../../../shared/shared_exports.dart';
 
 class InicioScreen extends ConsumerStatefulWidget {
   const InicioScreen({super.key});
@@ -11,6 +12,40 @@ class InicioScreen extends ConsumerStatefulWidget {
 }
 
 class _InicioScreenState extends ConsumerState<InicioScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _handleConsultarSaldo();
+  }
+
+  Future<void> _handleConsultarSaldo() async {
+    try {
+      final response = await ref.read(consultarSaldoProvider.future);
+      if (response?.success ?? false) {
+        ref.read(inicioProvider.notifier).setSaldo(response?.saldo ?? 0.00);
+        ref
+            .read(inicioProvider.notifier)
+            .setSaldoReservado(response?.saldoReservado ?? 0.00);
+        ref
+            .read(inicioProvider.notifier)
+            .setSaldoDisponible(response?.saldoDisponible ?? 0.00);
+        ref.read(inicioProvider.notifier).setSuccess(true);
+      } else {
+        if (!mounted) return;
+        SnackbarUtil.snackbarError(
+          context,
+          message: 'Error al consultar el saldo',
+        );
+      }
+    } catch (error) {
+      if (!mounted) return;
+      SnackbarUtil.snackbarError(
+        context,
+        message: 'Error al consultar el saldo',
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -109,7 +144,9 @@ class _InicioScreenState extends ConsumerState<InicioScreen> {
             ),
             const Spacer(),
             Text(
-              ref.watch(mostrarSaldo) ? '0,00 PEN' : '••••• PEN',
+              ref.watch(mostrarSaldo)
+                  ? '${ref.watch(inicioProvider).saldo.toStringAsFixed(2)} PEN'
+                  : '••••• PEN',
               style: Theme.of(context).textTheme.titleLarge!.copyWith(
                 color: Tema.negro,
                 fontWeight: FontWeight.bold,

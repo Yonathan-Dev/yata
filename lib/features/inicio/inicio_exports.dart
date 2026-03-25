@@ -6,5 +6,6 @@ export 'providers/inicio_provider.dart';
 export 'data/datasources/inicio_datasource.dart';
 //Models
 export 'data/models/inicio_model.dart';
+export 'data/models/saldo_model.dart';
 //Repositories
 export 'data/repositories/inicio_repository.dart';

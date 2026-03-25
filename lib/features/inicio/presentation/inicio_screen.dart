@@ -147,7 +147,7 @@ class _InicioScreenState extends ConsumerState<InicioScreen> {
               ref.watch(mostrarSaldo)
                   ? '${ref.watch(inicioProvider).saldo.toStringAsFixed(2)} PEN'
                   : '••••• PEN',
-              style: Theme.of(context).textTheme.titleLarge!.copyWith(
+              style: Theme.of(context).textTheme.titleMedium!.copyWith(
                 color: Tema.negro,
                 fontWeight: FontWeight.bold,
               ),
@@ -219,23 +219,23 @@ class _InicioScreenState extends ConsumerState<InicioScreen> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 55,
-            height: 55,
+            width: 48,
+            height: 48,
             decoration: BoxDecoration(
               color: Tema.negro,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Tema.negro, width: 1.5),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: Tema.negro, width: 1.2),
             ),
-            child: Icon(icono, color: Tema.blanco, size: 28),
+            child: Icon(icono, color: Tema.blanco, size: 22),
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 4),
           Text(
             texto,
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodySmall!.copyWith(
               color: Tema.negro,
-              fontSize: 11,
-              height: 1.2,
+              fontSize: 12,
+              height: 1.1,
             ),
           ),
         ],

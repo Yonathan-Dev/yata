@@ -2,6 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/app_exports.dart' hide AppBarWidget;
 import '../../../shared/shared_exports.dart';
 
@@ -151,7 +152,7 @@ class _CambiarContrasenaScreenState
       child: Row(
         children: [
           IconButton(
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => context.go('/home'),
             icon: const Icon(
               Icons.arrow_back_ios_new_rounded,
               color: Tema.primaryColor,

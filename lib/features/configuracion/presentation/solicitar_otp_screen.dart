@@ -33,6 +33,7 @@ class _SolicitarOtpScreenState extends ConsumerState<SolicitarOtpScreen> {
 
   Future<void> _handleEnviarCodigo() async {
     if (_formKey.currentState!.validate()) {
+      _correoFocus.unfocus();
       try {
         String response;
         if (widget.isPin) {

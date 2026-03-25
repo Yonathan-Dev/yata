@@ -2,6 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/app_exports.dart' hide AppBarWidget;
 import '../../../shared/shared_exports.dart';
 
@@ -44,6 +45,10 @@ class _CambiarPinScreenState extends ConsumerState<CambiarPinScreen> {
   @override
   void initState() {
     super.initState();
+    Future.microtask(() {
+      if (!mounted) return;
+      FocusScope.of(context).unfocus();
+    });
     for (int s = 0; s < 3; s++) {
       for (int i = 0; i < 6; i++) {
         final step = s;
@@ -55,9 +60,9 @@ class _CambiarPinScreenState extends ConsumerState<CambiarPinScreen> {
         });
       }
     }
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    /*WidgetsBinding.instance.addPostFrameCallback((_) {
       _focusNodes[0][0].requestFocus();
-    });
+    });*/
   }
 
   @override
@@ -233,7 +238,7 @@ class _CambiarPinScreenState extends ConsumerState<CambiarPinScreen> {
                   _focusNodes[_step][0].requestFocus();
                 });
               } else {
-                Navigator.of(context).pop();
+                context.go('/home');
               }
             },
             icon: const Icon(

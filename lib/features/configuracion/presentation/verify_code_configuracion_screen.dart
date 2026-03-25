@@ -26,6 +26,11 @@ class _VerifyCodeConfiguracionScreenState
   @override
   void initState() {
     super.initState();
+
+    Future.microtask(() {
+      if (!mounted) return;
+      FocusScope.of(context).unfocus();
+    });
     for (int i = 0; i < 6; i++) {
       final index = i;
       _codeControllers[i].addListener(() {
@@ -36,9 +41,6 @@ class _VerifyCodeConfiguracionScreenState
         });
       });
     }
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _focusNodes[0].requestFocus();
-    });
   }
 
   @override
@@ -69,7 +71,12 @@ class _VerifyCodeConfiguracionScreenState
       ref.watch(filledFieldsProvider).where((f) => f).length;
 
   Future<void> _handleContinuar() async {
+    FocusScope.of(context).unfocus();
+
     final code = _fullCode;
+    for (var f in _focusNodes) {
+      f.unfocus();
+    }
     if (code.length != 6) {
       SnackbarUtil.snackbarNotificationPush(
         context,
@@ -106,10 +113,15 @@ class _VerifyCodeConfiguracionScreenState
 
       if (!mounted) return;
       SnackbarUtil.snackbarNotificationPush(context, message: response);
+      // Limpiar el estado de los campos llenos antes de navegar
+      ref.read(filledFieldsProvider.notifier).state = List.generate(
+        6,
+        (_) => false,
+      );
       if (widget.isPin) {
-        context.push('/configuracion/cambiar-pin');
+        context.go('/configuracion/cambiar-pin');
       } else {
-        context.push('/configuracion/cambiar-contrasena');
+        context.go('/configuracion/cambiar-contrasena');
       }
     } catch (e) {
       SnackbarUtil.snackbarError(
@@ -198,7 +210,7 @@ class _VerifyCodeConfiguracionScreenState
       child: Row(
         children: [
           IconButton(
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => context.go('/home'),
             icon: Icon(
               Icons.arrow_back_ios_new_rounded,
               color: Tema.primaryColor,

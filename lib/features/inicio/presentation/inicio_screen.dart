@@ -11,9 +11,6 @@ class InicioScreen extends ConsumerStatefulWidget {
 }
 
 class _InicioScreenState extends ConsumerState<InicioScreen> {
-  bool _mostrarSaldo = false;
-  bool _mostrarMovimientos = false;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,7 +20,7 @@ class _InicioScreenState extends ConsumerState<InicioScreen> {
           Expanded(
             child: SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 35),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -77,24 +74,26 @@ class _InicioScreenState extends ConsumerState<InicioScreen> {
     return FadeInUp(
       duration: Constantes.standardAnimation,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         decoration: BoxDecoration(
           color: Tema.blanco,
-          borderRadius: BorderRadius.circular(30),
-          border: Border.all(color: Tema.gris.withValues(alpha: 0.3)),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Tema.primaryColor),
         ),
         child: Row(
           children: [
             GestureDetector(
               onTap: () {
-                setState(() {
-                  _mostrarSaldo = !_mostrarSaldo;
-                });
+                ref.read(mostrarSaldo.notifier).state = !ref
+                    .read(mostrarSaldo.notifier)
+                    .state;
               },
               child: Row(
                 children: [
                   Icon(
-                    _mostrarSaldo ? Icons.visibility : Icons.visibility_off,
+                    ref.watch(mostrarSaldo)
+                        ? Icons.visibility
+                        : Icons.visibility_off,
                     color: Tema.negro,
                     size: 20,
                   ),
@@ -103,14 +102,14 @@ class _InicioScreenState extends ConsumerState<InicioScreen> {
                     'Mostrar saldo',
                     style: Theme.of(
                       context,
-                    ).textTheme.bodyMedium!.copyWith(color: Tema.negro),
+                    ).textTheme.bodyLarge!.copyWith(color: Tema.negro),
                   ),
                 ],
               ),
             ),
             const Spacer(),
             Text(
-              _mostrarSaldo ? '0,00 PEN' : '••••• PEN',
+              ref.watch(mostrarSaldo) ? '0,00 PEN' : '••••• PEN',
               style: Theme.of(context).textTheme.titleLarge!.copyWith(
                 color: Tema.negro,
                 fontWeight: FontWeight.bold,
@@ -126,7 +125,7 @@ class _InicioScreenState extends ConsumerState<InicioScreen> {
     return Text(
       '¿Que te gustaría hacer?',
       style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-        color: Tema.primaryColor,
+        color: Tema.negro,
         fontWeight: FontWeight.w500,
       ),
     );
@@ -186,11 +185,11 @@ class _InicioScreenState extends ConsumerState<InicioScreen> {
             width: 55,
             height: 55,
             decoration: BoxDecoration(
-              color: Tema.blanco,
+              color: Tema.negro,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: Tema.negro, width: 1.5),
             ),
-            child: Icon(icono, color: Tema.negro, size: 28),
+            child: Icon(icono, color: Tema.blanco, size: 28),
           ),
           const SizedBox(height: 6),
           Text(
@@ -215,16 +214,16 @@ class _InicioScreenState extends ConsumerState<InicioScreen> {
         decoration: BoxDecoration(
           color: Tema.blanco,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Tema.gris.withValues(alpha: 0.3)),
+          border: Border.all(color: Tema.primaryColor.withValues(alpha: 0.3)),
         ),
         child: Column(
           children: [
             // Header
             GestureDetector(
               onTap: () {
-                setState(() {
-                  _mostrarMovimientos = !_mostrarMovimientos;
-                });
+                ref.read(mostrarMovimientos.notifier).state = !ref
+                    .read(mostrarMovimientos.notifier)
+                    .state;
               },
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -241,7 +240,7 @@ class _InicioScreenState extends ConsumerState<InicioScreen> {
                     ),
                     const Spacer(),
                     Icon(
-                      _mostrarMovimientos
+                      ref.watch(mostrarMovimientos)
                           ? Icons.keyboard_arrow_up
                           : Icons.keyboard_arrow_down,
                       color: Tema.negro,
@@ -251,7 +250,7 @@ class _InicioScreenState extends ConsumerState<InicioScreen> {
               ),
             ),
             // Lista de movimientos
-            if (_mostrarMovimientos) ...[
+            if (ref.watch(mostrarMovimientos)) ...[
               const Divider(height: 1),
               _buildMovimientoItem('Rosa Mendez', '10.00'),
               _buildMovimientoItem('Rosa Mendez', '10.00'),

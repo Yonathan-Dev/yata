@@ -35,10 +35,7 @@ final inicioProvider = NotifierProvider<InicioNotifier, List<InicioModel>>(() {
   return InicioNotifier();
 });
 
-final ubicacionObtenidaProvider = StateProvider<bool>((ref) => false);
 final yatasObtenidosProvider = StateProvider<bool>((ref) => false);
-final mapaCreadoProvider = StateProvider<bool>((ref) => false);
-final mostrarLeyendaProvider = StateProvider<bool>((ref) => false);
 
 //Provider de DataSource, Repository y UseCase para obtener un yata específico por su código
 final yataProvider = FutureProvider.family<InicioModel, int>((
@@ -62,3 +59,6 @@ final inicioDataSourceProvider = Provider<InicioDataSource>((ref) {
   final dio = ref.watch(dioYataProvider);
   return InicioDataSource(dio: dio);
 });
+
+final mostrarMovimientos = StateProvider<bool>((ref) => false);
+final mostrarSaldo = StateProvider<bool>((ref) => false);

@@ -12,8 +12,16 @@ class InicioRepository {
     return saldo;
   }
 
-  Future<List<InicioModel>> listarTodosyatas() async {
-    final yatas = await dataSource.listarTodosyatas();
-    return yatas;
+  Future<MovimientoModel?> consultarMovimientos(
+    int idUsuario,
+    int page,
+    int pageSize,
+  ) async {
+    final movimientos = await dataSource.consultarMovimientos(
+      idUsuario,
+      page,
+      pageSize,
+    );
+    return movimientos;
   }
 }

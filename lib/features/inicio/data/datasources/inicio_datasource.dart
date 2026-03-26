@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:core';
 
 import 'package:dio/dio.dart';
@@ -43,46 +42,48 @@ class InicioDataSource {
     }
   }
 
-  //cuando tenemos una lista usar esta forma, si es un solo objeto usar la forma anterior
-  Future<List<InicioModel>> listarTodosyatas() async {
+  Future<MovimientoModel> consultarMovimientos(
+    int idUsuario,
+    int page,
+    int pageSize,
+  ) async {
     try {
-      final response = await dio.post(
-        '/api/wsyata/listar-yata',
-        data: jsonEncode({'iCodigoyata': 1}),
+      final response = await dio.get(
+        '/api/Payin/movimientos',
+        queryParameters: {
+          'idusuario': idUsuario,
+          'page': page,
+          'pageSize': pageSize,
+          'idestado': null,
+          'tipo': null,
+        },
         options: Options(
-          headers: {'Content-Type': 'application/json'},
-          receiveTimeout: const Duration(seconds: 30),
-          sendTimeout: const Duration(seconds: 30),
+          contentType: Headers.jsonContentType,
+          sendTimeout: Duration(milliseconds: 30000),
+          receiveTimeout: Duration(milliseconds: 30000),
         ),
       );
 
-      final Map<String, dynamic> jsonResponse = response.data is String
-          ? jsonDecode(response.data as String)
-          : response.data as Map<String, dynamic>;
+      if (response.statusCode == 200) {
+        final data = response.data;
 
-      final data = jsonResponse["data"];
-      final error = data?["error"];
-
-      if (error != null && error["xidError"] == 200) {
-        final objects = data["objects"];
-        final table1 = objects?["table1"];
-        final dataList = table1?["data"] as List?;
-
-        if (dataList != null && dataList.isNotEmpty) {
-          return dataList
-              .map((item) => InicioModel.fromJson(item as Map<String, dynamic>))
-              .toList();
-        } else {
-          return [];
+        if (data == null) {
+          throw Exception('Respuesta vacía del servidor');
         }
+
+        final success = data['success'] as bool? ?? false;
+        if (!success) {
+          throw Exception('Error en la respuesta del servidor');
+        }
+
+        return MovimientoModel.fromJson(data);
       } else {
-        final mensajeError = error?["msjError"] ?? "Error desconocido";
-        throw Exception(mensajeError);
+        throw Exception('Error: ${response.statusCode}');
       }
-    } on DioException catch (e) {
-      throw Exception('Error en la solicitud: ${e.message}');
+    } on DioException {
+      rethrow;
     } catch (e) {
-      throw Exception('Error al procesar la respuesta: $e');
+      rethrow;
     }
   }
 }

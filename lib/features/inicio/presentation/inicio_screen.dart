@@ -292,10 +292,22 @@ class _InicioScreenState extends ConsumerState<InicioScreen> {
           children: [
             // Header
             GestureDetector(
-              onTap: () {
-                ref.read(mostrarMovimientos.notifier).state = !ref
-                    .read(mostrarMovimientos.notifier)
-                    .state;
+              onTap: () async {
+                final show = !ref.read(mostrarMovimientos.notifier).state;
+                ref.read(mostrarMovimientos.notifier).state = show;
+                if (show) {
+                  // Iniciar carga inicial cuando se despliegan los movimientos
+                  final newCount = await ref
+                      .read(movimientosNotifierProvider.notifier)
+                      .loadInitial();
+                  if (newCount == 0 &&
+                      ref.read(movimientosNotifierProvider).items.isEmpty) {
+                    SnackbarUtil.snackbarInfo(
+                      context,
+                      message: 'No se encontraron movimientos',
+                    );
+                  }
+                }
               },
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -321,14 +333,106 @@ class _InicioScreenState extends ConsumerState<InicioScreen> {
                 ),
               ),
             ),
-            // Lista de movimientos
+            // Lista de movimientos con paginación
             if (ref.watch(mostrarMovimientos)) ...[
               const Divider(height: 1),
-              _buildMovimientoItem('Rosa Mendez', '10.00'),
-              _buildMovimientoItem('Rosa Mendez', '10.00'),
-              _buildMovimientoItem('Rosa Mendez', '10.00'),
-              _buildMovimientoItem('Rosa Mendez', '10.00'),
-              _buildMovimientoItem('Rosa Mendez', '10.00'),
+              Builder(
+                builder: (context) {
+                  final state = ref.watch(movimientosNotifierProvider);
+
+                  if (state.isLoading) {
+                    return const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 12),
+                      child: Center(child: CircularProgressIndicator()),
+                    );
+                  }
+
+                  if (state.error.isNotEmpty) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      child: Text(
+                        'Error al cargar movimientos',
+                        style: Theme.of(
+                          context,
+                        ).textTheme.bodyMedium!.copyWith(color: Tema.negro),
+                      ),
+                    );
+                  }
+
+                  if (state.items.isEmpty) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      child: Text(
+                        'No hay movimientos',
+                        style: Theme.of(
+                          context,
+                        ).textTheme.bodyMedium!.copyWith(color: Tema.negro),
+                      ),
+                    );
+                  }
+
+                  return Column(
+                    children: [
+                      ...state.items.map((d) {
+                        final nombre = d.descripcion;
+                        final monto = d.monto.toStringAsFixed(2);
+                        return _buildMovimientoItem(nombre, monto);
+                      }),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 4,
+                        ),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            'Mostrando ${state.items.length} de ${state.totalRegistros} (Página ${state.page} de ${state.totalPaginas})',
+                            style: Theme.of(context).textTheme.bodySmall!
+                                .copyWith(color: Tema.negro, fontSize: 12),
+                          ),
+                        ),
+                      ),
+                      if (state.isLoadingMore) ...[
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 8),
+                          child: Center(
+                            child: SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          ),
+                        ),
+                      ] else if (state.hasNext) ...[
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          child: TextButton(
+                            onPressed: () async {
+                              final newCount = await ref
+                                  .read(movimientosNotifierProvider.notifier)
+                                  .loadMore();
+                              if (newCount == 0) {
+                                SnackbarUtil.snackbarInfo(
+                                  context,
+                                  message:
+                                      'No se encontraron nuevos movimientos en la siguiente página',
+                                );
+                              }
+                            },
+                            child: const Text('Cargar más'),
+                          ),
+                        ),
+                      ],
+                    ],
+                  );
+                },
+              ),
             ],
           ],
         ),

@@ -351,11 +351,7 @@ class ConfiguracionScreen extends ConsumerWidget {
         horizontal: Constantes.padding,
         vertical: 6,
       ),
-      leading: _iconBox(
-        color: const Color(0xFF25D366).withValues(alpha: 0.12),
-        icon: Icons.chat_rounded,
-        iconColor: const Color(0xFF25D366),
-      ),
+      leading: Image.asset('assets/iconos/whatsapp.png', width: 20, height: 20),
       title: const Text(
         'Soporte por WhatsApp',
         style: TextStyle(fontWeight: FontWeight.w500),

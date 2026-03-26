@@ -60,9 +60,6 @@ class _CambiarPinScreenState extends ConsumerState<CambiarPinScreen> {
         });
       }
     }
-    /*WidgetsBinding.instance.addPostFrameCallback((_) {
-      _focusNodes[0][0].requestFocus();
-    });*/
   }
 
   @override

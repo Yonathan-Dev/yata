@@ -216,18 +216,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     );
   }
 
-  Widget buildVersionApp() {
-    return ZoomIn(
-      duration: Constantes.standardAnimation,
-      child: Center(
-        child: Text(
-          'v1.0.0',
-          style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-        ),
-      ),
-    );
-  }
-
   Future<void> _solicitarPermisos() async {
     try {
       // Verificar y solicitar permiso de cámara

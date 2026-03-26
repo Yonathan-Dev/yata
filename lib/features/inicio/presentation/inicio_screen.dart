@@ -1,6 +1,7 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import '../../../core/app_exports.dart';
 import '../../../shared/shared_exports.dart';
 
@@ -173,14 +174,43 @@ class _InicioScreenState extends ConsumerState<InicioScreen> {
       {
         'icono': Icons.account_balance_wallet_outlined,
         'texto': 'Recargar\nsaldo',
+        'svg': 'assets/iconos/icono_1.svg',
       },
-      {'icono': Icons.output_outlined, 'texto': 'Retirar\nsaldo'},
-      {'icono': Icons.qr_code_scanner, 'texto': 'Paga con\nQR'},
-      {'icono': Icons.attach_money, 'texto': 'Cobrar'},
-      {'icono': Icons.store_outlined, 'texto': 'Tienda'},
-      {'icono': Icons.receipt_long_outlined, 'texto': 'Referencias'},
-      {'icono': Icons.swap_horiz, 'texto': 'Transferir'},
-      {'icono': Icons.monetization_on_outlined, 'texto': 'Cobrar'},
+      {
+        'icono': Icons.output_outlined,
+        'texto': 'Retirar\nsaldo',
+        'svg': 'assets/iconos/icono_2.svg',
+      },
+      {
+        'icono': Icons.qr_code_scanner,
+        'texto': 'Paga con\nQR',
+        'svg': 'assets/iconos/icono_3.svg',
+      },
+      {
+        'icono': Icons.attach_money,
+        'texto': 'Cobrar',
+        'svg': 'assets/iconos/icono_4.svg',
+      },
+      {
+        'icono': Icons.store_outlined,
+        'texto': 'Tienda',
+        'svg': 'assets/iconos/icono_5.svg',
+      },
+      {
+        'icono': Icons.receipt_long_outlined,
+        'texto': 'Referencias',
+        'svg': 'assets/iconos/icono_6.svg',
+      },
+      {
+        'icono': Icons.swap_horiz,
+        'texto': 'Transferir',
+        'svg': 'assets/iconos/icono_7.svg',
+      },
+      {
+        'icono': Icons.monetization_on_outlined,
+        'texto': 'Cobrar',
+        'svg': 'assets/iconos/icono_8.svg',
+      },
     ];
 
     return FadeInUp(
@@ -202,6 +232,7 @@ class _InicioScreenState extends ConsumerState<InicioScreen> {
             context,
             icono: accion['icono'] as IconData,
             texto: accion['texto'] as String,
+            svg: accion['svg'] as String,
           );
         },
       ),
@@ -212,6 +243,7 @@ class _InicioScreenState extends ConsumerState<InicioScreen> {
     BuildContext context, {
     required IconData icono,
     required String texto,
+    required String svg,
   }) {
     return GestureDetector(
       onTap: () {},
@@ -223,10 +255,13 @@ class _InicioScreenState extends ConsumerState<InicioScreen> {
             height: 48,
             decoration: BoxDecoration(
               color: Tema.negro,
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(25),
               border: Border.all(color: Tema.negro, width: 1.2),
             ),
-            child: Icon(icono, color: Tema.blanco, size: 22),
+            child: Padding(
+              padding: const EdgeInsets.all(1),
+              child: SvgPicture.asset(svg, fit: BoxFit.contain),
+            ),
           ),
           const SizedBox(height: 4),
           Text(

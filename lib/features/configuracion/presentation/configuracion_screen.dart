@@ -351,7 +351,7 @@ class ConfiguracionScreen extends ConsumerWidget {
         horizontal: Constantes.padding,
         vertical: 6,
       ),
-      leading: Image.asset('assets/iconos/whatsapp.png', width: 20, height: 20),
+      leading: Image.asset('assets/iconos/whatsapp.png', width: 35, height: 35),
       title: const Text(
         'Soporte por WhatsApp',
         style: TextStyle(fontWeight: FontWeight.w500),
@@ -362,15 +362,7 @@ class ConfiguracionScreen extends ConsumerWidget {
       ),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
-        children: [
-          _badge(
-            label: 'En línea',
-            bgColor: Tema.primaryColor.withValues(alpha: 0.1),
-            textColor: Tema.primaryColor,
-          ),
-          const SizedBox(width: 4),
-          const Icon(Icons.chevron_right_rounded, color: Colors.grey),
-        ],
+        children: [const Icon(Icons.chevron_right_rounded, color: Colors.grey)],
       ),
       onTap: () async {
         const phone = '966105060';

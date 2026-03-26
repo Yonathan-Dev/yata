@@ -12,22 +12,69 @@ class SnackbarUtil {
   }) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: _buildSnackbarContent(
+        content: _buildErrorCardContent(
           context: context,
-          icon: Icons.error_outline_rounded,
-          title: title ?? 'Error',
+          title: title ?? 'Error!',
           message: message,
-          iconColor: Tema.blanco,
-          textColor: Tema.blanco,
         ),
-        backgroundColor: Tema.rojo,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(Constantes.borderRadius),
-        ),
         margin: const EdgeInsets.all(Constantes.padding),
         duration: duration,
         dismissDirection: DismissDirection.horizontal,
+      ),
+    );
+  }
+
+  static Widget _buildErrorCardContent({
+    required BuildContext context,
+    required String title,
+    required String message,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+      decoration: BoxDecoration(
+        color: Tema.blanco,
+        borderRadius: BorderRadius.circular(Constantes.borderRadius),
+        border: Border.all(color: Colors.black12, width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 20,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.warning_amber_rounded, color: Tema.rojoCoral, size: 30),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  title,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: Tema.negro,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  message,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

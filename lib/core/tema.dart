@@ -6,6 +6,7 @@ class Tema {
   static const Color amarillo = Color(0xFFFEDD3C);
   static const Color blanco = Color(0xFFFFFFFF);
   static const Color rojo = Color(0xFFF06177);
+  static const Color rojoCoral = Color(0xFFFF5252);
   static const Color rojoClaro = Color(0xFFF497A2);
   static const Color verde = Color(0xFF8BDC64);
   static const Color naranja = Color(0xFFFF9F43);

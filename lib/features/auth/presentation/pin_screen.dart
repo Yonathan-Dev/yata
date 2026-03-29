@@ -102,7 +102,10 @@ class _PinScreenState extends ConsumerState<PinScreen> {
             );
           } catch (error) {
             if (!mounted) return;
-            SnackbarUtil.snackbarError(context, message: error.toString());
+            SnackbarUtil.snackbarError(
+              context,
+              message: error.toString().replaceAll('Exception: ', ''),
+            );
             ref.read(pinProvider.notifier).state = '';
           } finally {
             _shuffleNumbers();
@@ -242,7 +245,10 @@ class _PinScreenState extends ConsumerState<PinScreen> {
         );
       } catch (error) {
         if (mounted) {
-          SnackbarUtil.snackbarError(context, message: error.toString());
+          SnackbarUtil.snackbarError(
+            context,
+            message: error.toString().replaceAll('Exception: ', ''),
+          );
         }
       } finally {
         ref.read(pinProvider.notifier).state = '';

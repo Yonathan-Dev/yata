@@ -165,7 +165,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
       SnackbarUtil.snackbarNotificationPush(context, message: response);
       context.go('/auth');
     } catch (error) {
-      SnackbarUtil.snackbarNotificationPush(
+      SnackbarUtil.snackbarError(
         context,
         message: error.toString().replaceAll('Exception: ', ''),
       );

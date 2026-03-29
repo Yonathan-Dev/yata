@@ -9,6 +9,7 @@ export 'providers/dio_providers.dart';
 export 'providers/dispositivo_providers.dart';
 export 'providers/fingerprint_crypto_provider.dart';
 export 'providers/shared_providers.dart';
+export 'providers/inactivity_provider.dart';
 // Widgets
 export 'widgets/appbar_widget.dart';
 export 'widgets/convex_curve_clipper.dart';
@@ -23,3 +24,5 @@ export 'utils/dialog_utils.dart';
 // Interceptors
 export 'interceptors/dio_interceptor.dart';
 export 'interceptors/dio_auth_interceptor.dart';
+//Listeners
+export 'widgets/inactivity_listener.dart';

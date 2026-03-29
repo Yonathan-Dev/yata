@@ -70,7 +70,10 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
           context.go('/pin');
         } catch (e) {
           if (!mounted) return;
-          SnackbarUtil.snackbarError(context, message: e.toString());
+          SnackbarUtil.snackbarError(
+            context,
+            message: e.toString().replaceAll('Exception: ', ''),
+          );
         } finally {
           ref.read(forgotProvider.notifier).resetearEstado();
         }

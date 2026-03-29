@@ -141,26 +141,29 @@ class _VerifyCodeConfiguracionScreenState
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Tema.blanco,
-      body: Stack(
-        children: [
-          _buildBackground(context),
-          SafeArea(
-            child: Column(
-              children: [
-                _buildCustomAppBar(context),
-                Expanded(
-                  child: SingleChildScrollView(
-                    physics: const BouncingScrollPhysics(),
-                    child: _buildContent(context),
+    ref.watch(filledFieldsProvider);
+    return InactivityListener(
+      child: Scaffold(
+        backgroundColor: Tema.blanco,
+        body: Stack(
+          children: [
+            _buildBackground(context),
+            SafeArea(
+              child: Column(
+                children: [
+                  _buildCustomAppBar(context),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      child: _buildContent(context),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          _buildLoadingIndicator(context),
-        ],
+            _buildLoadingIndicator(context),
+          ],
+        ),
       ),
     );
   }

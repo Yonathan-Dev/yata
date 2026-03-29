@@ -82,9 +82,12 @@ class _Step3DatosIngresoWidgetState
 
         SnackbarUtil.snackbarNotificationPush(context, message: response);
         context.push('/verify-code');
-      } catch (e) {
+      } catch (error) {
         if (!mounted) return null;
-        SnackbarUtil.snackbarError(context, message: e.toString());
+        SnackbarUtil.snackbarError(
+          context,
+          message: error.toString().replaceAll('Exception: ', ''),
+        );
       } finally {
         ref.read(registerProvider.notifier).setIsLoading(false);
         ref.read(registerProvider.notifier).setMensaje('');

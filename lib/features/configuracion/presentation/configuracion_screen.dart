@@ -10,6 +10,7 @@ class ConfiguracionScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(inactivityProvider);
     final themeMode = ref.watch(themeProvider);
     final authState = ref.watch(authProvider);
 
@@ -17,64 +18,66 @@ class ConfiguracionScreen extends ConsumerWidget {
       if (next.isAuthenticated == false) context.go('/pin');
     });
 
-    return Stack(
-      children: [
-        ListView(
-          padding: const EdgeInsets.all(Constantes.padding),
-          children: [
-            _buildPerfilHeader(context, authState),
-            const SizedBox(height: Constantes.separacion * 2),
-            _buildSeccionTitulo(context, 'Apariencia'),
-            _buildTarjetaConfiguracion(
-              context: context,
-              children: [_buildOpcionTema(context, ref, themeMode)],
-            ),
-            const SizedBox(height: Constantes.separacion * 2),
-            _buildSeccionTitulo(context, 'Seguridad'),
-            _buildTarjetaConfiguracion(
-              context: context,
-              children: [
-                _buildOpcionContrasena(context),
-                _buildOpcionCambiarPin(context),
-                _buildOpcionDispositivoVinculado(context, ref),
-                _buildOpcionDesvincularDispositivo(context, ref),
-              ],
-            ),
-            const SizedBox(height: Constantes.separacion * 2),
-            _buildSeccionTitulo(context, 'Cuenta'),
-            _buildTarjetaConfiguracion(
-              context: context,
-              children: [_buildOpcionModificarPerfil(context)],
-            ),
-            const SizedBox(height: Constantes.separacion * 2),
-            _buildSeccionTitulo(context, 'Notificaciones'),
-            _buildTarjetaConfiguracion(
-              context: context,
-              children: [_buildOpcionNotificaciones(context)],
-            ),
-            const SizedBox(height: Constantes.separacion * 2),
-            _buildSeccionTitulo(context, 'Soporte'),
-            _buildTarjetaConfiguracion(
-              context: context,
-              children: [_buildOpcionSoporteWhatsapp(context)],
-            ),
-            const SizedBox(height: Constantes.separacion * 2),
-            _buildSeccionTitulo(context, 'Zona de riesgo'),
-            _buildTarjetaConfiguracion(
-              context: context,
-              children: [_buildOpcionCancelarCuenta(context, ref)],
-            ),
-            const SizedBox(height: Constantes.separacion * 4),
-            _buildTarjetaConfiguracion(
-              context: context,
-              children: [_buildOpcionCerrarSesion(context, ref)],
-            ),
-            const SizedBox(height: Constantes.separacion * 2),
-            _buildVersionInfo(context, ref),
-          ],
-        ),
-        _buildLoadingIndicator(context, ref),
-      ],
+    return InactivityListener(
+      child: Stack(
+        children: [
+          ListView(
+            padding: const EdgeInsets.all(Constantes.padding),
+            children: [
+              _buildPerfilHeader(context, authState),
+              const SizedBox(height: Constantes.separacion * 2),
+              _buildSeccionTitulo(context, 'Apariencia'),
+              _buildTarjetaConfiguracion(
+                context: context,
+                children: [_buildOpcionTema(context, ref, themeMode)],
+              ),
+              const SizedBox(height: Constantes.separacion * 2),
+              _buildSeccionTitulo(context, 'Seguridad'),
+              _buildTarjetaConfiguracion(
+                context: context,
+                children: [
+                  _buildOpcionContrasena(context),
+                  _buildOpcionCambiarPin(context),
+                  _buildOpcionDispositivoVinculado(context, ref),
+                  _buildOpcionDesvincularDispositivo(context, ref),
+                ],
+              ),
+              const SizedBox(height: Constantes.separacion * 2),
+              _buildSeccionTitulo(context, 'Cuenta'),
+              _buildTarjetaConfiguracion(
+                context: context,
+                children: [_buildOpcionModificarPerfil(context)],
+              ),
+              const SizedBox(height: Constantes.separacion * 2),
+              _buildSeccionTitulo(context, 'Notificaciones'),
+              _buildTarjetaConfiguracion(
+                context: context,
+                children: [_buildOpcionNotificaciones(context)],
+              ),
+              const SizedBox(height: Constantes.separacion * 2),
+              _buildSeccionTitulo(context, 'Soporte'),
+              _buildTarjetaConfiguracion(
+                context: context,
+                children: [_buildOpcionSoporteWhatsapp(context)],
+              ),
+              const SizedBox(height: Constantes.separacion * 2),
+              _buildSeccionTitulo(context, 'Zona de riesgo'),
+              _buildTarjetaConfiguracion(
+                context: context,
+                children: [_buildOpcionCancelarCuenta(context, ref)],
+              ),
+              const SizedBox(height: Constantes.separacion * 4),
+              _buildTarjetaConfiguracion(
+                context: context,
+                children: [_buildOpcionCerrarSesion(context, ref)],
+              ),
+              const SizedBox(height: Constantes.separacion * 2),
+              _buildVersionInfo(context, ref),
+            ],
+          ),
+          _buildLoadingIndicator(context, ref),
+        ],
+      ),
     );
   }
 
@@ -499,9 +502,12 @@ class ConfiguracionScreen extends ConsumerWidget {
             await ref.read(logoutProvider.future);
             if (!context.mounted) return;
             authNotifier.logout();
-          } catch (e) {
+          } catch (error) {
             if (!context.mounted) return;
-            SnackbarUtil.snackbarError(context, message: e.toString());
+            SnackbarUtil.snackbarError(
+              context,
+              message: error.toString().replaceAll('Exception: ', ''),
+            );
           } finally {
             authNotifier.setLoading(isLoading: false, mensaje: '');
           }

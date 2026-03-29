@@ -77,9 +77,12 @@ class _PerfilDatosScreenState extends ConsumerState<PerfilDatosScreen> {
       _nombresController.text = response.nombres;
       _fechaNacimientoController.text = response.fechaNacimiento;
       _correoController.text = response.correo;
-    } catch (e) {
+    } catch (error) {
       if (!mounted) return;
-      SnackbarUtil.snackbarError(context, message: e.toString());
+      SnackbarUtil.snackbarError(
+        context,
+        message: error.toString().replaceAll('Exception: ', ''),
+      );
     } finally {
       ref.read(perfilProvider.notifier).setIsLoading(false);
       ref.read(perfilProvider.notifier).setMensaje('');
@@ -142,9 +145,12 @@ class _PerfilDatosScreenState extends ConsumerState<PerfilDatosScreen> {
           message: response.toString(),
         );
         context.go('/home');
-      } catch (e) {
+      } catch (error) {
         if (!mounted) return;
-        SnackbarUtil.snackbarError(context, message: e.toString());
+        SnackbarUtil.snackbarError(
+          context,
+          message: error.toString().replaceAll('Exception: ', ''),
+        );
       } finally {
         ref.read(perfilProvider.notifier).setIsLoading(false);
         ref.read(perfilProvider.notifier).setMensaje('');
@@ -154,26 +160,29 @@ class _PerfilDatosScreenState extends ConsumerState<PerfilDatosScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Tema.blanco,
-      body: Stack(
-        children: [
-          _buildBackground(context),
-          SafeArea(
-            child: Column(
-              children: [
-                _buildCustomAppBar(context),
-                Expanded(
-                  child: SingleChildScrollView(
-                    physics: const BouncingScrollPhysics(),
-                    child: Form(key: _formKey, child: _buildContent(context)),
+    ref.watch(inactivityProvider);
+    return InactivityListener(
+      child: Scaffold(
+        backgroundColor: Tema.blanco,
+        body: Stack(
+          children: [
+            _buildBackground(context),
+            SafeArea(
+              child: Column(
+                children: [
+                  _buildCustomAppBar(context),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      child: Form(key: _formKey, child: _buildContent(context)),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          _buildLoadingIndicator(context),
-        ],
+            _buildLoadingIndicator(context),
+          ],
+        ),
       ),
     );
   }

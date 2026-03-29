@@ -49,35 +49,38 @@ class _InicioScreenState extends ConsumerState<InicioScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Tema.blanco,
-      body: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 35),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 16),
-                    _buildSaludo(context),
-                    const SizedBox(height: 20),
-                    _buildSaldoCard(context),
-                    const SizedBox(height: 24),
-                    _buildPreguntaAcciones(context),
-                    const SizedBox(height: 16),
-                    _buildAccionesGrid(context),
-                    const SizedBox(height: 24),
-                    _buildMovimientosCard(context),
-                    const SizedBox(height: 20),
-                  ],
+    ref.watch(inactivityProvider);
+    return InactivityListener(
+      child: Scaffold(
+        backgroundColor: Tema.blanco,
+        body: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 35),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 16),
+                      _buildSaludo(context),
+                      const SizedBox(height: 20),
+                      _buildSaldoCard(context),
+                      const SizedBox(height: 24),
+                      _buildPreguntaAcciones(context),
+                      const SizedBox(height: 16),
+                      _buildAccionesGrid(context),
+                      const SizedBox(height: 24),
+                      _buildMovimientosCard(context),
+                      const SizedBox(height: 20),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-          // Bottom Navigation
-        ],
+            // Bottom Navigation
+          ],
+        ),
       ),
     );
   }
@@ -293,6 +296,7 @@ class _InicioScreenState extends ConsumerState<InicioScreen> {
             // Header
             GestureDetector(
               onTap: () async {
+                final scaffoldMessenger = ScaffoldMessenger.of(context);
                 final show = !ref.read(mostrarMovimientos.notifier).state;
                 ref.read(mostrarMovimientos.notifier).state = show;
                 if (show) {
@@ -302,9 +306,12 @@ class _InicioScreenState extends ConsumerState<InicioScreen> {
                       .loadInitial();
                   if (newCount == 0 &&
                       ref.read(movimientosNotifierProvider).items.isEmpty) {
-                    SnackbarUtil.snackbarInfo(
-                      context,
-                      message: 'No se encontraron movimientos',
+                    scaffoldMessenger.showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          'No se encontraron nuevos movimientos en la siguiente página',
+                        ),
+                      ),
                     );
                   }
                 }
@@ -414,14 +421,19 @@ class _InicioScreenState extends ConsumerState<InicioScreen> {
                           padding: const EdgeInsets.symmetric(vertical: 8),
                           child: TextButton(
                             onPressed: () async {
+                              final scaffoldMessenger = ScaffoldMessenger.of(
+                                context,
+                              );
                               final newCount = await ref
                                   .read(movimientosNotifierProvider.notifier)
                                   .loadMore();
                               if (newCount == 0) {
-                                SnackbarUtil.snackbarInfo(
-                                  context,
-                                  message:
+                                scaffoldMessenger.showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
                                       'No se encontraron nuevos movimientos en la siguiente página',
+                                    ),
+                                  ),
                                 );
                               }
                             },

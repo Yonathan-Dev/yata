@@ -97,7 +97,10 @@ class _FormularioWidgetState extends ConsumerState<FormularioWidget> {
           context.go('/pin');
         } catch (error) {
           if (!mounted) return;
-          SnackbarUtil.snackbarError(context, message: error.toString());
+          SnackbarUtil.snackbarError(
+            context,
+            message: error.toString().replaceAll('Exception: ', ''),
+          );
         } finally {
           _usuarioFocusNode.unfocus();
           _passwordFocusNode.unfocus();

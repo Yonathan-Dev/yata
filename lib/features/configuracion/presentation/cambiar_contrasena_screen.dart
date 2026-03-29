@@ -71,9 +71,12 @@ class _CambiarContrasenaScreenState
           message: 'Contraseña actualizada exitosamente',
         );
         await ref.read(cambiarContrasenaProvider.notifier).logout();
-      } catch (e) {
+      } catch (error) {
         if (!mounted) return;
-        SnackbarUtil.snackbarError(context, message: e.toString());
+        SnackbarUtil.snackbarError(
+          context,
+          message: error.toString().replaceAll('Exception: ', ''),
+        );
       } finally {
         ref.read(cambiarContrasenaProvider.notifier).setIsLoading(false);
         ref.read(cambiarContrasenaProvider.notifier).setMensaje('');
@@ -83,26 +86,29 @@ class _CambiarContrasenaScreenState
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Tema.blanco,
-      body: Stack(
-        children: [
-          _buildBackground(context),
-          SafeArea(
-            child: Column(
-              children: [
-                _buildCustomAppBar(context),
-                Expanded(
-                  child: SingleChildScrollView(
-                    physics: const BouncingScrollPhysics(),
-                    child: Form(key: _formKey, child: _buildContent(context)),
+    ref.watch(inactivityProvider);
+    return InactivityListener(
+      child: Scaffold(
+        backgroundColor: Tema.blanco,
+        body: Stack(
+          children: [
+            _buildBackground(context),
+            SafeArea(
+              child: Column(
+                children: [
+                  _buildCustomAppBar(context),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      child: Form(key: _formKey, child: _buildContent(context)),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          _buildLoadingIndicator(context),
-        ],
+            _buildLoadingIndicator(context),
+          ],
+        ),
       ),
     );
   }

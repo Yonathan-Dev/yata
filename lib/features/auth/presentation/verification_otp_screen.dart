@@ -81,9 +81,12 @@ class _VerificationOtpScreenState extends ConsumerState<VerificationOtpScreen> {
           await secureStorage.write(key: 'flagRegistrado', value: 'true');
           if (!mounted) return;
           context.go('/pin');
-        } catch (e) {
+        } catch (error) {
           if (!mounted) return;
-          SnackbarUtil.snackbarError(context, message: e.toString());
+          SnackbarUtil.snackbarError(
+            context,
+            message: error.toString().replaceAll('Exception: ', ''),
+          );
         } finally {
           ref.read(verifyCodeProvider.notifier).setIsLoading(false);
           ref.read(verifyCodeProvider.notifier).resetEstado();

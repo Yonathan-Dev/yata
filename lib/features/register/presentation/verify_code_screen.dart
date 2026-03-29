@@ -66,9 +66,12 @@ class _VerifyCodeScreenState extends ConsumerState<VerifyCodeScreen> {
           if (!mounted) return;
           SnackbarUtil.snackbarNotificationPush(context, message: response);
           context.push('/create-pin');
-        } catch (e) {
+        } catch (error) {
           if (!mounted) return;
-          SnackbarUtil.snackbarError(context, message: e.toString());
+          SnackbarUtil.snackbarError(
+            context,
+            message: error.toString().replaceAll('Exception: ', ''),
+          );
         } finally {
           ref.read(verifyCodeProvider.notifier).resetEstado();
         }

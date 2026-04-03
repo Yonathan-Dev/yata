@@ -444,7 +444,7 @@ class _CambiarPinScreenState extends ConsumerState<CambiarPinScreen> {
                       child: isDone
                           ? const Icon(
                               Icons.check_rounded,
-                              color: Colors.white,
+                              color: Tema.blanco,
                               size: 14,
                             )
                           : Text(
@@ -453,7 +453,7 @@ class _CambiarPinScreenState extends ConsumerState<CambiarPinScreen> {
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
                                 color: isActive
-                                    ? Colors.white
+                                    ? Tema.blanco
                                     : Colors.grey[400],
                               ),
                             ),

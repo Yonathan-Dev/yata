@@ -324,10 +324,7 @@ class _InicioScreenState extends ConsumerState<InicioScreen> {
                                     style: Theme.of(context)
                                         .textTheme
                                         .titleMedium!
-                                        .copyWith(
-                                          color: const Color(0xFF2D1B4E),
-                                          fontWeight: FontWeight.w600,
-                                        ),
+                                        .copyWith(color: Tema.negro),
                                   ),
                                   const Icon(
                                     Icons.arrow_forward_ios,
@@ -372,11 +369,7 @@ class _InicioScreenState extends ConsumerState<InicioScreen> {
                               child: Text(
                                 'Paga tus\nservicios',
                                 style: Theme.of(context).textTheme.titleMedium!
-                                    .copyWith(
-                                      color: const Color(0xFF2D1B4E),
-                                      fontWeight: FontWeight.w600,
-                                      height: 1.2,
-                                    ),
+                                    .copyWith(color: Tema.negro, height: 1.2),
                               ),
                             ),
                           ],
@@ -410,11 +403,9 @@ class _InicioScreenState extends ConsumerState<InicioScreen> {
                         padding: const EdgeInsets.all(16),
                         child: Text(
                           'Promociones',
-                          style: Theme.of(context).textTheme.titleMedium!
-                              .copyWith(
-                                color: const Color(0xFF2D1B4E),
-                                fontWeight: FontWeight.w600,
-                              ),
+                          style: Theme.of(
+                            context,
+                          ).textTheme.titleMedium!.copyWith(color: Tema.negro),
                         ),
                       ),
                     ],

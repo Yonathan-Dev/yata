@@ -1,6 +1,7 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/app_exports.dart';
 import '../../../shared/shared_exports.dart';
 
@@ -372,74 +373,180 @@ class _PagosPendientesScreenState extends ConsumerState<PagosPendientesScreen> {
   }
 
   Widget _buildTransactionCard() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        border: Border.all(color: const Color(0xFFE0E0E0), width: 1.5),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return GestureDetector(
+      onTap: () {
+        _showPaymentOptionsDialog();
+      },
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          border: Border.all(color: const Color(0xFFE0E0E0), width: 1.5),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Comercio',
+                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                      color: Tema.negro,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '01 mar. 2026',
+                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                      color: Tema.negro.withValues(alpha: 0.7),
+                    ),
+                  ),
+                  Text(
+                    'Nº OR99384',
+                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                      color: Tema.negro.withValues(alpha: 0.7),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  'Comercio',
-                  style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                  's/ 2.00',
+                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
                     color: Tema.negro,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 const SizedBox(height: 4),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF00BCD4),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    'Pendiente',
+                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                      color: Tema.blanco,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showPaymentOptionsDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Header con avatar
+                Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFE0E0E0),
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                ),
+                const SizedBox(height: 16),
                 Text(
-                  '01 mar. 2026',
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                  'Pagar servicio',
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                     color: Tema.negro.withValues(alpha: 0.7),
                   ),
                 ),
                 Text(
-                  'Nº OR99384',
+                  'Titular: Lilly Ann Mateos Chavez',
                   style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                    color: Tema.negro.withValues(alpha: 0.7),
+                    color: Tema.negro.withValues(alpha: 0.6),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                // Botón "¡Paga con Yata!"
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      context.push('/paga-yata');
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Tema.primaryColor,
+                      foregroundColor: Tema.blanco,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
+                    child: Text(
+                      '¡Paga con Yata!',
+                      style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                        color: Tema.blanco,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                // Botón "Otros"
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF424242),
+                      foregroundColor: Tema.blanco,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
+                    child: Text(
+                      'Otros',
+                      style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                        color: Tema.blanco,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Comercio',
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                    color: Tema.negro.withValues(alpha: 0.5),
                   ),
                 ),
               ],
             ),
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                's/ 2.00',
-                style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                  color: Tema.negro,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF00BCD4),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  'Pendiente',
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                    color: Tema.blanco,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -448,7 +555,7 @@ class _PagosPendientesScreenState extends ConsumerState<PagosPendientesScreen> {
       padding: const EdgeInsets.all(16),
       child: Row(
         children: [
-          Expanded(
+          /*Expanded(
             child: ElevatedButton(
               onPressed: () {
                 // Action for Paga con Yata
@@ -462,7 +569,7 @@ class _PagosPendientesScreenState extends ConsumerState<PagosPendientesScreen> {
                 ),
               ),
               child: Text(
-                'Paga con Yata',
+                'Paga Ahora',
                 style: Theme.of(context).textTheme.titleMedium!.copyWith(
                   color: Tema.blanco,
                   fontWeight: FontWeight.w600,
@@ -470,11 +577,13 @@ class _PagosPendientesScreenState extends ConsumerState<PagosPendientesScreen> {
               ),
             ),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 16),*/
           Expanded(
             child: ElevatedButton(
               onPressed: () {
-                // Action for Paga con Yata
+                // Action for Paga regrear
+                ref.read(navigationBarExpandedProvider.notifier).state = false;
+                Navigator.of(context).pop();
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Tema.negro,

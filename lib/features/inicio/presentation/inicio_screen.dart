@@ -162,16 +162,19 @@ class _InicioScreenState extends ConsumerState<InicioScreen> {
         'icono': Icons.account_balance_wallet_outlined,
         'texto': 'Recargar\nsaldo',
         'svg': 'assets/iconos/icono_1.svg',
+        'ruta': '/recargar-saldo',
       },
       {
         'icono': Icons.qr_code_scanner,
         'texto': 'Paga con\nQR',
         'svg': 'assets/iconos/icono_3.svg',
+        'ruta': '/paga-con-qr',
       },
       {
         'icono': Icons.attach_money,
         'texto': 'Pagos\npendientes',
         'svg': 'assets/iconos/icono_4.svg',
+        'ruta': '/pagos-pendientes',
       },
       /*{
         'icono': Icons.output_outlined,
@@ -182,16 +185,19 @@ class _InicioScreenState extends ConsumerState<InicioScreen> {
         'icono': Icons.store_outlined,
         'texto': 'Tienda',
         'svg': 'assets/iconos/icono_5.svg',
+        'ruta': '/tienda',
       },
       {
         'icono': Icons.receipt_long_outlined,
         'texto': 'Referencias',
         'svg': 'assets/iconos/icono_6.svg',
+        'ruta': '/referencias',
       },
       {
         'icono': Icons.swap_horiz,
         'texto': 'Transferir',
         'svg': 'assets/iconos/icono_7.svg',
+        'ruta': '/transferir',
       },
       /*{
         'icono': Icons.monetization_on_outlined,
@@ -220,6 +226,7 @@ class _InicioScreenState extends ConsumerState<InicioScreen> {
             icono: accion['icono'] as IconData,
             texto: accion['texto'] as String,
             svg: accion['svg'] as String,
+            ruta: accion['ruta'] as String,
           );
         },
       ),
@@ -231,9 +238,12 @@ class _InicioScreenState extends ConsumerState<InicioScreen> {
     required IconData icono,
     required String texto,
     required String svg,
+    required String ruta,
   }) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        context.push(ruta);
+      },
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

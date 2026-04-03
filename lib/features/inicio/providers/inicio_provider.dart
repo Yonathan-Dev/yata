@@ -292,3 +292,5 @@ final movimientosNotifierProvider =
     NotifierProvider<MovimientosNotifier, MovimientosState>(() {
       return MovimientosNotifier();
     });
+
+final selectedMonthIndex = StateProvider<int>((ref) => 3);

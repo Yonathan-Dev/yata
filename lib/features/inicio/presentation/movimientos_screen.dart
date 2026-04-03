@@ -11,8 +11,6 @@ class MovimientosScreen extends ConsumerStatefulWidget {
 }
 
 class _MovimientosScreenState extends ConsumerState<MovimientosScreen> {
-  int _selectedMonthIndex = 3;
-
   @override
   void initState() {
     super.initState();
@@ -333,7 +331,7 @@ class _MovimientosScreenState extends ConsumerState<MovimientosScreen> {
     final consumosPorMes = _calcularConsumosPorMes(state.items, months);
 
     // Calcular el total del mes seleccionado
-    final totalConsumos = consumosPorMes[_selectedMonthIndex];
+    final totalConsumos = consumosPorMes[ref.watch(selectedMonthIndex)];
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -352,7 +350,7 @@ class _MovimientosScreenState extends ConsumerState<MovimientosScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Consumos en ${months[_selectedMonthIndex]['label']}',
+            'Consumos en ${months[ref.watch(selectedMonthIndex)]['label']}',
             style: Theme.of(context).textTheme.bodyMedium!.copyWith(
               color: Tema.negro,
               fontWeight: FontWeight.w500,
@@ -470,12 +468,12 @@ class _MovimientosScreenState extends ConsumerState<MovimientosScreen> {
           final normalizedHeight = maxConsumo > 0
               ? (consumo > 0 ? (consumo / maxConsumo) : minVisibleHeight)
               : minVisibleHeight;
-          final isSelected = index == _selectedMonthIndex;
+          final isSelected = index == ref.watch(selectedMonthIndex);
 
           return GestureDetector(
             onTap: () {
               setState(() {
-                _selectedMonthIndex = index;
+                ref.read(selectedMonthIndex.notifier).state = index;
               });
             },
             child: Container(

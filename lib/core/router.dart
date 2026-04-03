@@ -120,6 +120,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: 'movimientos',
         builder: (context, state) => const MovimientosScreen(),
       ),
+      GoRoute(
+        path: '/pagos-pendientes',
+        name: 'pagosPendientes',
+        builder: (context, state) => const PagosPendientesScreen(),
+      ),
     ],
   );
 });

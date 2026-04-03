@@ -1,17 +1,19 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/app_exports.dart';
 import '../../../shared/shared_exports.dart';
 
-class PagaYataScreen extends ConsumerStatefulWidget {
-  const PagaYataScreen({super.key});
+class PagoExitosoScreen extends ConsumerStatefulWidget {
+  final String metodoPago;
+  const PagoExitosoScreen({super.key, required this.metodoPago});
 
   @override
-  ConsumerState<PagaYataScreen> createState() => _PagaYataScreenState();
+  ConsumerState<PagoExitosoScreen> createState() => _PagoExitosoScreenState();
 }
 
-class _PagaYataScreenState extends ConsumerState<PagaYataScreen> {
+class _PagoExitosoScreenState extends ConsumerState<PagoExitosoScreen> {
   @override
   void initState() {
     super.initState();
@@ -60,7 +62,7 @@ class _PagaYataScreenState extends ConsumerState<PagaYataScreen> {
                               ),
                               const SizedBox(height: 8),
                               Text(
-                                '¡Pago exitoso por QR!',
+                                '¡Pago exitoso por ${widget.metodoPago}!',
                                 style: Theme.of(context).textTheme.titleMedium!
                                     .copyWith(color: Tema.negro, fontSize: 18),
                               ),
@@ -262,7 +264,10 @@ class _PagaYataScreenState extends ConsumerState<PagaYataScreen> {
         children: [
           Expanded(
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                ref.read(navigationBarExpandedProvider.notifier).state = false;
+                context.go('/pagos-pendientes');
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Tema.primaryColor,
                 foregroundColor: Tema.blanco,
@@ -283,7 +288,11 @@ class _PagaYataScreenState extends ConsumerState<PagaYataScreen> {
             child: ElevatedButton(
               onPressed: () {
                 ref.read(navigationBarExpandedProvider.notifier).state = false;
-                Navigator.of(context).pop();
+                if (context.canPop()) {
+                  context.pop();
+                } else {
+                  context.go('/pagos-pendientes');
+                }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.black,

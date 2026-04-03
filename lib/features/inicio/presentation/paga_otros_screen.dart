@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/app_exports.dart';
 import '../../../shared/shared_exports.dart';
@@ -12,8 +13,6 @@ class PagaOtrosScreen extends ConsumerStatefulWidget {
 }
 
 class _PagaOtrosScreenState extends ConsumerState<PagaOtrosScreen> {
-  bool _billeteraExpanded = true;
-
   @override
   Widget build(BuildContext context) {
     ref.watch(inactivityProvider);
@@ -23,81 +22,91 @@ class _PagaOtrosScreenState extends ConsumerState<PagaOtrosScreen> {
         backgroundColor: Tema.blanco,
         body: SafeArea(
           child: Column(
-            children: [
-              _buildCustomAppBar(context),
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 20,
-                  ),
-                  child: Column(
-                    children: [
-                      _buildMetodoPagoCard(
-                        context,
-                        title: 'Billetera Electrónica / QR',
-                        icon: Icons.qr_code_2_rounded,
-                        iconColor: Tema.primaryColor,
-                        isExpanded: _billeteraExpanded,
-                        onTap: () {
-                          setState(() {
-                            _billeteraExpanded = !_billeteraExpanded;
-                          });
-                        },
-                        children: [
-                          _buildMetodoOpcion('YAPE', 'assets/iconos/yape.png'),
-                          const Divider(
-                            height: 1,
-                            thickness: 1,
-                            color: Color(0xFFE8E8E8),
-                          ),
-                          _buildMetodoOpcion('PLIN', 'assets/iconos/plin.png'),
-                          const Divider(
-                            height: 1,
-                            thickness: 1,
-                            color: Color(0xFFE8E8E8),
-                          ),
-                          _buildMetodoOpcion(
-                            'Otros',
-                            null,
-                            iconData: Icons.qr_code_2_rounded,
-                            iconColor: Tema.primaryColor,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      _buildMetodoPagoCard(
-                        context,
-                        title: 'Depósito / Transferencia',
-                        icon: Icons.account_balance,
-                        iconColor: Tema.primaryColor,
-                        isExpanded: false,
-                        onTap: () {},
-                      ),
-                      const SizedBox(height: 12),
-                      _buildMetodoPagoCard(
-                        context,
-                        title: 'Efectivo',
-                        icon: Icons.attach_money_rounded,
-                        iconColor: Tema.primaryColor,
-                        isExpanded: false,
-                        onTap: () {},
-                      ),
-                      const SizedBox(height: 12),
-                      _buildMetodoPagoCard(
-                        context,
-                        title: 'Tarjeta de Crédito /\nDébito',
-                        icon: Icons.credit_card,
-                        iconColor: Tema.primaryColor,
-                        isExpanded: false,
-                        onTap: () {},
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
+            children: [_buildCustomAppBar(context), _buildContent(context)],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildContent(BuildContext context) {
+    return Expanded(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        child: Column(
+          children: [
+            _buildMetodoPagoCard(
+              context,
+              title: 'Billetera Electrónica / QR',
+              icon: Icons.qr_code_2_rounded,
+              iconColor: Tema.primaryColor,
+              isExpanded: ref.watch(billeteraExpandedProvider),
+              onTap: () {
+                ref.read(billeteraExpandedProvider.notifier).state = !ref.watch(
+                  billeteraExpandedProvider,
+                );
+              },
+              children: [
+                _buildMetodoOpcion('YAPE', 'assets/iconos/yape.png'),
+                const Divider(
+                  height: 1,
+                  thickness: 1,
+                  color: Color(0xFFE8E8E8),
+                ),
+                _buildMetodoOpcion('PLIN', 'assets/iconos/plin.png'),
+                const Divider(
+                  height: 1,
+                  thickness: 1,
+                  color: Color(0xFFE8E8E8),
+                ),
+                _buildMetodoOpcion(
+                  'Otros',
+                  null,
+                  iconData: Icons.qr_code_2_rounded,
+                  iconColor: Tema.primaryColor,
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            _buildMetodoPagoCard(
+              context,
+              title: 'Depósito / Transferencia',
+              icon: Icons.account_balance,
+              iconColor: Tema.primaryColor,
+              isExpanded: false,
+              onTap: () {
+                context.go(
+                  '/pago-exitoso',
+                  extra: {'metodoPago': 'Depósito / Transferencia'},
+                );
+              },
+            ),
+            const SizedBox(height: 12),
+            _buildMetodoPagoCard(
+              context,
+              title: 'Efectivo',
+              icon: Icons.attach_money_rounded,
+              iconColor: Tema.primaryColor,
+              isExpanded: false,
+              onTap: () {
+                context.go('/pago-exitoso', extra: {'metodoPago': 'Efectivo'});
+              },
+            ),
+            const SizedBox(height: 12),
+            _buildMetodoPagoCard(
+              context,
+              title: 'Tarjeta de Crédito /\nDébito',
+              icon: Icons.credit_card,
+              iconColor: Tema.primaryColor,
+              isExpanded: false,
+              onTap: () {
+                context.go(
+                  '/pago-exitoso',
+                  extra: {'metodoPago': 'Tarjeta de Crédito / Débito'},
+                );
+              },
+            ),
+          ],
         ),
       ),
     );
@@ -213,7 +222,13 @@ class _PagaOtrosScreenState extends ConsumerState<PagaOtrosScreen> {
     Color? iconColor,
   }) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        String metodoPago = label;
+        if (label == 'Otros') {
+          metodoPago = 'Billetera Electrónica / QR - Otros';
+        }
+        context.go('/pago-exitoso', extra: {'metodoPago': metodoPago});
+      },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         child: Row(

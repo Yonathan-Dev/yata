@@ -2,7 +2,7 @@
 export 'presentation/inicio_screen.dart';
 export 'presentation/movimientos_screen.dart';
 export 'presentation/pagos_pendientes_screen.dart';
-export 'presentation/paga_yata_screen.dart';
+export 'presentation/pago_exitoso_screen.dart';
 export 'presentation/paga_otros_screen.dart';
 //Providers
 export 'providers/inicio_provider.dart';

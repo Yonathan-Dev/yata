@@ -294,3 +294,4 @@ final movimientosNotifierProvider =
     });
 
 final selectedMonthIndex = StateProvider<int>((ref) => 3);
+final billeteraExpandedProvider = StateProvider<bool>((ref) => false);

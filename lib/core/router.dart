@@ -126,9 +126,16 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const PagosPendientesScreen(),
       ),
       GoRoute(
-        path: '/paga-yata',
-        name: 'pagaYata',
-        builder: (context, state) => const PagaYataScreen(),
+        path: '/pago-exitoso',
+        name: 'pagoExitoso',
+        builder: (context, state) {
+          final extra = state.extra;
+          String metodoPago = '';
+          if (extra is Map && extra['metodoPago'] is String) {
+            metodoPago = extra['metodoPago'] as String;
+          }
+          return PagoExitosoScreen(metodoPago: metodoPago);
+        },
       ),
       GoRoute(
         path: '/paga-otros',

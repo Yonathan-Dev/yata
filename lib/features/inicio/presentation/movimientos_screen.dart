@@ -472,9 +472,7 @@ class _MovimientosScreenState extends ConsumerState<MovimientosScreen> {
 
           return GestureDetector(
             onTap: () {
-              setState(() {
-                ref.read(selectedMonthIndex.notifier).state = index;
-              });
+              ref.read(selectedMonthIndex.notifier).state = index;
             },
             child: Container(
               width: 60,

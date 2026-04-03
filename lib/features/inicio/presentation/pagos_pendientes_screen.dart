@@ -198,9 +198,13 @@ class _PagosPendientesScreenState extends ConsumerState<PagosPendientesScreen> {
       child: Row(
         children: [
           IconButton(
-            onPressed: () => {
-              ref.read(navigationBarExpandedProvider.notifier).state = false,
-              Navigator.of(context).pop(),
+            onPressed: () {
+              ref.read(navigationBarExpandedProvider.notifier).state = false;
+              if (Navigator.of(context).canPop()) {
+                Navigator.of(context).pop();
+              } else {
+                context.go('/inicio');
+              }
             },
             icon: const Icon(
               Icons.arrow_back_ios_new_rounded,
@@ -491,7 +495,10 @@ class _PagosPendientesScreenState extends ConsumerState<PagosPendientesScreen> {
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.pop(context);
-                      context.push('/paga-yata');
+                      context.push(
+                        '/pago-exitoso',
+                        extra: {'metodoPago': 'QR'},
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Tema.primaryColor,

@@ -63,17 +63,20 @@ class _InicioScreenState extends ConsumerState<InicioScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 16),
+                      const SizedBox(height: Constantes.separacionFormulario),
                       _buildPreguntaAcciones(context),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: Constantes.separacionFormulario),
                       _buildAccionesGrid(context),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: Constantes.separacion),
                       _buildSaldoCard(context),
-                      //const SizedBox(height: 20),
-                      //_buildMovimientosCard(context),
-                      const SizedBox(height: 50),
+                      const SizedBox(
+                        height: Constantes.separacionFormulario * 2,
+                      ),
                       _buildActionButtons(context),
-                      const SizedBox(height: 20),
+                      const SizedBox(
+                        height: Constantes.separacionFormulario * 2,
+                      ),
+                      _buildScanAndYatearButtons(context),
                     ],
                   ),
                 ),
@@ -140,11 +143,15 @@ class _InicioScreenState extends ConsumerState<InicioScreen> {
   }
 
   Widget _buildPreguntaAcciones(BuildContext context) {
-    return Text(
-      '¿Que te gustaría hacer?',
-      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-        color: Tema.negro,
-        fontWeight: FontWeight.w500,
+    return FadeInUp(
+      duration: Constantes.standardAnimation,
+      delay: const Duration(milliseconds: 300),
+      child: Text(
+        '¿Que te gustaría hacer?',
+        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+          color: Tema.negro,
+          fontWeight: FontWeight.w500,
+        ),
       ),
     );
   }
@@ -415,6 +422,62 @@ class _InicioScreenState extends ConsumerState<InicioScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildScanAndYatearButtons(BuildContext context) {
+    return FadeInUp(
+      duration: Constantes.standardAnimation,
+      delay: const Duration(milliseconds: 300),
+      child: Row(
+        children: [
+          Expanded(
+            child: ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Tema.blanco,
+                foregroundColor: Tema.negro,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  side: const BorderSide(color: Tema.negro, width: 1.2),
+                ),
+                elevation: 0,
+              ),
+              onPressed: () {
+                // Acción para escanear QR
+              },
+              icon: const Icon(
+                Icons.qr_code_scanner,
+                size: 22,
+                color: Tema.negro,
+              ),
+              label: const Text(
+                'Escanear QR',
+                style: TextStyle(color: Tema.negro),
+              ),
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Tema.primaryColor,
+                foregroundColor: Tema.blanco,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 0,
+              ),
+              onPressed: () {
+                // Acción para Yatear
+              },
+              icon: const Icon(Icons.send, size: 22),
+              label: const Text('Yatear'),
+            ),
+          ),
+        ],
       ),
     );
   }

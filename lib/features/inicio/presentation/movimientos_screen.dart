@@ -79,7 +79,6 @@ class _MovimientosScreenState extends ConsumerState<MovimientosScreen> {
                 ),
               ),
             ),
-            // NavigationBar que se muestra/oculta
             AnimatedSize(
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeInOut,
@@ -102,6 +101,8 @@ class _MovimientosScreenState extends ConsumerState<MovimientosScreen> {
                         return;
                       }
                       ref.read(navigationIndexProvider.notifier).state = index;
+                      ref.read(navigationBarExpandedProvider.notifier).state =
+                          false;
                       Navigator.of(context).pop();
                     },
                     height: 70,
@@ -161,7 +162,10 @@ class _MovimientosScreenState extends ConsumerState<MovimientosScreen> {
       child: Row(
         children: [
           IconButton(
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => {
+              ref.read(navigationBarExpandedProvider.notifier).state = false,
+              Navigator.of(context).pop(),
+            },
             icon: const Icon(
               Icons.arrow_back_ios_new_rounded,
               color: Tema.blanco,

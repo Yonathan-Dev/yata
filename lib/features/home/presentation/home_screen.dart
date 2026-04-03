@@ -75,6 +75,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         return;
                       }
                       ref.read(navigationIndexProvider.notifier).state = index;
+                      ref.read(navigationBarExpandedProvider.notifier).state =
+                          false;
                     },
                     height: 70,
                     backgroundColor: Tema.primaryColor,

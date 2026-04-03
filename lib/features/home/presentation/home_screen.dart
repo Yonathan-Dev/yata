@@ -116,7 +116,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  const AppBarWidget(),
+                  AppBarWidget(
+                    title:
+                        ref
+                            .watch(authProvider)
+                            .user
+                            ?.apellidosyNombres
+                            .split(',')
+                            .last
+                            .trim() ??
+                        'Usuario',
+                  ),
                   Expanded(
                     child: _getSelectedScreen(
                       selectedIndex,

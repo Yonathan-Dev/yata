@@ -4,7 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/app_exports.dart';
 
 class AppBarWidget extends ConsumerWidget {
-  const AppBarWidget({super.key});
+  final String title;
+  const AppBarWidget({super.key, required this.title});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -24,30 +25,25 @@ class AppBarWidget extends ConsumerWidget {
           // Título
           Expanded(
             child: Text(
-              'Payment Latam Wallet',
-              style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                color: Tema.blanco,
-                fontWeight: FontWeight.w600,
-              ),
+              title,
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge!.copyWith(color: Tema.blanco),
             ),
           ),
-          Container(
-            width: 42,
-            height: 42,
-            decoration: BoxDecoration(
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(
+              Icons.notifications_none,
               color: Tema.blanco,
-              shape: BoxShape.circle,
-              border: Border.all(color: Tema.primaryColor, width: 2),
+              size: 30,
             ),
-            child: ClipOval(
-              child: Padding(
-                padding: const EdgeInsets.all(4),
-                child: Image.asset(
-                  'assets/iconos/icono.png',
-                  fit: BoxFit.contain,
-                ),
-              ),
-            ),
+            constraints: const BoxConstraints(),
+          ),
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.settings, color: Tema.blanco, size: 30),
+            constraints: const BoxConstraints(),
           ),
         ],
       ),

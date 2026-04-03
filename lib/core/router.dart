@@ -130,6 +130,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: 'pagaYata',
         builder: (context, state) => const PagaYataScreen(),
       ),
+      GoRoute(
+        path: '/paga-otros',
+        name: 'pagaOtros',
+        builder: (context, state) => const PagaOtrosScreen(),
+      ),
     ],
   );
 });

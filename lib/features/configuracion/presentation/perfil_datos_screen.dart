@@ -228,8 +228,6 @@ class _PerfilDatosScreenState extends ConsumerState<PerfilDatosScreen> {
     );
   }
 
-  // ── App Bar ───────────────────────────────────────────────────
-
   Widget _buildCustomAppBar(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),

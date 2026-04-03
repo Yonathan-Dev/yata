@@ -115,6 +115,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           return SolicitarOtpScreen(isPin: isPin);
         },
       ),
+      GoRoute(
+        path: '/movimientos',
+        name: 'movimientos',
+        builder: (context, state) => const MovimientosScreen(),
+      ),
     ],
   );
 });

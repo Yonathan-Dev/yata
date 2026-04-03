@@ -1,5 +1,6 @@
 //Screen
 export 'presentation/inicio_screen.dart';
+export 'presentation/movimientos_screen.dart';
 //Providers
 export 'providers/inicio_provider.dart';
 //Data Sources

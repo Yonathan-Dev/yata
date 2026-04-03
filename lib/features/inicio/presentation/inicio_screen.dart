@@ -2,6 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/app_exports.dart';
 import '../../../shared/shared_exports.dart';
 
@@ -68,9 +69,9 @@ class _InicioScreenState extends ConsumerState<InicioScreen> {
                       _buildAccionesGrid(context),
                       const SizedBox(height: 10),
                       _buildSaldoCard(context),
-                      const SizedBox(height: 20),
-                      _buildMovimientosCard(context),
-                      const SizedBox(height: 20),
+                      //const SizedBox(height: 20),
+                      //_buildMovimientosCard(context),
+                      const SizedBox(height: 50),
                       _buildActionButtons(context),
                       const SizedBox(height: 20),
                     ],
@@ -257,202 +258,6 @@ class _InicioScreenState extends ConsumerState<InicioScreen> {
     );
   }
 
-  Widget _buildMovimientosCard(BuildContext context) {
-    return FadeInUp(
-      duration: Constantes.standardAnimation,
-      delay: const Duration(milliseconds: 200),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Tema.blanco,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Tema.primaryColor.withValues(alpha: 0.3)),
-        ),
-        child: Column(
-          children: [
-            // Header
-            GestureDetector(
-              onTap: () async {
-                final scaffoldMessenger = ScaffoldMessenger.of(context);
-                final show = !ref.read(mostrarMovimientos.notifier).state;
-                ref.read(mostrarMovimientos.notifier).state = show;
-                if (show) {
-                  // Iniciar carga inicial cuando se despliegan los movimientos
-                  final newCount = await ref
-                      .read(movimientosNotifierProvider.notifier)
-                      .loadInitial();
-                  if (newCount == 0 &&
-                      ref.read(movimientosNotifierProvider).items.isEmpty) {
-                    scaffoldMessenger.showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          'No se encontraron nuevos movimientos en la siguiente página',
-                        ),
-                      ),
-                    );
-                  }
-                }
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  children: [
-                    Icon(Icons.receipt_outlined, color: Tema.negro, size: 20),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Mostrar movimientos',
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        color: Tema.negro,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const Spacer(),
-                    Icon(
-                      ref.watch(mostrarMovimientos)
-                          ? Icons.keyboard_arrow_up
-                          : Icons.keyboard_arrow_down,
-                      color: Tema.negro,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            // Lista de movimientos con paginación
-            if (ref.watch(mostrarMovimientos)) ...[
-              const Divider(height: 1),
-              Builder(
-                builder: (context) {
-                  final state = ref.watch(movimientosNotifierProvider);
-
-                  if (state.isLoading) {
-                    return const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 12),
-                      child: Center(child: CircularProgressIndicator()),
-                    );
-                  }
-
-                  if (state.error.isNotEmpty) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                      child: Text(
-                        'Error al cargar movimientos',
-                        style: Theme.of(
-                          context,
-                        ).textTheme.bodyMedium!.copyWith(color: Tema.negro),
-                      ),
-                    );
-                  }
-
-                  if (state.items.isEmpty) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                      child: Text(
-                        'No hay movimientos',
-                        style: Theme.of(
-                          context,
-                        ).textTheme.bodyMedium!.copyWith(color: Tema.negro),
-                      ),
-                    );
-                  }
-
-                  return Column(
-                    children: [
-                      ...state.items.map((d) {
-                        final nombre = d.descripcion;
-                        final monto = d.monto.toStringAsFixed(2);
-                        return _buildMovimientoItem(nombre, monto);
-                      }),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 4,
-                        ),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            'Mostrando ${state.items.length} de ${state.totalRegistros} (Página ${state.page} de ${state.totalPaginas})',
-                            style: Theme.of(context).textTheme.bodySmall!
-                                .copyWith(color: Tema.negro, fontSize: 12),
-                          ),
-                        ),
-                      ),
-                      if (state.isLoadingMore) ...[
-                        const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 8),
-                          child: Center(
-                            child: SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            ),
-                          ),
-                        ),
-                      ] else if (state.hasNext) ...[
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          child: TextButton(
-                            onPressed: () async {
-                              final scaffoldMessenger = ScaffoldMessenger.of(
-                                context,
-                              );
-                              final newCount = await ref
-                                  .read(movimientosNotifierProvider.notifier)
-                                  .loadMore();
-                              if (newCount == 0) {
-                                scaffoldMessenger.showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      'No se encontraron nuevos movimientos en la siguiente página',
-                                    ),
-                                  ),
-                                );
-                              }
-                            },
-                            child: const Text('Cargar más'),
-                          ),
-                        ),
-                      ],
-                    ],
-                  );
-                },
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMovimientoItem(String nombre, String monto) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              nombre,
-              style: Theme.of(
-                context,
-              ).textTheme.bodyMedium!.copyWith(color: Tema.negro),
-            ),
-          ),
-          Text(
-            monto,
-            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-              color: Tema.negro,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildActionButtons(BuildContext context) {
     const double cardHeight = 120.0;
     const double spacing = 12.0;
@@ -473,7 +278,9 @@ class _InicioScreenState extends ConsumerState<InicioScreen> {
                   SizedBox(
                     height: cardHeight,
                     child: GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        context.push('/movimientos');
+                      },
                       child: Container(
                         decoration: BoxDecoration(
                           gradient: const LinearGradient(

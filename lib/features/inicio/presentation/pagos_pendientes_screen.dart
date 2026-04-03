@@ -200,11 +200,7 @@ class _PagosPendientesScreenState extends ConsumerState<PagosPendientesScreen> {
           IconButton(
             onPressed: () {
               ref.read(navigationBarExpandedProvider.notifier).state = false;
-              if (Navigator.of(context).canPop()) {
-                Navigator.of(context).pop();
-              } else {
-                context.go('/inicio');
-              }
+              context.go('/home');
             },
             icon: const Icon(
               Icons.arrow_back_ios_new_rounded,
@@ -301,12 +297,6 @@ class _PagosPendientesScreenState extends ConsumerState<PagosPendientesScreen> {
                 _buildTransactionCard(),
               ],
             ),
-          ),
-          // Action buttons
-          FadeInUp(
-            duration: Constantes.standardAnimation,
-            delay: const Duration(milliseconds: 300),
-            child: _buildActionButtons(),
           ),
           FadeInUp(
             duration: Constantes.standardAnimation,
@@ -555,63 +545,6 @@ class _PagosPendientesScreenState extends ConsumerState<PagosPendientesScreen> {
           ),
         );
       },
-    );
-  }
-
-  Widget _buildActionButtons() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      child: Row(
-        children: [
-          /*Expanded(
-            child: ElevatedButton(
-              onPressed: () {
-                // Action for Paga con Yata
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Tema.primaryColor,
-                foregroundColor: Tema.blanco,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: Text(
-                'Paga Ahora',
-                style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                  color: Tema.blanco,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(width: 16),*/
-          Expanded(
-            child: ElevatedButton(
-              onPressed: () {
-                // Action for Paga regrear
-                ref.read(navigationBarExpandedProvider.notifier).state = false;
-                Navigator.of(context).pop();
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Tema.negro,
-                foregroundColor: Tema.blanco,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: Text(
-                'Regresar',
-                style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                  color: Tema.blanco,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

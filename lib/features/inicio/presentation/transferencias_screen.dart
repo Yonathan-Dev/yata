@@ -14,8 +14,6 @@ class TransferenciasScreen extends ConsumerStatefulWidget {
 }
 
 class _TransferenciasScreenState extends ConsumerState<TransferenciasScreen> {
-  bool _mostrarFormulario = false;
-
   @override
   void initState() {
     super.initState();
@@ -227,14 +225,13 @@ class _TransferenciasScreenState extends ConsumerState<TransferenciasScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 16),
-                  if (!_mostrarFormulario) ...[
+                  if (!ref.watch(mostrarFormularioProvider)) ...[
                     SizedBox(
                       width: double.infinity,
                       child: OutlinedButton.icon(
                         onPressed: () {
-                          setState(() {
-                            _mostrarFormulario = true;
-                          });
+                          ref.read(mostrarFormularioProvider.notifier).state =
+                              true;
                         },
                         icon: const Icon(Icons.add_circle_outline),
                         label: const Text(
@@ -407,7 +404,7 @@ class _TransferenciasScreenState extends ConsumerState<TransferenciasScreen> {
                       ),
                     ),
                   ],
-                  if (_mostrarFormulario) ...[
+                  if (ref.watch(mostrarFormularioProvider)) ...[
                     Row(
                       children: [
                         Icon(Icons.wallet, size: 20, color: Colors.grey[700]),
@@ -661,9 +658,8 @@ class _TransferenciasScreenState extends ConsumerState<TransferenciasScreen> {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      setState(() {
-                        _mostrarFormulario = false;
-                      });
+                      ref.read(mostrarFormularioProvider.notifier).state =
+                          false;
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.grey[800],

@@ -456,6 +456,7 @@ class _InicioScreenState extends ConsumerState<InicioScreen> {
               ),
               onPressed: () {
                 // Acción para escanear QR
+                context.push('/paga-con-qr');
               },
               icon: const Icon(
                 Icons.qr_code_scanner,

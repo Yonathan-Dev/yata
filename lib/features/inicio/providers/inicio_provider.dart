@@ -295,3 +295,7 @@ final movimientosNotifierProvider =
 
 final selectedMonthIndex = StateProvider<int>((ref) => 3);
 final billeteraExpandedProvider = StateProvider<bool>((ref) => false);
+final flashlightProvider = StateProvider<bool>((ref) => false);
+final mostrarFormularioProvider = StateProvider<bool>((ref) => false);
+final qrResultProvider = StateProvider<String?>((ref) => null);
+final isProcessingProvider = StateProvider<bool>((ref) => false);

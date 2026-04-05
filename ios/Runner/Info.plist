@@ -44,12 +44,16 @@
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>La aplicación requiere acceso a la cámara para capturar la imagen del documento de identidad del usuario, con el fin de validar su identidad durante el registro en la billetera digital.</string>
-	<key>keychain-access-groups</key>
-	<array>
+	<string>La aplicación requiere acceso a la cámara para escanear códigos QR y capturar la imagen del documento de identidad durante el registro en la billetera digital.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>La aplicación requiere acceso a tu galería de fotos para seleccionar imágenes que contengan códigos QR.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>La aplicación necesita guardar imágenes en tu galería de fotos.</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>La aplicación utiliza Face ID para autenticar al usuario de forma segura en el acceso a la billetera digital.</string>
-	<string>$(AppIdentifierPrefix)com.yata.wallet</string>
+	<key>keychain-access-groups</key>
+	<array>
+		<string>$(AppIdentifierPrefix)com.yata.wallet</string>
 	</array>
 </dict>
 </plist>

@@ -142,6 +142,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: 'pagaOtros',
         builder: (context, state) => const PagaOtrosScreen(),
       ),
+      GoRoute(
+        path: '/transferencias',
+        name: 'transferencias',
+        builder: (context, state) => const TransferenciasScreen(),
+      ),
     ],
   );
 });

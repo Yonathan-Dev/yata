@@ -197,7 +197,7 @@ class _InicioScreenState extends ConsumerState<InicioScreen> {
         'icono': Icons.swap_horiz,
         'texto': 'Transferir',
         'svg': 'assets/iconos/icono_7.svg',
-        'ruta': '/transferir',
+        'ruta': '/transferencias',
       },
       /*{
         'icono': Icons.monetization_on_outlined,

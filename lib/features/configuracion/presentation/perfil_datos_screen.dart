@@ -187,8 +187,6 @@ class _PerfilDatosScreenState extends ConsumerState<PerfilDatosScreen> {
     );
   }
 
-  // ── Background ────────────────────────────────────────────────
-
   Widget _buildBackground(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     return Stack(

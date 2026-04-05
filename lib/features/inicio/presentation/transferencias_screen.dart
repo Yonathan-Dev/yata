@@ -30,118 +30,123 @@ class _TransferenciasScreenState extends ConsumerState<TransferenciasScreen> {
     return InactivityListener(
       child: Scaffold(
         backgroundColor: Tema.blanco,
-        bottomNavigationBar: Stack(
-          clipBehavior: Clip.none,
-          alignment: Alignment.topCenter,
-          children: [
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: double.infinity,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: Tema.primaryColor,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20),
+        bottomNavigationBar: SafeArea(
+          top: false,
+          child: Stack(
+            clipBehavior: Clip.none,
+            alignment: Alignment.topCenter,
+            children: [
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: double.infinity,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: Tema.primaryColor,
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
+                      ),
                     ),
                   ),
-                ),
-                AnimatedSize(
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeInOut,
-                  child: SizedBox(
-                    height: ref.watch(navigationBarExpandedProvider) ? 70 : 0,
-                    child: Theme(
-                      data: Theme.of(context).copyWith(
-                        navigationBarTheme: NavigationBarThemeData(
-                          iconTheme: WidgetStateProperty.all(
-                            const IconThemeData(color: Tema.blanco),
-                          ),
-                          labelTextStyle: WidgetStateProperty.all(
-                            const TextStyle(color: Tema.blanco, fontSize: 12),
+                  AnimatedSize(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                    child: SizedBox(
+                      height: ref.watch(navigationBarExpandedProvider) ? 70 : 0,
+                      child: Theme(
+                        data: Theme.of(context).copyWith(
+                          navigationBarTheme: NavigationBarThemeData(
+                            iconTheme: WidgetStateProperty.all(
+                              const IconThemeData(color: Tema.blanco),
+                            ),
+                            labelTextStyle: WidgetStateProperty.all(
+                              const TextStyle(color: Tema.blanco, fontSize: 12),
+                            ),
                           ),
                         ),
-                      ),
-                      child: NavigationBar(
-                        onDestinationSelected: (int index) {
-                          if (esperandoRespuesta) {
-                            return;
-                          }
-                          ref.read(navigationIndexProvider.notifier).state =
-                              index;
-                          ref
-                                  .read(navigationBarExpandedProvider.notifier)
-                                  .state =
-                              false;
-                          Navigator.of(context).pop();
-                        },
-                        height: 70,
-                        backgroundColor: Tema.primaryColor,
-                        indicatorColor: Tema.primaryColor,
-                        selectedIndex: selectedIndex,
-                        destinations: const <NavigationDestination>[
-                          NavigationDestination(
-                            icon: Icon(Icons.double_arrow),
-                            selectedIcon: Icon(Icons.double_arrow_outlined),
-                            label: 'Inicio',
-                          ),
-                          NavigationDestination(
-                            icon: Icon(Icons.compare_arrows),
-                            selectedIcon: Icon(Icons.compare_arrows_outlined),
-                            label: 'Operaciones',
-                          ),
-                          NavigationDestination(
-                            icon: Icon(Icons.shopping_cart),
-                            selectedIcon: Icon(Icons.shopping_cart_outlined),
-                            label: 'Para ti',
-                          ),
-                          NavigationDestination(
-                            icon: Icon(Icons.menu),
-                            selectedIcon: Icon(Icons.menu_open_outlined),
-                            label: 'Más',
-                          ),
-                        ],
+                        child: NavigationBar(
+                          onDestinationSelected: (int index) {
+                            if (esperandoRespuesta) {
+                              return;
+                            }
+                            ref.read(navigationIndexProvider.notifier).state =
+                                index;
+                            ref
+                                    .read(
+                                      navigationBarExpandedProvider.notifier,
+                                    )
+                                    .state =
+                                false;
+                            Navigator.of(context).pop();
+                          },
+                          height: 70,
+                          backgroundColor: Tema.primaryColor,
+                          indicatorColor: Tema.primaryColor,
+                          selectedIndex: selectedIndex,
+                          destinations: const <NavigationDestination>[
+                            NavigationDestination(
+                              icon: Icon(Icons.double_arrow),
+                              selectedIcon: Icon(Icons.double_arrow_outlined),
+                              label: 'Inicio',
+                            ),
+                            NavigationDestination(
+                              icon: Icon(Icons.compare_arrows),
+                              selectedIcon: Icon(Icons.compare_arrows_outlined),
+                              label: 'Operaciones',
+                            ),
+                            NavigationDestination(
+                              icon: Icon(Icons.shopping_cart),
+                              selectedIcon: Icon(Icons.shopping_cart_outlined),
+                              label: 'Para ti',
+                            ),
+                            NavigationDestination(
+                              icon: Icon(Icons.menu),
+                              selectedIcon: Icon(Icons.menu_open_outlined),
+                              label: 'Más',
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
-            // Botón circular flotante en el centro
-            Positioned(
-              top: -20,
-              child: GestureDetector(
-                onTap: () {
-                  ref.read(navigationBarExpandedProvider.notifier).state = !ref
-                      .read(navigationBarExpandedProvider);
-                },
-                child: Container(
-                  width: 60,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    color: Tema.primaryColor,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.2),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Icon(
-                    ref.watch(navigationBarExpandedProvider)
-                        ? Icons.keyboard_arrow_down
-                        : Icons.keyboard_arrow_up,
-                    color: Tema.blanco,
-                    size: 30,
+                ],
+              ),
+              // Botón circular flotante en el centro
+              Positioned(
+                top: -20,
+                child: GestureDetector(
+                  onTap: () {
+                    ref.read(navigationBarExpandedProvider.notifier).state =
+                        !ref.read(navigationBarExpandedProvider);
+                  },
+                  child: Container(
+                    width: 60,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      color: Tema.primaryColor,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.2),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Icon(
+                      ref.watch(navigationBarExpandedProvider)
+                          ? Icons.keyboard_arrow_down
+                          : Icons.keyboard_arrow_up,
+                      color: Tema.blanco,
+                      size: 30,
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         body: SafeArea(
           child: Column(

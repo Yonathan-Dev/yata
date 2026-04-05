@@ -213,12 +213,28 @@ class _MovimientosScreenState extends ConsumerState<MovimientosScreen> {
             ),
           ),
           IconButton(
+            onPressed: _descargarMovimientosPDF,
+            icon: const Icon(
+              Icons.picture_as_pdf,
+              color: Tema.blanco,
+              size: 24,
+            ),
+            tooltip: 'Descargar PDF',
+          ),
+          IconButton(
             onPressed: () {},
             icon: const Icon(Icons.more_vert, color: Tema.blanco, size: 24),
             constraints: const BoxConstraints(),
           ),
         ],
       ),
+    );
+  }
+
+  Future<void> _descargarMovimientosPDF() async {
+    SnackbarUtil.snackbarNotificationPush(
+      context,
+      title: 'Descargando movimientos en PDF...',
     );
   }
 

@@ -152,7 +152,7 @@ class _LecturaQrScreenState extends ConsumerState<LecturaQrScreen>
     }
   }
 
-  void _handleQrResult(String qrData) {
+  void _handleQrResult(String qrData) async {
     final isProcessing = ref.read(isProcessingProvider);
     if (isProcessing) return;
 
@@ -160,72 +160,12 @@ class _LecturaQrScreenState extends ConsumerState<LecturaQrScreen>
 
     // Guardar resultado en el provider
     ref.read(qrResultProvider.notifier).state = qrData;
-    _showQrResultDialog(qrData);
-  }
 
-  void _showQrResultDialog(String qrData) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Row(
-          children: [
-            Icon(Icons.qr_code_2, color: Tema.primaryColor, size: 28),
-            const SizedBox(width: 12),
-            const Text('QR Escaneado'),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Contenido del código QR:',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-            ),
-            const SizedBox(height: 12),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Tema.primaryColor.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: Tema.primaryColor.withValues(alpha: 0.3),
-                ),
-              ),
-              child: SelectableText(
-                qrData,
-                style: const TextStyle(fontSize: 14, fontFamily: 'monospace'),
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              ref.read(isProcessingProvider.notifier).state = false;
-            },
-            child: const Text('Escanear otro'),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Tema.primaryColor,
-              foregroundColor: Tema.blanco,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            onPressed: () {
-              Navigator.of(context).pop();
-              context.pop(qrData);
-            },
-            child: const Text('Continuar'),
-          ),
-        ],
-      ),
-    );
+    // Navegar a la pantalla de resultado
+    context.go('/resultado-qr', extra: qrData);
+
+    // Resetear el estado de procesamiento
+    ref.read(isProcessingProvider.notifier).state = false;
   }
 
   @override

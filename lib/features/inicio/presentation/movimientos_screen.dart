@@ -171,6 +171,7 @@ class _MovimientosScreenState extends ConsumerState<MovimientosScreen> {
             children: [
               _buildCustomAppBar(context),
               Expanded(child: _buildMovimientosList(context)),
+              const SizedBox(height: Constantes.separacionFormulario),
             ],
           ),
         ),

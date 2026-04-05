@@ -69,14 +69,11 @@ class _InicioScreenState extends ConsumerState<InicioScreen> {
                       _buildAccionesGrid(context),
                       const SizedBox(height: Constantes.separacion),
                       _buildSaldoCard(context),
-                      const SizedBox(
-                        height: Constantes.separacionFormulario * 2,
-                      ),
+                      const SizedBox(height: Constantes.separacionFormulario),
                       _buildActionButtons(context),
-                      const SizedBox(
-                        height: Constantes.separacionFormulario * 2,
-                      ),
+                      const SizedBox(height: Constantes.separacionFormulario),
                       _buildScanAndYatearButtons(context),
+                      const SizedBox(height: Constantes.separacionFormulario),
                     ],
                   ),
                 ),

@@ -299,3 +299,4 @@ final flashlightProvider = StateProvider<bool>((ref) => false);
 final mostrarFormularioProvider = StateProvider<bool>((ref) => false);
 final qrResultProvider = StateProvider<String?>((ref) => null);
 final isProcessingProvider = StateProvider<bool>((ref) => false);
+final isButtonEnabled = StateProvider<bool>((ref) => false);

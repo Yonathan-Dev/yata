@@ -183,6 +183,7 @@ class _PagosPendientesScreenState extends ConsumerState<PagosPendientesScreen> {
               _buildCustomAppBar(context),
               _buildCustomPendientes(context),
               Expanded(child: _buildMovimientosList(context)),
+              const SizedBox(height: Constantes.separacionFormulario),
             ],
           ),
         ),

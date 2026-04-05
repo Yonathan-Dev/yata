@@ -158,6 +158,7 @@ class _TransferenciasScreenState extends ConsumerState<TransferenciasScreen> {
                   child: _buildFormulario(context),
                 ),
               ),
+              const SizedBox(height: Constantes.separacionFormulario),
             ],
           ),
         ),

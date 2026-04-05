@@ -7,7 +7,8 @@ import '../../../shared/shared_exports.dart';
 
 class PagoExitosoScreen extends ConsumerStatefulWidget {
   final String metodoPago;
-  const PagoExitosoScreen({super.key, required this.metodoPago});
+  final String? screen;
+  const PagoExitosoScreen({super.key, required this.metodoPago, this.screen});
 
   @override
   ConsumerState<PagoExitosoScreen> createState() => _PagoExitosoScreenState();
@@ -45,9 +46,9 @@ class _PagoExitosoScreenState extends ConsumerState<PagoExitosoScreen> {
                   Stack(
                     children: [
                       Container(
-                        margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                        margin: const EdgeInsets.symmetric(horizontal: 20),
                         child: Padding(
-                          padding: const EdgeInsets.fromLTRB(10, 50, 150, 24),
+                          padding: const EdgeInsets.fromLTRB(10, 60, 130, 24),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -63,8 +64,10 @@ class _PagoExitosoScreenState extends ConsumerState<PagoExitosoScreen> {
                               const SizedBox(height: 8),
                               Text(
                                 '¡Pago exitoso por ${widget.metodoPago}!',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                                 style: Theme.of(context).textTheme.titleMedium!
-                                    .copyWith(color: Tema.negro, fontSize: 18),
+                                    .copyWith(color: Tema.negro, fontSize: 20),
                               ),
                               const SizedBox(height: 2),
                               Text(
@@ -78,9 +81,8 @@ class _PagoExitosoScreenState extends ConsumerState<PagoExitosoScreen> {
                       ),
                       Positioned(
                         top: 0,
-                        right: 0,
+                        right: 20,
                         child: Container(
-                          margin: const EdgeInsets.fromLTRB(0, 0, 20, 0),
                           width: 100,
                           height: 100,
                           decoration: const BoxDecoration(
@@ -266,7 +268,9 @@ class _PagoExitosoScreenState extends ConsumerState<PagoExitosoScreen> {
             child: ElevatedButton(
               onPressed: () {
                 ref.read(navigationBarExpandedProvider.notifier).state = false;
-                context.go('/pagos-pendientes');
+                if (widget.screen != null && widget.screen!.isNotEmpty) {
+                  context.go(widget.screen!);
+                }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Tema.primaryColor,
@@ -291,7 +295,9 @@ class _PagoExitosoScreenState extends ConsumerState<PagoExitosoScreen> {
                 if (context.canPop()) {
                   context.pop();
                 } else {
-                  context.go('/pagos-pendientes');
+                  if (widget.screen != null && widget.screen!.isNotEmpty) {
+                    context.go(widget.screen!);
+                  }
                 }
               },
               style: ElevatedButton.styleFrom(

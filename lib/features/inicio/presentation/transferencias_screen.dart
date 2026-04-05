@@ -631,7 +631,15 @@ class _TransferenciasScreenState extends ConsumerState<TransferenciasScreen> {
               children: [
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      context.push(
+                        '/pago-exitoso',
+                        extra: {
+                          'metodoPago': 'transferencia',
+                          'screen': '/transferencias',
+                        },
+                      );
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Tema.violeta,
                       foregroundColor: Tema.blanco,

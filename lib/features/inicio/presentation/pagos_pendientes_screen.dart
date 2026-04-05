@@ -487,7 +487,10 @@ class _PagosPendientesScreenState extends ConsumerState<PagosPendientesScreen> {
                       Navigator.pop(context);
                       context.push(
                         '/pago-exitoso',
-                        extra: {'metodoPago': 'QR'},
+                        extra: {
+                          'metodoPago': 'QR',
+                          'screen': '/pagos-pendientes',
+                        },
                       );
                     },
                     style: ElevatedButton.styleFrom(

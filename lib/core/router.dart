@@ -134,7 +134,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           if (extra is Map && extra['metodoPago'] is String) {
             metodoPago = extra['metodoPago'] as String;
           }
-          return PagoExitosoScreen(metodoPago: metodoPago);
+          //logica para enviar el screen
+          String screen = '';
+          if (extra is Map && extra['screen'] is String) {
+            screen = extra['screen'] as String;
+          }
+          return PagoExitosoScreen(metodoPago: metodoPago, screen: screen);
         },
       ),
       GoRoute(

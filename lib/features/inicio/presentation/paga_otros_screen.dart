@@ -77,7 +77,10 @@ class _PagaOtrosScreenState extends ConsumerState<PagaOtrosScreen> {
               onTap: () {
                 context.go(
                   '/pago-exitoso',
-                  extra: {'metodoPago': 'Depósito / Transferencia'},
+                  extra: {
+                    'metodoPago': 'Depósito / Transferencia',
+                    'screen': '/pagos-pendientes',
+                  },
                 );
               },
             ),
@@ -89,7 +92,13 @@ class _PagaOtrosScreenState extends ConsumerState<PagaOtrosScreen> {
               iconColor: Tema.primaryColor,
               isExpanded: false,
               onTap: () {
-                context.go('/pago-exitoso', extra: {'metodoPago': 'Efectivo'});
+                context.go(
+                  '/pago-exitoso',
+                  extra: {
+                    'metodoPago': 'Efectivo',
+                    'screen': '/pagos-pendientes',
+                  },
+                );
               },
             ),
             const SizedBox(height: 12),
@@ -102,7 +111,10 @@ class _PagaOtrosScreenState extends ConsumerState<PagaOtrosScreen> {
               onTap: () {
                 context.go(
                   '/pago-exitoso',
-                  extra: {'metodoPago': 'Tarjeta de Crédito / Débito'},
+                  extra: {
+                    'metodoPago': 'Tarjeta de Crédito / Débito',
+                    'screen': '/pagos-pendientes',
+                  },
                 );
               },
             ),
@@ -227,7 +239,10 @@ class _PagaOtrosScreenState extends ConsumerState<PagaOtrosScreen> {
         if (label == 'Otros') {
           metodoPago = 'Billetera Electrónica / QR - Otros';
         }
-        context.go('/pago-exitoso', extra: {'metodoPago': metodoPago});
+        context.go(
+          '/pago-exitoso',
+          extra: {'metodoPago': metodoPago, 'screen': '/pagos-pendientes'},
+        );
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),

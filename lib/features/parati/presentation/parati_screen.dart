@@ -3,14 +3,14 @@ import '../../../shared/providers/inactivity_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ParatiScreen extends ConsumerStatefulWidget {
-  const ParatiScreen({super.key});
+class ParaTiScreen extends ConsumerStatefulWidget {
+  const ParaTiScreen({super.key});
 
   @override
-  ConsumerState<ParatiScreen> createState() => _ParatiScreenState();
+  ConsumerState<ParaTiScreen> createState() => _ParaTiScreenState();
 }
 
-class _ParatiScreenState extends ConsumerState<ParatiScreen> {
+class _ParaTiScreenState extends ConsumerState<ParaTiScreen> {
   @override
   Widget build(BuildContext context) {
     ref.watch(inactivityProvider);

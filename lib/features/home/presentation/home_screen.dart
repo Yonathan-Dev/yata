@@ -195,7 +195,7 @@ Widget _getSelectedScreen(
     case 1:
       return const OperacionesScreen();
     case 2:
-      return const ParatiScreen();
+      return const ParaTiScreen();
     case 3:
       return const ConfiguracionScreen();
     default:

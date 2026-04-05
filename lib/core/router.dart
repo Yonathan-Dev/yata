@@ -42,6 +42,21 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const InicioScreen(),
       ),
       GoRoute(
+        path: '/operaciones',
+        name: 'operaciones',
+        builder: (context, state) => const OperacionesScreen(),
+      ),
+      GoRoute(
+        path: '/para-ti',
+        name: 'paraTi',
+        builder: (context, state) => const ParaTiScreen(),
+      ),
+      GoRoute(
+        path: '/configuracion',
+        name: 'configuracion',
+        builder: (context, state) => const ConfiguracionScreen(),
+      ),
+      GoRoute(
         path: '/register',
         name: 'register',
         builder: (context, state) => const RegisterScreen(),

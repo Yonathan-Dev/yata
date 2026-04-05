@@ -1,20 +1,19 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/app_exports.dart';
 import '../../../shared/shared_exports.dart';
 
-class ResultadoQrScreen extends ConsumerStatefulWidget {
-  final String qrData;
-
-  const ResultadoQrScreen({super.key, required this.qrData});
+class RecargaSaldoScreen extends ConsumerStatefulWidget {
+  const RecargaSaldoScreen({super.key});
 
   @override
-  ConsumerState<ResultadoQrScreen> createState() => _ResultadoQrScreenState();
+  ConsumerState<RecargaSaldoScreen> createState() => _RecargaSaldoScreenState();
 }
 
-class _ResultadoQrScreenState extends ConsumerState<ResultadoQrScreen> {
+class _RecargaSaldoScreenState extends ConsumerState<RecargaSaldoScreen> {
   final montoController = TextEditingController();
   final montoFocusNode = FocusNode();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -40,16 +39,9 @@ class _ResultadoQrScreenState extends ConsumerState<ResultadoQrScreen> {
         text.isNotEmpty && monto != null && monto > 0;
   }
 
-  String _getNombrePersona() {
-    // Aquí podrías parsear el widget.qrData para obtener el nombre
-    // Por ahora usamos un nombre de ejemplo basado en el QR
-    return 'Yonathan G.';
-  }
-
   @override
   Widget build(BuildContext context) {
     ref.watch(inactivityProvider);
-    final nombrePersona = _getNombrePersona();
 
     return InactivityListener(
       child: Scaffold(
@@ -63,23 +55,30 @@ class _ResultadoQrScreenState extends ConsumerState<ResultadoQrScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Spacer(),
-
-                  // Nombre de la persona
                   FadeInDown(
                     duration: const Duration(milliseconds: 600),
-                    child: Text(
-                      nombrePersona,
-                      style: const TextStyle(
-                        fontSize: 40,
-                        fontWeight: FontWeight.bold,
-                        color: Tema.negro,
-                      ),
-                      textAlign: TextAlign.center,
+                    child: Column(
+                      children: [
+                        Text(
+                          'Tu plataforma de pago',
+                          style: const TextStyle(
+                            fontSize: 25,
+                            fontWeight: FontWeight.bold,
+                            color: Tema.negro,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        Text(
+                          '¡Rápida, sencilla y segura!',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            color: Tema.negro,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 40),
-
-                  // Etiqueta "Monto a pagar"
                   FadeInUp(
                     duration: const Duration(milliseconds: 600),
                     delay: const Duration(milliseconds: 200),
@@ -99,6 +98,7 @@ class _ResultadoQrScreenState extends ConsumerState<ResultadoQrScreen> {
                     duration: const Duration(milliseconds: 600),
                     delay: const Duration(milliseconds: 400),
                     child: Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 50),
                       padding: const EdgeInsets.symmetric(
                         horizontal: 32,
                         vertical: 24,
@@ -127,6 +127,11 @@ class _ResultadoQrScreenState extends ConsumerState<ResultadoQrScreen> {
                                   const TextInputType.numberWithOptions(
                                     decimal: true,
                                   ),
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(
+                                  RegExp(r'^\d*(\.\d{0,2})?$'),
+                                ),
+                              ],
                               textAlign: TextAlign.left,
                               style: const TextStyle(
                                 fontSize: 32,
@@ -172,16 +177,16 @@ class _ResultadoQrScreenState extends ConsumerState<ResultadoQrScreen> {
                             onPressed: ref.watch(isButtonEnabled)
                                 ? () {
                                     context.go(
-                                      '/pago-exitoso',
+                                      '/paga-otros',
                                       extra: {
-                                        'metodoPago': 'QR',
+                                        'metodoPago': 'Recarga',
                                         'screen': '/home',
                                       },
                                     );
                                   }
                                 : null,
                             child: const Text(
-                              '¡Yata!',
+                              'Pagar',
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,

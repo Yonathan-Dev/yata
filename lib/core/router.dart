@@ -145,7 +145,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/paga-otros',
         name: 'pagaOtros',
-        builder: (context, state) => const PagaOtrosScreen(),
+        builder: (context, state) {
+          final extra = state.extra;
+          String screen = '';
+          if (extra is Map && extra['screen'] is String) {
+            screen = extra['screen'] as String;
+          }
+          return PagaOtrosScreen(screen: screen);
+        },
       ),
       GoRoute(
         path: '/transferencias',
@@ -164,6 +171,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           final qrData = state.extra as String;
           return ResultadoQrScreen(qrData: qrData);
         },
+      ),
+      GoRoute(
+        path: '/recargar-saldo',
+        name: 'recargarSaldo',
+        builder: (context, state) => const RecargaSaldoScreen(),
       ),
     ],
   );

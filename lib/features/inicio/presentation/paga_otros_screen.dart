@@ -6,7 +6,8 @@ import '../../../core/app_exports.dart';
 import '../../../shared/shared_exports.dart';
 
 class PagaOtrosScreen extends ConsumerStatefulWidget {
-  const PagaOtrosScreen({super.key});
+  final String screen;
+  const PagaOtrosScreen({super.key, required this.screen});
 
   @override
   ConsumerState<PagaOtrosScreen> createState() => _PagaOtrosScreenState();
@@ -79,7 +80,7 @@ class _PagaOtrosScreenState extends ConsumerState<PagaOtrosScreen> {
                   '/pago-exitoso',
                   extra: {
                     'metodoPago': 'Depósito / Transferencia',
-                    'screen': '/pagos-pendientes',
+                    'screen': widget.screen,
                   },
                 );
               },
@@ -94,10 +95,7 @@ class _PagaOtrosScreenState extends ConsumerState<PagaOtrosScreen> {
               onTap: () {
                 context.go(
                   '/pago-exitoso',
-                  extra: {
-                    'metodoPago': 'Efectivo',
-                    'screen': '/pagos-pendientes',
-                  },
+                  extra: {'metodoPago': 'Efectivo', 'screen': widget.screen},
                 );
               },
             ),
@@ -113,7 +111,7 @@ class _PagaOtrosScreenState extends ConsumerState<PagaOtrosScreen> {
                   '/pago-exitoso',
                   extra: {
                     'metodoPago': 'Tarjeta de Crédito / Débito',
-                    'screen': '/pagos-pendientes',
+                    'screen': widget.screen,
                   },
                 );
               },
@@ -241,7 +239,7 @@ class _PagaOtrosScreenState extends ConsumerState<PagaOtrosScreen> {
         }
         context.go(
           '/pago-exitoso',
-          extra: {'metodoPago': metodoPago, 'screen': '/pagos-pendientes'},
+          extra: {'metodoPago': metodoPago, 'screen': widget.screen},
         );
       },
       child: Padding(

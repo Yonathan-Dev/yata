@@ -7,6 +7,7 @@ export 'presentation/paga_otros_screen.dart';
 export 'presentation/transferencias_screen.dart';
 export 'presentation/lectura_qr_screen.dart';
 export 'presentation/resultado_qr_screen.dart';
+export 'presentation/recarga_saldo_screen.dart';
 //Providers
 export 'providers/inicio_provider.dart';
 //Data Sources

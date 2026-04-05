@@ -523,7 +523,10 @@ class _PagosPendientesScreenState extends ConsumerState<PagosPendientesScreen> {
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.pop(context);
-                      context.push('/paga-otros');
+                      context.push(
+                        '/paga-otros',
+                        extra: {'screen': '/pagos-pendientes'},
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF424242),
